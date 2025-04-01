@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStateById, getConservationStatusColor } from '@/data/mockData';
+import { geoMercator } from 'd3-geo';
 
 const INDIA_TOPO_JSON = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/india/india-states.json";
 
@@ -106,7 +107,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
         <div className="h-full flex items-center justify-center">
           <TooltipProvider>
             <ComposableMap
-              projection="geoMercator"
+              projection={geoMercator}
               projectionConfig={{
                 scale: 1000,
                 center: [82, 22]
