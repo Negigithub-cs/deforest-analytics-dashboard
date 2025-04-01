@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   ResponsiveContainer, 
@@ -9,8 +10,7 @@ import {
   Tooltip, 
   Legend,
   ReferenceLine,
-  ReferenceArea,
-  DataKey
+  ReferenceArea
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStateById, StateData, ForestData } from '@/data/mockData';
@@ -53,8 +53,9 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
   const currentYear = new Date().getFullYear();
   const projectionStartYear = Math.max(...stateData.forestData.map(d => d.year));
   
-  const handleLegendClick = (dataKey: DataKey<any>) => {
-    const key = dataKey as string;
+  // Fix the typing issue by explicitly typing the parameter and using type assertion
+  const handleLegendClick = (dataKey: string | number) => {
+    const key = String(dataKey);
     if (focusDataKey === key) {
       setFocusDataKey(null);
       setShowAllLines(true);
@@ -175,7 +176,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
               <Tooltip content={<CustomTooltip />} />
               <Legend 
                 onClick={(e) => handleLegendClick(e.dataKey)}
-                formatter={(value) => renderLegendText(value as string)}
+                formatter={(value) => renderLegendText(String(value))}
                 wrapperStyle={{ paddingTop: '10px' }}
               />
               
