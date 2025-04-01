@@ -53,9 +53,17 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
   const currentYear = new Date().getFullYear();
   const projectionStartYear = Math.max(...stateData.forestData.map(d => d.year));
   
-  // Fix the typing issue by explicitly typing the parameter and using type assertion
-  const handleLegendClick = (dataKey: string | number) => {
-    const key = String(dataKey);
+  // Updated to handle all possible types that the Legend might pass
+  const handleLegendClick = (data: any) => {
+    // Ensure we have a string key regardless of what's passed
+    const key = typeof data === 'string' ? data : 
+               typeof data === 'number' ? String(data) : 
+               data && typeof data.dataKey === 'string' ? data.dataKey :
+               data && typeof data.dataKey === 'number' ? String(data.dataKey) :
+               data && typeof data.dataKey === 'function' ? String(data.dataKey) : null;
+               
+    if (!key) return; // Guard against undefined keys
+    
     if (focusDataKey === key) {
       setFocusDataKey(null);
       setShowAllLines(true);
@@ -175,7 +183,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend 
-                onClick={(e) => handleLegendClick(e.dataKey)}
+                onClick={handleLegendClick}
                 formatter={(value) => renderLegendText(String(value))}
                 wrapperStyle={{ paddingTop: '10px' }}
               />
