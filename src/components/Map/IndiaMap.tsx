@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ComposableMap, 
   Geographies, 
@@ -61,6 +61,31 @@ const stateMapping: Record<string, string> = {
 
 const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => {
   const [tooltipData, setTooltipData] = useState<MapStateData | null>(null);
+  const [geoData, setGeoData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Fetch the GeoJSON data
+  useEffect(() => {
+    setIsLoading(true);
+    
+    fetch(INDIA_TOPO_JSON)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        setGeoData(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error("Error fetching geography data:", err);
+        setError("Failed to load map data. Please try again later.");
+        setIsLoading(false);
+      });
+  }, []);
   
   const getStateIdFromName = (name: string): string => {
     return stateMapping[name] || "";
@@ -95,6 +120,88 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
     }
   };
   
+  const renderMap = () => {
+    if (isLoading) {
+      return <div className="flex items-center justify-center h-64">Loading map data...</div>;
+    }
+    
+    if (error) {
+      return <div className="flex items-center justify-center h-64 text-red-500">{error}</div>;
+    }
+    
+    return (
+      <TooltipProvider>
+        <ComposableMap
+          projection={geoMercator}
+          projectionConfig={{
+            scale: 1000,
+            center: [82, 22]
+          }}
+          width={450}
+          height={450}
+        >
+          {geoData && (
+            <Geographies geography={geoData}>
+              {({ geographies }) =>
+                geographies.map(geo => {
+                  const stateName = geo.properties.NAME_1;
+                  const stateId = getStateIdFromName(stateName);
+                  
+                  return (
+                    <Tooltip key={geo.rsmKey}>
+                      <TooltipTrigger asChild>
+                        <Geography
+                          geography={geo}
+                          style={{
+                            default: {
+                              fill: getStateFill(stateId),
+                              stroke: "#FFFFFF",
+                              strokeWidth: 0.75,
+                              outline: "none"
+                            },
+                            hover: {
+                              fill: "#2E7D32",
+                              stroke: "#FFFFFF",
+                              strokeWidth: 0.75,
+                              outline: "none",
+                              cursor: "pointer"
+                            },
+                            pressed: {
+                              fill: "#1B5E20",
+                              stroke: "#FFFFFF",
+                              strokeWidth: 0.75,
+                              outline: "none"
+                            }
+                          }}
+                          onMouseEnter={() => handleStateMouseEnter(geo)}
+                          onMouseLeave={handleStateMouseLeave}
+                          onClick={() => handleStateClick(geo)}
+                        />
+                      </TooltipTrigger>
+                      {stateId && (
+                        <TooltipContent>
+                          <div>
+                            <p className="font-bold">{stateName}</p>
+                            {getStateById(stateId) && (
+                              <>
+                                <p>Conservation Status: {getStateById(stateId)?.conservationStatus}</p>
+                                <p>Deforestation Rate: {getStateById(stateId)?.deforestationRate.toFixed(1)}%</p>
+                              </>
+                            )}
+                          </div>
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+                  );
+                })
+              }
+            </Geographies>
+          )}
+        </ComposableMap>
+      </TooltipProvider>
+    );
+  };
+  
   return (
     <Card className="h-full">
       <CardHeader>
@@ -105,73 +212,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
       </CardHeader>
       <CardContent>
         <div className="h-full flex items-center justify-center">
-          <TooltipProvider>
-            <ComposableMap
-              projection={geoMercator}
-              projectionConfig={{
-                scale: 1000,
-                center: [82, 22]
-              }}
-              width={450}
-              height={450}
-            >
-              <Geographies geography={INDIA_TOPO_JSON}>
-                {({ geographies }) =>
-                  geographies.map(geo => {
-                    const stateName = geo.properties.NAME_1;
-                    const stateId = getStateIdFromName(stateName);
-                    
-                    return (
-                      <Tooltip key={geo.rsmKey}>
-                        <TooltipTrigger asChild>
-                          <Geography
-                            geography={geo}
-                            style={{
-                              default: {
-                                fill: getStateFill(stateId),
-                                stroke: "#FFFFFF",
-                                strokeWidth: 0.75,
-                                outline: "none"
-                              },
-                              hover: {
-                                fill: "#2E7D32",
-                                stroke: "#FFFFFF",
-                                strokeWidth: 0.75,
-                                outline: "none",
-                                cursor: "pointer"
-                              },
-                              pressed: {
-                                fill: "#1B5E20",
-                                stroke: "#FFFFFF",
-                                strokeWidth: 0.75,
-                                outline: "none"
-                              }
-                            }}
-                            onMouseEnter={() => handleStateMouseEnter(geo)}
-                            onMouseLeave={handleStateMouseLeave}
-                            onClick={() => handleStateClick(geo)}
-                          />
-                        </TooltipTrigger>
-                        {stateId && (
-                          <TooltipContent>
-                            <div>
-                              <p className="font-bold">{stateName}</p>
-                              {getStateById(stateId) && (
-                                <>
-                                  <p>Conservation Status: {getStateById(stateId)?.conservationStatus}</p>
-                                  <p>Deforestation Rate: {getStateById(stateId)?.deforestationRate.toFixed(1)}%</p>
-                                </>
-                              )}
-                            </div>
-                          </TooltipContent>
-                        )}
-                      </Tooltip>
-                    );
-                  })
-                }
-              </Geographies>
-            </ComposableMap>
-          </TooltipProvider>
+          {renderMap()}
         </div>
       </CardContent>
     </Card>
