@@ -69,11 +69,12 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
     setShowAllLines(true);
   };
   
-  const formatYAxis = (value: number) => {
+  // Fix #1: Update formatYAxis to ensure it always returns a string
+  const formatYAxis = (value: number): string => {
     if (value >= 1000) {
       return `${(value / 1000).toFixed(0)}k`;
     }
-    return value;
+    return value.toString();
   };
   
   const getDataKeyVisibility = (dataKey: string) => {
@@ -82,7 +83,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
   };
   
   const renderLegendText = (value: string) => {
-    const mapping = {
+    const mapping: Record<string, string> = {
       "totalForestCover": "Total Forest Cover",
       "veryDenseForest": "Very Dense Forest",
       "moderatelyDenseForest": "Moderately Dense Forest",
@@ -90,7 +91,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
       "scrub": "Scrub"
     };
     
-    return mapping[value as keyof typeof mapping] || value;
+    return mapping[value] || value;
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -100,7 +101,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
           <p className="font-bold mb-1">{`Year: ${label}`}</p>
           {payload.map((entry: any, index: number) => (
             <p key={`item-${index}`} style={{ color: entry.color }} className="flex justify-between gap-4">
-              <span>{renderLegendText(entry.dataKey)}:</span> 
+              <span>{renderLegendText(entry.dataKey as string)}:</span> 
               <span className="font-semibold">{Number(entry.value).toLocaleString()} sq km</span>
             </p>
           ))}
@@ -175,7 +176,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
               <Tooltip content={<CustomTooltip />} />
               <Legend 
                 onClick={(e) => handleLegendClick(e.dataKey)}
-                formatter={(value) => renderLegendText(value)}
+                formatter={(value) => renderLegendText(value as string)}
                 wrapperStyle={{ paddingTop: '10px' }}
               />
               
