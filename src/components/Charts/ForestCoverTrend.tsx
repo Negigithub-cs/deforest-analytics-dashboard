@@ -73,6 +73,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 x={currentYear} 
                 stroke="#F44336" 
                 strokeDasharray="3 3"
+                yAxisId="left"
                 label={{ value: 'Current Year', position: 'top', fill: '#F44336' }}
               />
               <Line 
