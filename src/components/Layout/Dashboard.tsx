@@ -12,7 +12,7 @@ import StateComparison from '@/components/Tables/StateComparison';
 import { getStateById } from '@/data/mockData';
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowDown, ArrowUp, Tree, TreeDeciduous } from 'lucide-react';
+import { ArrowDown, ArrowUp, Trees, TreeDeciduous } from 'lucide-react';
 
 const Dashboard = () => {
   const [selectedState, setSelectedState] = useState('IN');
@@ -103,7 +103,7 @@ const Dashboard = () => {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
               <div>
                 <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <Tree className="h-5 w-5 text-forest" />
+                  <Trees className="h-5 w-5 text-forest" />
                   {stateData.name} Forest Analysis
                 </h2>
                 <p className="text-sm text-muted-foreground">
