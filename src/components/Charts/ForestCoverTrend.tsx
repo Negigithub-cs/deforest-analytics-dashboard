@@ -10,12 +10,13 @@ import {
   Tooltip, 
   Legend,
   ReferenceLine,
-  ReferenceArea
+  ReferenceArea,
+  Brush
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStateById, StateData, ForestData } from '@/data/mockData';
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Maximize2, RefreshCw, ZoomIn } from "lucide-react";
+import { ChevronDown, Info, Maximize2, RefreshCw, ZoomIn } from "lucide-react";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -23,6 +24,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 
 interface ForestCoverTrendProps {
   stateId: string;
@@ -113,6 +119,9 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
               <span className="font-semibold">{Number(entry.value).toLocaleString()} sq km</span>
             </p>
           ))}
+          {label >= projectionStartYear && (
+            <p className="text-xs mt-2 text-muted-foreground italic">* Projected data</p>
+          )}
         </div>
       );
     }
@@ -122,12 +131,37 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
   return (
     <Card className="h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <div>
-          <CardTitle>Forest Cover Trend</CardTitle>
-          <CardDescription>
-            {stateData.name}'s forest cover changes over time
-          </CardDescription>
+        <div className="flex items-center gap-2">
+          <div>
+            <CardTitle>Forest Cover Trend</CardTitle>
+            <CardDescription>
+              {stateData.name}'s forest cover changes over time
+            </CardDescription>
+          </div>
+          
+          <HoverCard>
+            <HoverCardTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Info size={16} />
+              </Button>
+            </HoverCardTrigger>
+            <HoverCardContent className="w-80">
+              <div className="space-y-2">
+                <h4 className="font-medium">Understanding Forest Cover Trends</h4>
+                <p className="text-sm text-muted-foreground">
+                  This graph shows how different types of forest areas are changing over time. 
+                  Historical data is shown with solid lines, while projections use dashed lines.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  • Click on legend items to focus on specific forest types<br />
+                  • Use the brush below to zoom into specific time periods<br />
+                  • Hover over lines to see exact values
+                </p>
+              </div>
+            </HoverCardContent>
+          </HoverCard>
         </div>
+
         <div className="flex items-center gap-2">
           <Button 
             variant="outline" 
@@ -174,18 +208,22 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 type="number"
                 tickCount={7}
                 allowDecimals={false}
+                padding={{ left: 10, right: 10 }}
               />
               <YAxis 
                 yAxisId="left"
                 orientation="left"
                 tickFormatter={formatYAxis}
-                label={{ value: 'Area (sq km)', angle: -90, position: 'insideLeft' }}
+                label={{ value: 'Area (sq km)', angle: -90, position: 'insideLeft', offset: -5 }}
+                padding={{ top: 10 }}
               />
               <Tooltip content={<CustomTooltip />} />
               <Legend 
                 onClick={handleLegendClick}
                 formatter={(value) => renderLegendText(String(value))}
                 wrapperStyle={{ paddingTop: '10px' }}
+                iconSize={10}
+                iconType="circle"
               />
               
               <ReferenceLine 
@@ -193,7 +231,13 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 stroke="#F44336" 
                 strokeDasharray="3 3"
                 yAxisId="left"
-                label={{ value: 'Current Year', position: 'top', fill: '#F44336' }}
+                label={{ 
+                  value: 'Current', 
+                  position: 'insideTopRight', 
+                  fill: '#F44336', 
+                  fontSize: 11,
+                  offset: 10
+                }}
               />
               
               {showProjectionArea && timeRange === 'all' && (
@@ -207,9 +251,11 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                   strokeOpacity={0.3}
                   strokeDasharray="3 3"
                   label={{ 
-                    value: 'Projected Data', 
+                    value: 'Projected', 
                     position: 'insideTopRight',
-                    fill: '#8884d8'
+                    fill: '#8884d8',
+                    fontSize: 11,
+                    offset: 30
                   }}
                 />
               )}
@@ -224,6 +270,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 strokeWidth={2}
                 hide={!getDataKeyVisibility("totalForestCover")}
                 animationDuration={500}
+                dot={{ strokeWidth: 1, r: 2 }}
               />
               <Line 
                 yAxisId="left"
@@ -231,7 +278,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 dataKey="veryDenseForest" 
                 name="Very Dense Forest"
                 stroke="#1B5E20" 
-                dot={{ r: 3 }}
+                dot={{ r: 2 }}
                 hide={!getDataKeyVisibility("veryDenseForest")}
                 animationDuration={500}
               />
@@ -241,7 +288,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 dataKey="moderatelyDenseForest" 
                 name="Moderately Dense Forest"
                 stroke="#4CAF50" 
-                dot={{ r: 3 }}
+                dot={{ r: 2 }}
                 hide={!getDataKeyVisibility("moderatelyDenseForest")}
                 animationDuration={500}
               />
@@ -251,7 +298,7 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 dataKey="openForest" 
                 name="Open Forest"
                 stroke="#8BC34A" 
-                dot={{ r: 3 }}
+                dot={{ r: 2 }}
                 hide={!getDataKeyVisibility("openForest")}
                 animationDuration={500}
               />
@@ -261,9 +308,18 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 dataKey="scrub" 
                 name="Scrub"
                 stroke="#A1887F" 
-                dot={{ r: 3 }}
+                dot={{ r: 2 }}
                 hide={!getDataKeyVisibility("scrub")}
                 animationDuration={500}
+              />
+              
+              <Brush 
+                dataKey="year" 
+                height={20} 
+                stroke="#2E7D32" 
+                fill="#fff" 
+                travellerWidth={10}
+                startIndex={data.length - 10} 
               />
             </LineChart>
           </ResponsiveContainer>
