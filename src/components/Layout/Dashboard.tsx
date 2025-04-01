@@ -12,13 +12,17 @@ import StateComparison from '@/components/Tables/StateComparison';
 import { getStateById } from '@/data/mockData';
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowDown, ArrowUp, Trees, TreeDeciduous } from 'lucide-react';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { ArrowDown, ArrowUp, Info, Maximize, TreeDeciduous, Trees } from 'lucide-react';
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const [selectedState, setSelectedState] = useState('IN');
   const [timeRange, setTimeRange] = useState('historical');
   const [selectedYear, setSelectedYear] = useState(2024);
   const [activeTab, setActiveTab] = useState('overview');
+  const [showInsights, setShowInsights] = useState(true);
+  const { toast } = useToast();
   
   const stateData = getStateById(selectedState);
   
@@ -30,9 +34,30 @@ const Dashboard = () => {
       setSelectedYear(2030);
     }
   }, [timeRange]);
+
+  useEffect(() => {
+    // Show welcome toast on initial load
+    toast({
+      title: "Welcome to the Deforestation Analytics Dashboard",
+      description: "Explore forest cover changes across India. Select a state to begin.",
+      duration: 5000,
+    });
+  }, []);
   
   const handleStateChange = (stateId: string) => {
     setSelectedState(stateId);
+    
+    // Show notification on state change
+    if (stateId !== 'IN') {
+      const state = getStateById(stateId);
+      if (state) {
+        toast({
+          title: `${state.name} Selected`,
+          description: `Forest cover: ${state.forestData[state.forestData.length-1].totalForestCover.toLocaleString()} sq km`,
+          duration: 3000,
+        });
+      }
+    }
   };
   
   const handleTimeRangeChange = (range: string) => {
@@ -46,7 +71,7 @@ const Dashboard = () => {
     const isPositive = deforestationRate < 0.5;
     
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Badge 
           className={`text-white ${isPositive ? 'bg-forest-dark' : 'bg-alert'}`}
         >
@@ -68,6 +93,47 @@ const Dashboard = () => {
           {conservationStatus}
         </Badge>
       </div>
+    );
+  };
+
+  const getKeyInsights = () => {
+    if (!stateData) return null;
+    
+    const { name, forestData, projectedData, deforestationRate } = stateData;
+    const currentData = forestData[forestData.length - 1];
+    const futureData = projectedData[projectedData.length - 1];
+    const totalArea = currentData.totalForestCover + currentData.nonForest;
+    const forestPercent = ((currentData.totalForestCover / totalArea) * 100).toFixed(1);
+    const forecastChange = ((futureData.totalForestCover - currentData.totalForestCover) / currentData.totalForestCover * 100).toFixed(1);
+    
+    return (
+      <Alert className="mb-6 border-l-4 border-l-forest-dark animate-fade-in">
+        <Info className="h-4 w-4" />
+        <AlertTitle>Key Insights for {name}</AlertTitle>
+        <AlertDescription>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+            <div>
+              <p className="text-sm font-medium">Current Forest Cover</p>
+              <p className="text-2xl font-bold text-forest-dark">{forestPercent}%</p>
+              <p className="text-xs text-muted-foreground">of total geographical area</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium">Annual Change Rate</p>
+              <p className="text-2xl font-bold" style={{ color: deforestationRate < 0.5 ? '#2E7D32' : '#F44336' }}>
+                {deforestationRate < 0 ? '+' : ''}{Math.abs(deforestationRate).toFixed(1)}%
+              </p>
+              <p className="text-xs text-muted-foreground">{deforestationRate < 0.5 ? 'Growing' : 'Declining'} forest cover</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium">2030 Forecast</p>
+              <p className="text-2xl font-bold" style={{ color: Number(forecastChange) >= 0 ? '#2E7D32' : '#F44336' }}>
+                {forecastChange}%
+              </p>
+              <p className="text-xs text-muted-foreground">Projected change by 2030</p>
+            </div>
+          </div>
+        </AlertDescription>
+      </Alert>
     );
   };
   
@@ -98,7 +164,8 @@ const Dashboard = () => {
       
       {/* State Info */}
       {stateData && (
-        <Card className="mb-6">
+        <Card className="mb-6 border-l-4 hover:shadow-md transition-shadow duration-200" 
+          style={{ borderLeftColor: stateData.deforestationRate < 0.5 ? '#2E7D32' : '#F44336' }}>
           <CardContent className="py-4">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
               <div>
@@ -118,15 +185,28 @@ const Dashboard = () => {
         </Card>
       )}
       
+      {/* Key Insights Section */}
+      {showInsights && stateData && getKeyInsights()}
+      
       {/* Dashboard Tabs */}
-      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="trends">Trends & Predictions</TabsTrigger>
-          <TabsTrigger value="comparison">State Comparison</TabsTrigger>
-        </TabsList>
+      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="relative">
+        <div className="flex justify-between items-center mb-2">
+          <TabsList className="mb-4">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">Overview</TabsTrigger>
+            <TabsTrigger value="trends" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">Trends & Predictions</TabsTrigger>
+            <TabsTrigger value="comparison" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">State Comparison</TabsTrigger>
+          </TabsList>
+          
+          <button 
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4"
+            onClick={() => setShowInsights(!showInsights)}
+          >
+            <Info size={14} />
+            {showInsights ? 'Hide' : 'Show'} Insights
+          </button>
+        </div>
         
-        <TabsContent value="overview" className="space-y-6">
+        <TabsContent value="overview" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <IndiaMap 
               selectedState={selectedState} 
@@ -145,7 +225,7 @@ const Dashboard = () => {
           </div>
         </TabsContent>
         
-        <TabsContent value="trends" className="space-y-6">
+        <TabsContent value="trends" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <AirQualityCorrelation 
               stateId={selectedState} 
@@ -157,7 +237,7 @@ const Dashboard = () => {
           </div>
         </TabsContent>
         
-        <TabsContent value="comparison" className="space-y-6">
+        <TabsContent value="comparison" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <StateComparison mode="positive" />
             <StateComparison mode="negative" />
