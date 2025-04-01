@@ -9,6 +9,7 @@ import ForestTypeDistribution from '@/components/Charts/ForestTypeDistribution';
 import AirQualityCorrelation from '@/components/Charts/AirQualityCorrelation';
 import PredictiveModel from '@/components/Charts/PredictiveModel';
 import StateComparison from '@/components/Tables/StateComparison';
+import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
 import { getStateById } from '@/data/mockData';
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -194,6 +195,7 @@ const Dashboard = () => {
           <TabsList className="mb-4">
             <TabsTrigger value="overview" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">Overview</TabsTrigger>
             <TabsTrigger value="trends" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">Trends & Predictions</TabsTrigger>
+            <TabsTrigger value="environment" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">Environmental Monitoring</TabsTrigger>
             <TabsTrigger value="comparison" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">State Comparison</TabsTrigger>
           </TabsList>
           
@@ -237,6 +239,14 @@ const Dashboard = () => {
           </div>
         </TabsContent>
         
+        <TabsContent value="environment" className="space-y-6 animate-fade-in">
+          <div className="grid grid-cols-1 gap-6">
+            <EnvironmentalUpdates 
+              stateId={selectedState} 
+            />
+          </div>
+        </TabsContent>
+        
         <TabsContent value="comparison" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <StateComparison mode="positive" />
@@ -247,7 +257,7 @@ const Dashboard = () => {
       
       <footer className="mt-12 text-center text-sm text-muted-foreground">
         <p>Data visualization of forest cover trends in India from 2013-2030</p>
-        <p className="mt-1">Explore the impact of deforestation on air quality and climate</p>
+        <p className="mt-1">Explore the impact of deforestation on air quality, temperature, and climate</p>
       </footer>
     </div>
   );
