@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   ResponsiveContainer, 
@@ -10,7 +9,8 @@ import {
   Tooltip, 
   Legend,
   ReferenceLine,
-  ReferenceArea
+  ReferenceArea,
+  DataKey
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStateById, StateData, ForestData } from '@/data/mockData';
@@ -39,7 +39,6 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
     return <div>No data available</div>;
   }
   
-  // Prepare data based on selected time range
   const getData = (): ForestData[] => {
     if (timeRange === 'historical') {
       return stateData.forestData;
@@ -54,12 +53,13 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
   const currentYear = new Date().getFullYear();
   const projectionStartYear = Math.max(...stateData.forestData.map(d => d.year));
   
-  const handleLegendClick = (dataKey: string) => {
-    if (focusDataKey === dataKey) {
+  const handleLegendClick = (dataKey: DataKey<any>) => {
+    const key = dataKey as string;
+    if (focusDataKey === key) {
       setFocusDataKey(null);
       setShowAllLines(true);
     } else {
-      setFocusDataKey(dataKey);
+      setFocusDataKey(key);
       setShowAllLines(false);
     }
   };
@@ -69,7 +69,6 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
     setShowAllLines(true);
   };
   
-  // Fix #1: Update formatYAxis to ensure it always returns a string
   const formatYAxis = (value: number): string => {
     if (value >= 1000) {
       return `${(value / 1000).toFixed(0)}k`;
@@ -180,7 +179,6 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 wrapperStyle={{ paddingTop: '10px' }}
               />
               
-              {/* Reference line for current year */}
               <ReferenceLine 
                 x={currentYear} 
                 stroke="#F44336" 
@@ -189,7 +187,6 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 label={{ value: 'Current Year', position: 'top', fill: '#F44336' }}
               />
               
-              {/* Projection area shading */}
               {showProjectionArea && timeRange === 'all' && (
                 <ReferenceArea 
                   x1={projectionStartYear} 
@@ -208,7 +205,6 @@ const ForestCoverTrend: React.FC<ForestCoverTrendProps> = ({ stateId, timeRange 
                 />
               )}
               
-              {/* Chart lines */}
               <Line 
                 yAxisId="left"
                 type="monotone" 
