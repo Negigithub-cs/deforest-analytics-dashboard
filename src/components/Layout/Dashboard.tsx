@@ -1,12 +1,14 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import StateSelector from '@/components/UI/StateSelector';
 import TimeRangeSelector from '@/components/UI/TimeRangeSelector';
 import IndiaMap from '@/components/Map/IndiaMap';
 import ForestCoverTrend from '@/components/Charts/ForestCoverTrend';
 import ForestTypeDistribution from '@/components/Charts/ForestTypeDistribution';
-import AirQualityCorrelation from '@/components/Charts/AirQualityCorrelation';
+import ForestCoverChange from '@/components/Charts/ForestCoverChange'; 
+import AirQualityTrend from '@/components/Charts/AirQualityTrend';
+import CorrelationAnalysis from '@/components/Charts/CorrelationAnalysis';
 import PredictiveModel from '@/components/Charts/PredictiveModel';
 import DistrictComparison from '@/components/Tables/DistrictComparison';
 import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
@@ -39,7 +41,7 @@ const Dashboard = () => {
   useEffect(() => {
     // Show welcome toast on initial load
     toast({
-      title: "Welcome to the Deforestation Analytics Dashboard",
+      title: "Welcome to the Forest Cover Analytics",
       description: "Explore forest cover changes across India. Select a state to begin.",
       duration: 5000,
     });
@@ -74,7 +76,7 @@ const Dashboard = () => {
     return (
       <div className="flex flex-wrap items-center gap-2">
         <Badge 
-          className={`text-white ${isPositive ? 'bg-forest-dark' : 'bg-alert'}`}
+          className={`text-white ${isPositive ? 'bg-green-600' : 'bg-orange-500'}`}
         >
           {isPositive ? (
             <ArrowUp className="mr-1 h-4 w-4" />
@@ -108,25 +110,25 @@ const Dashboard = () => {
     const forecastChange = ((futureData.totalForestCover - currentData.totalForestCover) / currentData.totalForestCover * 100).toFixed(1);
     
     return (
-      <Alert className="mb-6 border-l-4 border-l-forest-dark animate-fade-in">
-        <Info className="h-4 w-4" />
-        <AlertTitle>Key Insights for {name}</AlertTitle>
+      <Alert className="mb-6 border-l-4 border-l-green-600 bg-gradient-to-r from-green-50 to-blue-50 animate-fade-in">
+        <Info className="h-4 w-4 text-green-700" />
+        <AlertTitle className="text-green-800">Key Insights for {name}</AlertTitle>
         <AlertDescription>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-            <div>
-              <p className="text-sm font-medium">Current Forest Cover</p>
-              <p className="text-2xl font-bold text-forest-dark">{forestPercent}%</p>
+            <div className="bg-white/60 p-3 rounded-lg">
+              <p className="text-sm font-medium text-green-800">Current Forest Cover</p>
+              <p className="text-2xl font-bold text-green-700">{forestPercent}%</p>
               <p className="text-xs text-muted-foreground">of total geographical area</p>
             </div>
-            <div>
-              <p className="text-sm font-medium">Annual Change Rate</p>
+            <div className="bg-white/60 p-3 rounded-lg">
+              <p className="text-sm font-medium text-green-800">Annual Change Rate</p>
               <p className="text-2xl font-bold" style={{ color: deforestationRate < 0.5 ? '#2E7D32' : '#F44336' }}>
                 {deforestationRate < 0 ? '+' : ''}{Math.abs(deforestationRate).toFixed(1)}%
               </p>
               <p className="text-xs text-muted-foreground">{deforestationRate < 0.5 ? 'Growing' : 'Declining'} forest cover</p>
             </div>
-            <div>
-              <p className="text-sm font-medium">2030 Forecast</p>
+            <div className="bg-white/60 p-3 rounded-lg">
+              <p className="text-sm font-medium text-green-800">2030 Forecast</p>
               <p className="text-2xl font-bold" style={{ color: Number(forecastChange) >= 0 ? '#2E7D32' : '#F44336' }}>
                 {forecastChange}%
               </p>
@@ -139,15 +141,15 @@ const Dashboard = () => {
   };
   
   return (
-    <div className="container mx-auto py-6 bg-gradient-to-br from-[#f3f4f6] to-[#e5e7eb] dark:from-gray-900 dark:to-gray-800 min-h-screen">
+    <div className="container mx-auto py-6 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 backdrop-blur-sm bg-white/70 dark:bg-gray-800/70 p-4 rounded-lg shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 bg-gradient-to-r from-green-600 to-green-500 p-4 rounded-lg shadow-lg text-white">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-forest-dark">
-            <TreeDeciduous className="h-8 w-8 text-forest" />
-            India Deforestation Analytics
+          <h1 className="text-3xl font-bold flex items-center gap-2">
+            <TreeDeciduous className="h-8 w-8" />
+            India Forest Cover Analysis
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-green-100">
             Tracking forest cover changes and environmental impacts from 2013-2030
           </p>
         </div>
@@ -165,19 +167,19 @@ const Dashboard = () => {
       
       {/* State Info */}
       {stateData && (
-        <Card className="mb-6 border-l-4 hover:shadow-md transition-shadow duration-200 backdrop-blur-sm bg-white/90 dark:bg-gray-800/90" 
+        <Card className="mb-6 border-l-4 hover:shadow-md transition-shadow duration-200 bg-gradient-to-r from-green-50 to-blue-50" 
           style={{ borderLeftColor: stateData.deforestationRate < 0.5 ? '#2E7D32' : '#F44336' }}>
           <CardContent className="py-4">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
               <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <Trees className="h-5 w-5 text-forest" />
+                <h2 className="text-2xl font-bold flex items-center gap-2 text-green-800">
+                  <Trees className="h-5 w-5 text-green-700" />
                   {stateData.name} Forest Analysis
                 </h2>
                 <p className="text-sm text-muted-foreground">
                   {selectedState === 'IN' 
-                    ? 'Nationwide forest cover and deforestation trends'
-                    : 'State-level forest cover and deforestation analysis'}
+                    ? 'Nationwide forest cover trends and environmental impact analysis'
+                    : 'State-level forest cover analysis and district comparison'}
                 </p>
               </div>
               {renderStatusIndicator()}
@@ -189,30 +191,45 @@ const Dashboard = () => {
       {/* Key Insights Section */}
       {showInsights && stateData && getKeyInsights()}
       
+      {/* Forest Cover Change Summary */}
+      {stateData && <ForestCoverChange stateId={selectedState} />}
+      
       {/* Dashboard Tabs */}
-      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="relative">
+      <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="relative mt-6">
         <div className="flex justify-between items-center mb-2">
-          <TabsList className="mb-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+          <TabsList className="mb-4 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl p-1 shadow-md">
+            <TabsTrigger 
+              value="overview" 
+              className="data-[state=active]:bg-white data-[state=active]:text-green-700 rounded-lg transition-all"
+            >
               <BarChart3 className="h-4 w-4 mr-2" />
               Overview
             </TabsTrigger>
-            <TabsTrigger value="trends" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+            <TabsTrigger 
+              value="trends" 
+              className="data-[state=active]:bg-white data-[state=active]:text-green-700 rounded-lg transition-all"
+            >
               <LineChart className="h-4 w-4 mr-2" />
-              Trends & Predictions
+              Trends & Analysis
             </TabsTrigger>
-            <TabsTrigger value="environment" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+            <TabsTrigger 
+              value="environment" 
+              className="data-[state=active]:bg-white data-[state=active]:text-green-700 rounded-lg transition-all"
+            >
               <Thermometer className="h-4 w-4 mr-2" />
-              Environmental Monitoring
+              Climate Impact
             </TabsTrigger>
-            <TabsTrigger value="comparison" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+            <TabsTrigger 
+              value="comparison" 
+              className="data-[state=active]:bg-white data-[state=active]:text-green-700 rounded-lg transition-all"
+            >
               <MapPin className="h-4 w-4 mr-2" />
-              District Analysis
+              {selectedState === 'IN' ? 'State Analysis' : 'District Analysis'}
             </TabsTrigger>
           </TabsList>
           
           <button 
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4 bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-md"
+            className="flex items-center gap-1 text-xs text-white hover:text-white/90 mb-4 bg-gradient-to-r from-blue-500 to-green-500 px-3 py-1 rounded-md"
             onClick={() => setShowInsights(!showInsights)}
           >
             <Info size={14} />
@@ -241,10 +258,15 @@ const Dashboard = () => {
         
         <TabsContent value="trends" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <AirQualityCorrelation 
-              stateId={selectedState} 
-              timeRange={timeRange} 
+            <AirQualityTrend
+              stateId={selectedState}
+              timeRange={timeRange}
             />
+            <CorrelationAnalysis 
+              stateId={selectedState} 
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-6">
             <PredictiveModel 
               stateId={selectedState} 
             />
@@ -260,15 +282,22 @@ const Dashboard = () => {
         </TabsContent>
         
         <TabsContent value="comparison" className="space-y-6 animate-fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <DistrictComparison mode="positive" stateId={selectedState} />
-            <DistrictComparison mode="negative" stateId={selectedState} />
-          </div>
+          {selectedState === 'IN' ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              <DistrictComparison mode="positive" stateId={selectedState} />
+              <DistrictComparison mode="negative" stateId={selectedState} />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+              <DistrictComparison mode="positive" stateId={selectedState} />
+              <DistrictComparison mode="negative" stateId={selectedState} />
+            </div>
+          )}
         </TabsContent>
       </Tabs>
       
-      <footer className="mt-12 text-center text-sm text-muted-foreground bg-white/80 dark:bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm">
-        <p>Data visualization of forest cover trends in India from 2013-2030</p>
+      <footer className="mt-12 text-center text-sm text-white bg-gradient-to-r from-green-600 to-green-500 p-4 rounded-lg backdrop-blur-sm shadow-lg">
+        <p>Forest cover analysis and visualization for India (2013-2030)</p>
         <p className="mt-1">Explore the impact of deforestation on air quality, temperature, and climate</p>
       </footer>
     </div>
