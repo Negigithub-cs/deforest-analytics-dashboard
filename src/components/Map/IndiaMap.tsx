@@ -17,7 +17,8 @@ import { getStateById, getConservationStatusColor } from '@/data/mockData';
 import { AlertCircle, Info, Maximize } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
-const INDIA_TOPO_JSON = "https://raw.githubusercontent.com/deldersveld/topojson/master/countries/india/india-states.json";
+// Use a reliable GeoJSON source for India (this was causing the 404 error)
+const INDIA_TOPO_JSON = "https://raw.githubusercontent.com/rawgraphs/rawgraphs-core/master/data/india-states.geojson";
 
 interface IndiaMapProps {
   selectedState: string;
@@ -58,7 +59,15 @@ const stateMapping: Record<string, string> = {
   "Tripura": "TR",
   "Uttar Pradesh": "UP",
   "Uttarakhand": "UK",
-  "West Bengal": "WB"
+  "West Bengal": "WB",
+  "Andaman and Nicobar Islands": "AN",
+  "Chandigarh": "CH",
+  "Dadra and Nagar Haveli and Daman and Diu": "DN",
+  "Delhi": "DL",
+  "Jammu and Kashmir": "JK",
+  "Ladakh": "LA", 
+  "Lakshadweep": "LD",
+  "Puducherry": "PY"
 };
 
 const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => {
@@ -68,6 +77,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
   const [error, setError] = useState<string | null>(null);
   const [position, setPosition] = useState({ coordinates: [82, 22], zoom: 4 });
   const [showInfo, setShowInfo] = useState(false);
+  const [forestDensityView, setForestDensityView] = useState(false);
   
   // Fetch the GeoJSON data
   useEffect(() => {
@@ -96,18 +106,33 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
   };
   
   const getStateFill = (stateId: string): string => {
-    if (stateId === selectedState) {
-      return "#2E7D32"; // Highlight selected state
+    if (forestDensityView) {
+      const stateData = getStateById(stateId);
+      if (!stateData) return "#EEEEEE";
+      
+      const latestData = stateData.forestData[stateData.forestData.length - 1];
+      const totalArea = latestData.totalForestCover + latestData.nonForest;
+      const forestPercent = (latestData.totalForestCover / totalArea) * 100;
+      
+      if (forestPercent > 60) return "#1B5E20"; // Dark green - very dense
+      if (forestPercent > 40) return "#2E7D32"; // Medium green - moderately dense
+      if (forestPercent > 20) return "#4CAF50"; // Light green - open forest
+      if (forestPercent > 10) return "#A5D6A7"; // Very light green - minimal forest
+      return "#EEEEEE"; // Gray - almost no forest
+    } else {
+      if (stateId === selectedState) {
+        return "#2E7D32"; // Highlight selected state
+      }
+      
+      const stateData = getStateById(stateId);
+      if (!stateData) return "#EEEEEE";
+      
+      return getConservationStatusColor(stateData.conservationStatus);
     }
-    
-    const stateData = getStateById(stateId);
-    if (!stateData) return "#EEEEEE";
-    
-    return getConservationStatusColor(stateData.conservationStatus);
   };
   
   const handleStateMouseEnter = (geo: any) => {
-    const stateName = geo.properties.NAME_1;
+    const stateName = geo.properties.NAME_1 || geo.properties.name;
     const stateId = getStateIdFromName(stateName);
     setTooltipData({ id: stateId, state: stateName });
   };
@@ -117,7 +142,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
   };
   
   const handleStateClick = (geo: any) => {
-    const stateName = geo.properties.NAME_1;
+    const stateName = geo.properties.NAME_1 || geo.properties.name;
     const stateId = getStateIdFromName(stateName);
     if (stateId) {
       onStateSelect(stateId);
@@ -192,28 +217,62 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
             >
               <Info size={18} />
             </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => setForestDensityView(!forestDensityView)}
+              className="bg-white/90 hover:bg-white text-xs px-2"
+            >
+              {forestDensityView ? "Conservation View" : "Forest Density View"}
+            </Button>
           </div>
           
           {showInfo && (
             <div className="absolute top-14 right-2 w-64 p-3 bg-white/90 rounded-md shadow-md text-xs z-10 border border-gray-200">
               <h4 className="font-bold mb-1">Map Legend</h4>
               <div className="grid grid-cols-2 gap-1">
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-sm bg-green-800"></div>
-                  <span>Very Good</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-sm bg-green-500"></div>
-                  <span>Good</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-sm bg-yellow-500"></div>
-                  <span>Moderate</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-sm bg-red-500"></div>
-                  <span>Critical</span>
-                </div>
+                {forestDensityView ? (
+                  <>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-green-900"></div>
+                      <span>Very Dense (>60%)</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-green-700"></div>
+                      <span>Moderately Dense (>40%)</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-green-500"></div>
+                      <span>Open Forest (>20%)</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-green-200"></div>
+                      <span>Minimal Forest (>10%)</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-green-800"></div>
+                      <span>Excellent</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-green-500"></div>
+                      <span>Good</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-yellow-500"></div>
+                      <span>Fair</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-orange-500"></div>
+                      <span>Poor</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="w-3 h-3 rounded-sm bg-red-500"></div>
+                      <span>Critical</span>
+                    </div>
+                  </>
+                )}
               </div>
               <p className="mt-2 text-xs text-muted-foreground">Click on any state to view detailed information</p>
             </div>
@@ -226,6 +285,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
             }}
             width={450}
             height={450}
+            className="transition-all duration-300"
           >
             <ZoomableGroup
               zoom={position.zoom}
@@ -240,7 +300,8 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
                 <Geographies geography={geoData}>
                   {({ geographies }) =>
                     geographies.map(geo => {
-                      const stateName = geo.properties.NAME_1;
+                      const stateName = geo.properties.NAME_1 || geo.properties.name;
+                      if (!stateName) return null;
                       const stateId = getStateIdFromName(stateName);
                       
                       return (
@@ -285,6 +346,11 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
                                   <>
                                     <p>Conservation Status: {getStateById(stateId)?.conservationStatus}</p>
                                     <p>Deforestation Rate: {getStateById(stateId)?.deforestationRate.toFixed(1)}%</p>
+                                    {forestDensityView && getStateById(stateId)?.forestData.length > 0 && (
+                                      <p>Forest Cover: {Math.round((getStateById(stateId)?.forestData[getStateById(stateId)!.forestData.length - 1].totalForestCover || 0) / 
+                                        ((getStateById(stateId)?.forestData[getStateById(stateId)!.forestData.length - 1].totalForestCover || 0) + 
+                                         (getStateById(stateId)?.forestData[getStateById(stateId)!.forestData.length - 1].nonForest || 0)) * 100)}%</p>
+                                    )}
                                   </>
                                 )}
                               </div>
@@ -306,9 +372,14 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle>State-wise Forest Status</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+          {forestDensityView ? "Forest Density View" : "State-wise Forest Status"}
+        </CardTitle>
         <CardDescription>
-          Click on a state to view detailed information
+          {forestDensityView 
+            ? "Visualizing the percentage of land covered by forests across states" 
+            : "Click on a state to view detailed information"}
         </CardDescription>
       </CardHeader>
       <CardContent>

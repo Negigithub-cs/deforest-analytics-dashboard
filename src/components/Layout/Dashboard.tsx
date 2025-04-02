@@ -14,7 +14,7 @@ import { getStateById } from '@/data/mockData';
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { ArrowDown, ArrowUp, Info, Maximize, TreeDeciduous, Trees } from 'lucide-react';
+import { ArrowDown, ArrowUp, BarChart3, Info, LineChart, MapPin, Thermometer, TreeDeciduous, Trees } from 'lucide-react';
 import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
@@ -139,11 +139,11 @@ const Dashboard = () => {
   };
   
   return (
-    <div className="container mx-auto py-6">
+    <div className="container mx-auto py-6 bg-gradient-to-br from-[#f3f4f6] to-[#e5e7eb] dark:from-gray-900 dark:to-gray-800 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 backdrop-blur-sm bg-white/70 dark:bg-gray-800/70 p-4 rounded-lg shadow-sm">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-3xl font-bold flex items-center gap-2 text-forest-dark">
             <TreeDeciduous className="h-8 w-8 text-forest" />
             India Deforestation Analytics
           </h1>
@@ -165,7 +165,7 @@ const Dashboard = () => {
       
       {/* State Info */}
       {stateData && (
-        <Card className="mb-6 border-l-4 hover:shadow-md transition-shadow duration-200" 
+        <Card className="mb-6 border-l-4 hover:shadow-md transition-shadow duration-200 backdrop-blur-sm bg-white/90 dark:bg-gray-800/90" 
           style={{ borderLeftColor: stateData.deforestationRate < 0.5 ? '#2E7D32' : '#F44336' }}>
           <CardContent className="py-4">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
@@ -192,15 +192,27 @@ const Dashboard = () => {
       {/* Dashboard Tabs */}
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="relative">
         <div className="flex justify-between items-center mb-2">
-          <TabsList className="mb-4">
-            <TabsTrigger value="overview" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">Overview</TabsTrigger>
-            <TabsTrigger value="trends" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">Trends & Predictions</TabsTrigger>
-            <TabsTrigger value="environment" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">Environmental Monitoring</TabsTrigger>
-            <TabsTrigger value="comparison" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">State Comparison</TabsTrigger>
+          <TabsList className="mb-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+            <TabsTrigger value="overview" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="trends" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+              <LineChart className="h-4 w-4 mr-2" />
+              Trends & Predictions
+            </TabsTrigger>
+            <TabsTrigger value="environment" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+              <Thermometer className="h-4 w-4 mr-2" />
+              Environmental Monitoring
+            </TabsTrigger>
+            <TabsTrigger value="comparison" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+              <MapPin className="h-4 w-4 mr-2" />
+              State Comparison
+            </TabsTrigger>
           </TabsList>
           
           <button 
-            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4"
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mb-4 bg-white/80 dark:bg-gray-800/80 px-3 py-1 rounded-md"
             onClick={() => setShowInsights(!showInsights)}
           >
             <Info size={14} />
@@ -255,7 +267,7 @@ const Dashboard = () => {
         </TabsContent>
       </Tabs>
       
-      <footer className="mt-12 text-center text-sm text-muted-foreground">
+      <footer className="mt-12 text-center text-sm text-muted-foreground bg-white/80 dark:bg-gray-800/80 p-4 rounded-lg backdrop-blur-sm">
         <p>Data visualization of forest cover trends in India from 2013-2030</p>
         <p className="mt-1">Explore the impact of deforestation on air quality, temperature, and climate</p>
       </footer>
