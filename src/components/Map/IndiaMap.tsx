@@ -234,19 +234,19 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
                   <>
                     <div className="flex items-center gap-1">
                       <div className="w-3 h-3 rounded-sm bg-green-900"></div>
-                      <span>Very Dense (>60%)</span>
+                      <span>Very Dense ({'>'}60%)</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <div className="w-3 h-3 rounded-sm bg-green-700"></div>
-                      <span>Moderately Dense (>40%)</span>
+                      <span>Moderately Dense ({'>'}40%)</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <div className="w-3 h-3 rounded-sm bg-green-500"></div>
-                      <span>Open Forest (>20%)</span>
+                      <span>Open Forest ({'>'}20%)</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <div className="w-3 h-3 rounded-sm bg-green-200"></div>
-                      <span>Minimal Forest (>10%)</span>
+                      <span>Minimal Forest ({'>'}10%)</span>
                     </div>
                   </>
                 ) : (
