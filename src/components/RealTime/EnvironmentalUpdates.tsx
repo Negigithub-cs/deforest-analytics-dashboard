@@ -9,15 +9,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { getStateById } from '@/data/mockData';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
-interface FireUpdate {
-  id: string;
-  location: string;
-  status: 'active' | 'contained' | 'extinguished';
-  severity: 'low' | 'medium' | 'high';
-  timestamp: string;
-  affectedArea: number;
-}
-
 interface AQIReading {
   id: string;
   location: string;
@@ -73,7 +64,6 @@ interface DistrictData {
 
 const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
   const [activeTab, setActiveTab] = useState('aqi');
-  const [fireUpdates, setFireUpdates] = useState<FireUpdate[]>([]);
   const [aqiData, setAqiData] = useState<AQIReading[]>([]);
   const [temperatureData, setTemperatureData] = useState<TemperatureData[]>([]);
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
@@ -92,34 +82,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
   }, [stateId]);
   
   const generateMockData = (stateId: string) => {
-    // Mock fire updates
-    const mockFireUpdates: FireUpdate[] = [
-      {
-        id: '1',
-        location: `${stateId === 'IN' ? 'Uttarakhand' : stateName} Forest Reserve`,
-        status: 'active',
-        severity: 'high',
-        timestamp: new Date().toISOString(),
-        affectedArea: 120,
-      },
-      {
-        id: '2',
-        location: `${stateId === 'IN' ? 'Madhya Pradesh' : stateName} Wildlife Sanctuary`,
-        status: 'contained',
-        severity: 'medium',
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        affectedArea: 75,
-      },
-      {
-        id: '3',
-        location: `${stateId === 'IN' ? 'Kerala' : stateName} National Park`,
-        status: 'extinguished',
-        severity: 'low',
-        timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
-        affectedArea: 25,
-      },
-    ];
-    
     // Mock AQI readings
     const mockAqiData: AQIReading[] = [
       {
@@ -179,7 +141,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       },
     ];
     
-    // Mock news items
+    // Mock news items with real URLs
     const mockNewsItems: NewsItem[] = [
       {
         id: '1',
@@ -188,7 +150,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
         date: new Date().toLocaleDateString(),
         summary: 'Government announces major funding for forest restoration and conservation projects to combat rising deforestation rates.',
         category: 'conservation',
-        url: '#',
+        url: 'https://www.downtoearth.org.in/news/forests',
       },
       {
         id: '2',
@@ -197,7 +159,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
         date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         summary: 'Research shows concerning patterns of habitat loss due to changing temperature patterns, threatening endemic species.',
         category: 'climate',
-        url: '#',
+        url: 'https://www.carbonbrief.org/state-of-the-climate-how-the-world-warmed-in-2019/',
       },
       {
         id: '3',
@@ -206,7 +168,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
         date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         summary: 'Authorities have uncovered a major illegal logging operation affecting protected forest areas, leading to arrests of multiple individuals.',
         category: 'deforestation',
-        url: '#',
+        url: 'https://www.globalforestwatch.org/',
       },
       {
         id: '4',
@@ -215,7 +177,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
         date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         summary: 'Regional government implements stringent regulations on industrial emissions and forest management practices.',
         category: 'policy',
-        url: '#',
+        url: 'https://www.moef.gov.in/en/environment/forest-and-climate-change/forest-conservation',
       },
       {
         id: '5',
@@ -224,7 +186,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
         date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toLocaleDateString(),
         summary: 'Local communities partner with NGOs to restore degraded forest land, creating sustainable livelihoods.',
         category: 'conservation',
-        url: '#',
+        url: 'https://www.worldagroforestry.org/story/forestry-news-india',
       },
     ];
 
@@ -414,7 +376,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       }
     ];
     
-    setFireUpdates(mockFireUpdates);
     setAqiData(mockAqiData);
     setTemperatureData(mockTemperatureData);
     setNewsItems(mockNewsItems);
@@ -431,15 +392,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       case 'moderate': return 'bg-yellow-500';
       case 'unhealthy': return 'bg-orange-500';
       case 'hazardous': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-  
-  const getFireStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-red-500';
-      case 'contained': return 'bg-orange-500';
-      case 'extinguished': return 'bg-green-500';
       default: return 'bg-gray-500';
     }
   };
@@ -472,6 +424,10 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       default: return <Badge className="bg-gray-500">Unknown</Badge>;
     }
   };
+
+  const openNewsLink = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
   
   return (
     <Card className="w-full">
@@ -483,14 +439,10 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full grid grid-cols-4 mb-4">
+          <TabsList className="w-full grid grid-cols-3 mb-4">
             <TabsTrigger value="aqi" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
               <Wind className="h-4 w-4 mr-2" />
               Air Quality
-            </TabsTrigger>
-            <TabsTrigger value="fires" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
-              <Flame className="h-4 w-4 mr-2" />
-              Forest Fires
             </TabsTrigger>
             <TabsTrigger value="climate" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
               <Thermometer className="h-4 w-4 mr-2" />
@@ -541,18 +493,18 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
             </Alert>
 
             <div className="mt-8">
-              <h3 className="text-lg font-medium mb-4">Top Forest Cover Change by District</h3>
+              <h3 className="text-lg font-medium mb-4">Top Forest Cover Change by {stateId === 'IN' ? 'State' : 'District'}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-md font-medium text-red-500">Top 5 Districts with Forest Loss</CardTitle>
+                    <CardTitle className="text-md font-medium text-red-500">Top 5 {stateId === 'IN' ? 'States' : 'Districts'} with Forest Loss</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>District</TableHead>
-                          <TableHead>State</TableHead>
+                          <TableHead>{stateId === 'IN' ? 'State' : 'District'}</TableHead>
+                          <TableHead>{stateId === 'IN' ? 'Region' : 'State'}</TableHead>
                           <TableHead>Change (%)</TableHead>
                           <TableHead>Primary Cause</TableHead>
                         </TableRow>
@@ -573,14 +525,14 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-md font-medium text-green-500">Top 5 Districts with Forest Gain</CardTitle>
+                    <CardTitle className="text-md font-medium text-green-500">Top 5 {stateId === 'IN' ? 'States' : 'Districts'} with Forest Gain</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>District</TableHead>
-                          <TableHead>State</TableHead>
+                          <TableHead>{stateId === 'IN' ? 'State' : 'District'}</TableHead>
+                          <TableHead>{stateId === 'IN' ? 'Region' : 'State'}</TableHead>
                           <TableHead>Change (%)</TableHead>
                           <TableHead>Primary Cause</TableHead>
                         </TableRow>
@@ -600,72 +552,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
                 </Card>
               </div>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="fires" className="animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <div>
-                <h3 className="text-lg font-medium mb-4">Current Fire Incidents</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Severity</TableHead>
-                      <TableHead>Affected Area (ha)</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {fireUpdates.map((item) => (
-                      <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.location}</TableCell>
-                        <TableCell>
-                          <Badge className={`${getFireStatusColor(item.status)} text-white`}>
-                            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{item.severity.charAt(0).toUpperCase() + item.severity.slice(1)}</TableCell>
-                        <TableCell>{item.affectedArea}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-medium mb-4">High Fire Risk Areas</h3>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>District</TableHead>
-                      <TableHead>State</TableHead>
-                      <TableHead>Risk Level</TableHead>
-                      <TableHead>Forest Type</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {fireProneAreas.slice(0, 5).map((area) => (
-                      <TableRow key={area.district}>
-                        <TableCell className="font-medium">{area.district}</TableCell>
-                        <TableCell>{area.state}</TableCell>
-                        <TableCell>
-                          <Badge className={getFireRiskColor(area.riskLevel)}>
-                            {area.riskLevel.charAt(0).toUpperCase() + area.riskLevel.slice(1)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{area.vulnerableForestType}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-
-            <Alert className="mt-4 bg-muted/50">
-              <AlertDescription>
-                <strong>What this means:</strong> Forest fires are both a cause and effect of climate change. Fire-prone areas typically have specific forest types like pine which are more susceptible due to resin content and dry undergrowth. The most vulnerable regions include Uttarakhand, Himachal Pradesh, and parts of Northeast India.
-              </AlertDescription>
-            </Alert>
           </TabsContent>
           
           <TabsContent value="climate" className="animate-fade-in">
@@ -754,10 +640,14 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
             </div>
             <div className="space-y-4">
               {newsItems.map((item) => (
-                <Card key={item.id} className="overflow-hidden transition-all duration-200 hover:shadow-md border-l-4" 
+                <Card 
+                  key={item.id} 
+                  className="overflow-hidden transition-all duration-200 hover:shadow-md border-l-4 hover:bg-blue-50/30 cursor-pointer" 
                   style={{ borderLeftColor: item.category === 'deforestation' ? '#F44336' : 
                                            item.category === 'climate' ? '#2196F3' : 
-                                           item.category === 'conservation' ? '#4CAF50' : '#9C27B0' }}>
+                                           item.category === 'conservation' ? '#4CAF50' : '#9C27B0' }}
+                  onClick={() => openNewsLink(item.url)}
+                >
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-bold">{item.title}</h3>
@@ -768,7 +658,10 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
                     <p className="text-sm text-muted-foreground mb-2">{item.summary}</p>
                     <div className="flex justify-between items-center text-xs text-muted-foreground">
                       <span>{item.source}</span>
-                      <span>{item.date}</span>
+                      <span className="flex items-center">
+                        {item.date} 
+                        <span className="ml-2 text-blue-600">Read more →</span>
+                      </span>
                     </div>
                   </CardContent>
                 </Card>

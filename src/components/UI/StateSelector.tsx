@@ -22,7 +22,7 @@ const StateSelector: React.FC<StateSelectorProps> = ({ selectedState, onStateCha
   return (
     <Select value={selectedState} onValueChange={onStateChange}>
       <SelectTrigger className="w-[280px]">
-        <SelectValue placeholder="Select a state" />
+        <SelectValue placeholder="Select state" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
