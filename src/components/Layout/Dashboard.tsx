@@ -8,7 +8,7 @@ import ForestCoverTrend from '@/components/Charts/ForestCoverTrend';
 import ForestTypeDistribution from '@/components/Charts/ForestTypeDistribution';
 import AirQualityCorrelation from '@/components/Charts/AirQualityCorrelation';
 import PredictiveModel from '@/components/Charts/PredictiveModel';
-import StateComparison from '@/components/Tables/StateComparison';
+import DistrictComparison from '@/components/Tables/DistrictComparison';
 import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
 import { getStateById } from '@/data/mockData';
 import { Badge } from "@/components/ui/badge";
@@ -207,7 +207,7 @@ const Dashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="comparison" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
               <MapPin className="h-4 w-4 mr-2" />
-              State Comparison
+              District Analysis
             </TabsTrigger>
           </TabsList>
           
@@ -261,8 +261,8 @@ const Dashboard = () => {
         
         <TabsContent value="comparison" className="space-y-6 animate-fade-in">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <StateComparison mode="positive" />
-            <StateComparison mode="negative" />
+            <DistrictComparison mode="positive" stateId={selectedState} />
+            <DistrictComparison mode="negative" stateId={selectedState} />
           </div>
         </TabsContent>
       </Tabs>
