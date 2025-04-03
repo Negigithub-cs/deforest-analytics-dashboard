@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle, Flame, Thermometer, Wind, Activity } from 'lucide-react';
+import { Thermometer, Wind, Activity } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getStateById } from '@/data/mockData';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
@@ -38,14 +38,6 @@ interface NewsItem {
   url: string;
 }
 
-interface FireProneArea {
-  district: string;
-  state: string;
-  riskLevel: 'very high' | 'high' | 'moderate' | 'low';
-  vulnerableForestType: string;
-  historicalIncidents: number;
-}
-
 interface ClimateFactorData {
   factor: string;
   impact: number;
@@ -67,7 +59,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
   const [aqiData, setAqiData] = useState<AQIReading[]>([]);
   const [temperatureData, setTemperatureData] = useState<TemperatureData[]>([]);
   const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
-  const [fireProneAreas, setFireProneAreas] = useState<FireProneArea[]>([]);
   const [climateFactors, setClimateFactors] = useState<ClimateFactorData[]>([]);
   const [temperatureTrend, setTemperatureTrend] = useState<any[]>([]);
   const [topDistrictsLoss, setTopDistrictsLoss] = useState<DistrictData[]>([]);
@@ -188,59 +179,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
         category: 'conservation',
         url: 'https://www.worldagroforestry.org/story/forestry-news-india',
       },
-    ];
-
-    // Mock fire prone areas
-    const mockFireProneAreas: FireProneArea[] = [
-      {
-        district: 'Uttarkashi',
-        state: 'Uttarakhand',
-        riskLevel: 'very high',
-        vulnerableForestType: 'Pine Forest',
-        historicalIncidents: 47
-      },
-      {
-        district: 'Pauri Garhwal',
-        state: 'Uttarakhand',
-        riskLevel: 'high',
-        vulnerableForestType: 'Mixed Deciduous',
-        historicalIncidents: 38
-      },
-      {
-        district: 'Chamba',
-        state: 'Himachal Pradesh',
-        riskLevel: 'high',
-        vulnerableForestType: 'Coniferous',
-        historicalIncidents: 32
-      },
-      {
-        district: 'Wayanad',
-        state: 'Kerala',
-        riskLevel: 'moderate',
-        vulnerableForestType: 'Tropical Evergreen',
-        historicalIncidents: 24
-      },
-      {
-        district: 'Hoshangabad',
-        state: 'Madhya Pradesh',
-        riskLevel: 'moderate',
-        vulnerableForestType: 'Sal Forest',
-        historicalIncidents: 21
-      },
-      {
-        district: 'Koraput',
-        state: 'Odisha',
-        riskLevel: 'moderate',
-        vulnerableForestType: 'Deciduous',
-        historicalIncidents: 19
-      },
-      {
-        district: 'Adilabad',
-        state: 'Telangana',
-        riskLevel: 'low',
-        vulnerableForestType: 'Dry Deciduous',
-        historicalIncidents: 15
-      }
     ];
 
     // Climate change factors data
@@ -379,7 +317,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
     setAqiData(mockAqiData);
     setTemperatureData(mockTemperatureData);
     setNewsItems(mockNewsItems);
-    setFireProneAreas(mockFireProneAreas);
     setClimateFactors(mockClimateFactors);
     setTemperatureTrend(mockTemperatureTrend);
     setTopDistrictsLoss(mockTopDistrictsLoss);
@@ -392,16 +329,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       case 'moderate': return 'bg-yellow-500';
       case 'unhealthy': return 'bg-orange-500';
       case 'hazardous': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getFireRiskColor = (risk: string) => {
-    switch (risk) {
-      case 'very high': return 'bg-red-600 text-white';
-      case 'high': return 'bg-red-500 text-white';
-      case 'moderate': return 'bg-orange-500 text-white';
-      case 'low': return 'bg-yellow-500';
       default: return 'bg-gray-500';
     }
   };
@@ -425,6 +352,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
     }
   };
 
+  // Function to properly open news links in a new tab
   const openNewsLink = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
@@ -439,17 +367,13 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full grid grid-cols-3 mb-4">
+          <TabsList className="w-full grid grid-cols-2 mb-4">
             <TabsTrigger value="aqi" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
               <Wind className="h-4 w-4 mr-2" />
               Air Quality
             </TabsTrigger>
-            <TabsTrigger value="climate" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
-              <Thermometer className="h-4 w-4 mr-2" />
-              Climate Analysis
-            </TabsTrigger>
             <TabsTrigger value="news" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
-              <AlertTriangle className="h-4 w-4 mr-2" />
+              <Thermometer className="h-4 w-4 mr-2" />
               News & Updates
             </TabsTrigger>
           </TabsList>
@@ -554,86 +478,6 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
             </div>
           </TabsContent>
           
-          <TabsContent value="climate" className="animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-md">Temperature Trends (2015-2024)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart
-                        data={temperatureTrend}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
-                        <XAxis dataKey="year" />
-                        <YAxis label={{ value: 'Temperature (°C)', angle: -90, position: 'insideLeft' }} />
-                        <Tooltip formatter={(value) => [`${value}°C`]} />
-                        <Legend />
-                        <Line type="monotone" dataKey="averageMax" stroke="#FF9800" name="Avg Max Temp" strokeWidth={2} dot={{ r: 3 }} />
-                        <Line type="monotone" dataKey="averageMin" stroke="#2196F3" name="Avg Min Temp" strokeWidth={2} dot={{ r: 3 }} />
-                        <Line type="monotone" dataKey="extremeMax" stroke="#F44336" name="Extreme Max" strokeWidth={1} strokeDasharray="5 5" />
-                        <Line type="monotone" dataKey="extremeMin" stroke="#03A9F4" name="Extreme Min" strokeWidth={1} strokeDasharray="5 5" />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-4">
-                    This graph shows the annual temperature trends for {stateName} over the last decade, with both average and extreme temperatures tracked. The data reveals a gradual warming trend, with more pronounced increases in maximum temperatures.
-                  </p>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-md">Climate Change Factors</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart
-                        data={climateFactors}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="factor" />
-                        <YAxis label={{ value: 'Impact Percentage (%)', angle: -90, position: 'insideLeft' }} />
-                        <Tooltip formatter={(value) => [`${value}%`]} />
-                        <Area type="monotone" dataKey="impact" stackId="1" stroke="#4CAF50" fill="#4CAF50" />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                  <div className="mt-4">
-                    <h4 className="text-sm font-medium mb-2">Main Contributing States by Factor</h4>
-                    <div className="space-y-3">
-                      {climateFactors.map((factor) => (
-                        <div key={factor.factor} className="flex justify-between items-center">
-                          <div>
-                            <span className="font-medium">{factor.factor}</span>
-                            <div className="text-xs text-muted-foreground">
-                              {factor.mainContributors.join(', ')}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm">{factor.impact}%</span>
-                            {getTrendBadge(factor.trend)}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Alert className="mb-4 bg-muted/50">
-              <AlertDescription>
-                <strong>What this means:</strong> The data shows multiple factors contributing to climate change in India, with industrial emissions and deforestation being the most significant. States with high industrial activity and rapid urbanization tend to be the largest contributors to emissions, while forest-rich states face pressure from resource extraction and land conversion.
-              </AlertDescription>
-            </Alert>
-          </TabsContent>
-          
           <TabsContent value="news" className="animate-fade-in">
             <div className="text-sm text-muted-foreground mb-3">
               <p>Recent environmental news and alerts related to forest conservation and climate in {stateName}.</p>
@@ -644,8 +488,8 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
                   key={item.id} 
                   className="overflow-hidden transition-all duration-200 hover:shadow-md border-l-4 hover:bg-blue-50/30 cursor-pointer" 
                   style={{ borderLeftColor: item.category === 'deforestation' ? '#F44336' : 
-                                           item.category === 'climate' ? '#2196F3' : 
-                                           item.category === 'conservation' ? '#4CAF50' : '#9C27B0' }}
+                                          item.category === 'climate' ? '#2196F3' : 
+                                          item.category === 'conservation' ? '#4CAF50' : '#9C27B0' }}
                   onClick={() => openNewsLink(item.url)}
                 >
                   <CardContent className="p-4">
