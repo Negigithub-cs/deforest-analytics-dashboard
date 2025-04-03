@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { getStateById, getConservationStatusColor } from '@/data/mockData';
+import { stateIdToName } from '@/components/Map/utils/stateMappings';
 
 interface DistrictComparisonProps {
   mode: 'positive' | 'negative';
@@ -24,6 +25,7 @@ interface DistrictData {
   deforestationRate: number;
   conservationStatus: 'Critical' | 'Poor' | 'Fair' | 'Good' | 'Excellent';
   forestCover: number;
+  climateVulnerability: 'Very Low' | 'Low' | 'Moderate' | 'High' | 'Severe';
 }
 
 // Sample district names by state to use instead of District 1, District 2, etc.
@@ -60,17 +62,23 @@ const DistrictComparison: React.FC<DistrictComparisonProps> = ({ mode, stateId }
     if (stateId === 'IN') {
       const allStates = getStateById('IN');
       if (allStates) {
-        return allStates.forestData.map((_, index) => ({
-          id: `IN-S${index+1}`,
-          name: `State ${index+1}`,
-          deforestationRate: mode === 'positive' 
-            ? Math.random() * 0.5  // Lower rates for positive performers
-            : 0.5 + Math.random() * 2, // Higher rates for negative performers
-          conservationStatus: mode === 'positive' 
-            ? (Math.random() > 0.5 ? 'Excellent' : 'Good') as any
-            : (Math.random() > 0.5 ? 'Critical' : 'Poor') as any,
-          forestCover: Math.floor(100 + Math.random() * 4900)
-        }));
+        return Object.keys(stateIdToName)
+          .filter(id => id !== 'IN')
+          .slice(0, 15)
+          .map((stateId, index) => ({
+            id: stateId,
+            name: stateIdToName[stateId] || `State ${index+1}`,
+            deforestationRate: mode === 'positive' 
+              ? Math.random() * 0.5  // Lower rates for positive performers
+              : 0.5 + Math.random() * 2, // Higher rates for negative performers
+            conservationStatus: mode === 'positive' 
+              ? (Math.random() > 0.5 ? 'Excellent' : 'Good') as any
+              : (Math.random() > 0.5 ? 'Critical' : 'Poor') as any,
+            forestCover: Math.floor(100 + Math.random() * 4900),
+            climateVulnerability: mode === 'positive'
+              ? (Math.random() > 0.5 ? 'Very Low' : 'Low') as any
+              : (Math.random() > 0.5 ? 'Severe' : 'High') as any
+          }));
       }
     }
     
@@ -79,6 +87,7 @@ const DistrictComparison: React.FC<DistrictComparisonProps> = ({ mode, stateId }
     const districts: DistrictData[] = [];
     
     const statusOptions = ['Critical', 'Poor', 'Fair', 'Good', 'Excellent'] as const;
+    const vulnerabilityOptions = ['Very Low', 'Low', 'Moderate', 'High', 'Severe'] as const;
     
     // Use real district names from the map
     for (let i = 0; i < numberOfDistricts; i++) {
@@ -94,7 +103,12 @@ const DistrictComparison: React.FC<DistrictComparisonProps> = ({ mode, stateId }
         ? Math.floor(Math.random() * 3) + 2 // Good to Excellent for positive
         : Math.floor(Math.random() * 3); // Critical to Fair for negative
         
+      const vulnerabilityIndex = mode === 'positive'
+        ? Math.floor(Math.random() * 3) // Very Low to Moderate for positive
+        : Math.floor(Math.random() * 3) + 2; // Moderate to Severe for negative
+        
       const conservationStatus = statusOptions[statusIndex];
+      const climateVulnerability = vulnerabilityOptions[vulnerabilityIndex];
       
       // Random forest cover between 100-5000 sq km
       const forestCover = Math.floor(100 + Math.random() * 4900);
@@ -104,7 +118,8 @@ const DistrictComparison: React.FC<DistrictComparisonProps> = ({ mode, stateId }
         name,
         deforestationRate,
         conservationStatus,
-        forestCover
+        forestCover,
+        climateVulnerability
       });
     }
     
@@ -140,6 +155,17 @@ const DistrictComparison: React.FC<DistrictComparisonProps> = ({ mode, stateId }
     );
   }
   
+  const getVulnerabilityColor = (vulnerability: string): string => {
+    switch (vulnerability) {
+      case 'Very Low': return '#4CAF50';
+      case 'Low': return '#8BC34A';
+      case 'Moderate': return '#FFC107';
+      case 'High': return '#FF9800';
+      case 'Severe': return '#F44336';
+      default: return '#FFC107';
+    }
+  };
+  
   return (
     <Card className="h-full">
       <CardHeader>
@@ -168,6 +194,7 @@ const DistrictComparison: React.FC<DistrictComparisonProps> = ({ mode, stateId }
               <TableHead>Forest Cover</TableHead>
               <TableHead>Annual Change</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Climate Vulnerability</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -187,6 +214,16 @@ const DistrictComparison: React.FC<DistrictComparisonProps> = ({ mode, stateId }
                     }}
                   >
                     {getStatusText(district.conservationStatus)}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge 
+                    style={{ 
+                      backgroundColor: getVulnerabilityColor(district.climateVulnerability),
+                      color: '#fff' 
+                    }}
+                  >
+                    {district.climateVulnerability}
                   </Badge>
                 </TableCell>
               </TableRow>

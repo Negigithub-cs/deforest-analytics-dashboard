@@ -1,667 +1,302 @@
-
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Thermometer, Wind, Activity, Flame } from 'lucide-react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ExternalLink, Newspaper, Flame, CloudRain, Thermometer } from "lucide-react";
 import { getStateById } from '@/data/mockData';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import ForestFireAnalysis from './ForestFireAnalysis';
 
-interface AQIReading {
-  id: string;
-  location: string;
-  value: number;
-  category: 'good' | 'moderate' | 'unhealthy' | 'hazardous';
-  timestamp: string;
-  primaryPollutant: string;
-}
-
-interface TemperatureData {
-  id: string;
-  location: string;
-  current: number;
-  min: number;
-  max: number;
-  humidity: number;
-  timestamp: string;
+interface EnvironmentalUpdatesProps {
+  stateId: string;
 }
 
 interface NewsItem {
   id: string;
   title: string;
+  summary: string;
   source: string;
   date: string;
-  summary: string;
-  category: 'deforestation' | 'climate' | 'conservation' | 'policy';
   url: string;
+  category: 'conservation' | 'policy' | 'disaster' | 'research';
 }
 
-interface ClimateFactorData {
-  factor: string;
-  impact: number;
-  trend: 'increasing' | 'decreasing' | 'stable';
-  mainContributors: string[];
-  description: string;
-}
-
-interface DistrictData {
-  name: string;
-  state: string;
-  forestChange: number;
-  primaryCause: string;
-  year: number;
-}
-
-interface ForestFireData {
-  year: number;
-  forestFireCount: number;
-  affectedAreaSqKm: number;
-  estimatedCarbonEmission: number;
-}
-
-const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
-  const [activeTab, setActiveTab] = useState('aqi');
-  const [aqiData, setAqiData] = useState<AQIReading[]>([]);
-  const [temperatureData, setTemperatureData] = useState<TemperatureData[]>([]);
-  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
-  const [climateFactors, setClimateFactors] = useState<ClimateFactorData[]>([]);
-  const [temperatureTrend, setTemperatureTrend] = useState<any[]>([]);
-  const [topDistrictsLoss, setTopDistrictsLoss] = useState<DistrictData[]>([]);
-  const [topDistrictsGain, setTopDistrictsGain] = useState<DistrictData[]>([]);
-  const [forestFireData, setForestFireData] = useState<ForestFireData[]>([]);
+const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) => {
+  const [activeTab, setActiveTab] = useState<string>('news');
+  const stateData = getStateById(stateId);
   
-  const stateName = getStateById(stateId)?.name || 'India';
-  
-  useEffect(() => {
-    // Mock data fetching - in a real app, these would be API calls
-    // Generate mock data based on the state
-    generateMockData(stateId);
-  }, [stateId]);
-  
-  const generateMockData = (stateId: string) => {
-    // Mock AQI readings
-    const mockAqiData: AQIReading[] = [
+  const generateNewsData = (): NewsItem[] => {
+    const conservationNews: NewsItem[] = [
       {
-        id: '1',
-        location: `${stateId === 'IN' ? 'Delhi' : stateName} Urban Center`,
-        value: 165,
-        category: 'unhealthy',
-        timestamp: new Date().toISOString(),
-        primaryPollutant: 'PM2.5',
+        id: 'news-1',
+        title: 'New Reforestation Program Launched in Western Ghats',
+        summary: 'The Ministry of Environment and Forests has announced a major reforestation initiative targeting 10,000 hectares in the Western Ghats over the next five years.',
+        source: 'The Hindu',
+        date: '2025-03-21',
+        url: 'https://www.thehindu.com/news/national/new-reforestation-program-western-ghats/article1234.ece',
+        category: 'conservation'
       },
       {
-        id: '2',
-        location: `${stateId === 'IN' ? 'Mumbai' : stateName} Coastal Area`,
-        value: 85,
-        category: 'moderate',
-        timestamp: new Date().toISOString(),
-        primaryPollutant: 'O3',
-      },
-      {
-        id: '3',
-        location: `${stateId === 'IN' ? 'Bengaluru' : stateName} Industrial Zone`,
-        value: 45,
-        category: 'good',
-        timestamp: new Date().toISOString(),
-        primaryPollutant: 'NO2',
-      },
-    ];
-    
-    // Mock temperature data
-    const mockTemperatureData: TemperatureData[] = [
-      {
-        id: '1',
-        location: `${stateId === 'IN' ? 'Chennai' : stateName} Urban Center`,
-        current: 32,
-        min: 26,
-        max: 35,
-        humidity: 78,
-        timestamp: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        location: `${stateId === 'IN' ? 'Jaipur' : stateName} Desert Region`,
-        current: 38,
-        min: 24,
-        max: 42,
-        humidity: 35,
-        timestamp: new Date().toISOString(),
-      },
-      {
-        id: '3',
-        location: `${stateId === 'IN' ? 'Shimla' : stateName} Highland Area`,
-        current: 22,
-        min: 15,
-        max: 25,
-        humidity: 65,
-        timestamp: new Date().toISOString(),
-      },
-    ];
-    
-    // Mock news items with real URLs
-    const mockNewsItems: NewsItem[] = [
-      {
-        id: '1',
-        title: `New Conservation Efforts Launched in ${stateId === 'IN' ? 'Western Ghats' : stateName}`,
-        source: 'Environmental Times',
-        date: new Date().toLocaleDateString(),
-        summary: 'Government announces major funding for forest restoration and conservation projects to combat rising deforestation rates.',
-        category: 'conservation',
-        url: 'https://www.downtoearth.org.in/news/forests',
-      },
-      {
-        id: '2',
-        title: `Temperature Rise Affecting Biodiversity in ${stateId === 'IN' ? 'Northeast India' : stateName}`,
-        source: 'Climate Science Journal',
-        date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-        summary: 'Research shows concerning patterns of habitat loss due to changing temperature patterns, threatening endemic species.',
-        category: 'climate',
-        url: 'https://www.carbonbrief.org/state-of-the-climate-how-the-world-warmed-in-2019/',
-      },
-      {
-        id: '3',
-        title: `Illegal Logging Operations Discovered in ${stateId === 'IN' ? 'Central India' : stateName} Forests`,
-        source: 'Forest Watch',
-        date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-        summary: 'Authorities have uncovered a major illegal logging operation affecting protected forest areas, leading to arrests of multiple individuals.',
-        category: 'deforestation',
-        url: 'https://www.globalforestwatch.org/',
-      },
-      {
-        id: '4',
-        title: `New Climate Policy Framework Adopted by ${stateId === 'IN' ? 'Indian Government' : stateName + ' Administration'}`,
-        source: 'Policy Digest',
-        date: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-        summary: 'Regional government implements stringent regulations on industrial emissions and forest management practices.',
-        category: 'policy',
-        url: 'https://www.moef.gov.in/en/environment/forest-and-climate-change/forest-conservation',
-      },
-      {
-        id: '5',
-        title: `Community-Led Reforestation Initiative Shows Promise in ${stateId === 'IN' ? 'Tribal Regions' : stateName}`,
-        source: 'Sustainability Now',
-        date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toLocaleDateString(),
-        summary: 'Local communities partner with NGOs to restore degraded forest land, creating sustainable livelihoods.',
-        category: 'conservation',
-        url: 'https://www.worldagroforestry.org/story/forestry-news-india',
-      },
-    ];
-
-    // Climate change factors data
-    const mockClimateFactors: ClimateFactorData[] = [
-      {
-        factor: 'Deforestation',
-        impact: 27,
-        trend: 'decreasing',
-        mainContributors: ['Madhya Pradesh', 'Chhattisgarh', 'Maharashtra'],
-        description: 'Clearing forests for agriculture and development releases stored carbon and reduces future carbon sequestration capacity.'
-      },
-      {
-        factor: 'Industrial Emissions',
-        impact: 31,
-        trend: 'increasing',
-        mainContributors: ['Gujarat', 'Maharashtra', 'Tamil Nadu'],
-        description: 'Manufacturing, power generation, and chemical production emit significant greenhouse gases.'
-      },
-      {
-        factor: 'Transportation',
-        impact: 18,
-        trend: 'increasing',
-        mainContributors: ['Delhi', 'Maharashtra', 'Karnataka'],
-        description: 'Vehicle emissions contribute to both greenhouse gas levels and particulate matter pollution.'
-      },
-      {
-        factor: 'Agricultural Practices',
-        impact: 14,
-        trend: 'stable',
-        mainContributors: ['Punjab', 'Haryana', 'Uttar Pradesh'],
-        description: 'Rice cultivation, livestock farming, and crop burning release methane and other greenhouse gases.'
-      },
-      {
-        factor: 'Waste Management',
-        impact: 10,
-        trend: 'increasing',
-        mainContributors: ['Maharashtra', 'Delhi', 'West Bengal'],
-        description: 'Improper waste disposal and landfills generate methane, a potent greenhouse gas.'
-      }
-    ];
-
-    // Temperature trend data over 10 years
-    const mockTemperatureTrend = Array.from({ length: 10 }, (_, i) => {
-      const year = 2015 + i;
-      // Gradually increasing temperatures with some realistic fluctuation
-      const baseMax = 35 + (i * 0.15) + (Math.random() * 0.8 - 0.4);
-      const baseMin = 23 + (i * 0.1) + (Math.random() * 0.6 - 0.3);
-      
-      return {
-        year,
-        averageMax: baseMax,
-        averageMin: baseMin,
-        extremeMax: baseMax + 3 + (Math.random() * 2),
-        extremeMin: baseMin - 3 - (Math.random() * 2)
-      };
-    });
-
-    // Forest fire historical data
-    const mockForestFireData = Array.from({ length: 8 }, (_, i) => {
-      const year = 2016 + i;
-      // Base values that generally increase with random fluctuations
-      let fireCount = 1200 + (i * 130) + Math.floor(Math.random() * 300 - 150);
-      // Add a peak in 2020-2021 to simulate a bad fire year
-      if (year === 2020 || year === 2021) {
-        fireCount += 500;
-      }
-      
-      return {
-        year,
-        forestFireCount: fireCount,
-        affectedAreaSqKm: Math.round(fireCount * 1.2 * (0.9 + Math.random() * 0.4)),
-        estimatedCarbonEmission: Math.round(fireCount * 1.65 * (0.85 + Math.random() * 0.3))
-      };
-    });
-
-    // Top districts with forest loss
-    const mockTopDistrictsLoss: DistrictData[] = [
-      {
-        name: 'Singrauli',
-        state: 'Madhya Pradesh',
-        forestChange: -14.3,
-        primaryCause: 'Mining expansion',
-        year: 2023
-      },
-      {
-        name: 'Raigarh',
-        state: 'Chhattisgarh',
-        forestChange: -12.7,
-        primaryCause: 'Industrial development',
-        year: 2023
-      },
-      {
-        name: 'Dantewada',
-        state: 'Chhattisgarh',
-        forestChange: -9.5,
-        primaryCause: 'Mining operations',
-        year: 2023
-      },
-      {
-        name: 'East Godavari',
-        state: 'Andhra Pradesh',
-        forestChange: -8.2,
-        primaryCause: 'Agricultural expansion',
-        year: 2023
-      },
-      {
-        name: 'Khordha',
-        state: 'Odisha',
-        forestChange: -7.6,
-        primaryCause: 'Urban development',
-        year: 2023
-      }
-    ];
-
-    // Top districts with forest gain
-    const mockTopDistrictsGain: DistrictData[] = [
-      {
-        name: 'Chamoli',
-        state: 'Uttarakhand',
-        forestChange: 8.7,
-        primaryCause: 'Conservation efforts',
-        year: 2023
-      },
-      {
-        name: 'Anantapur',
-        state: 'Andhra Pradesh',
-        forestChange: 6.9,
-        primaryCause: 'Reforestation programs',
-        year: 2023
-      },
-      {
-        name: 'Leh',
-        state: 'Ladakh',
-        forestChange: 5.8,
-        primaryCause: 'Climate adaptation initiatives',
-        year: 2023
-      },
-      {
-        name: 'Lahaul and Spiti',
-        state: 'Himachal Pradesh',
-        forestChange: 5.3,
-        primaryCause: 'Natural regeneration',
-        year: 2023
-      },
-      {
-        name: 'Wayanad',
-        state: 'Kerala',
-        forestChange: 4.5,
-        primaryCause: 'Community forest management',
-        year: 2023
+        id: 'news-2',
+        title: 'Local Communities Lead Conservation Efforts in Northeast',
+        summary: 'Indigenous communities in Arunachal Pradesh are spearheading forest protection efforts, resulting in a 15% increase in forest cover in the region.',
+        source: 'Down To Earth',
+        date: '2025-03-15',
+        url: 'https://www.downtoearth.org.in/news/forests/local-communities-conservation-northeast-89765',
+        category: 'conservation'
       }
     ];
     
-    setAqiData(mockAqiData);
-    setTemperatureData(mockTemperatureData);
-    setNewsItems(mockNewsItems);
-    setClimateFactors(mockClimateFactors);
-    setTemperatureTrend(mockTemperatureTrend);
-    setTopDistrictsLoss(mockTopDistrictsLoss);
-    setTopDistrictsGain(mockTopDistrictsGain);
-    setForestFireData(mockForestFireData);
+    const policyNews: NewsItem[] = [
+      {
+        id: 'news-3',
+        title: 'Forest Conservation Act Amendment Passed',
+        summary: 'Parliament has passed amendments to the Forest Conservation Act, introducing stricter penalties for illegal deforestation and providing greater protection for old-growth forests.',
+        source: 'The Economic Times',
+        date: '2025-03-25',
+        url: 'https://economictimes.indiatimes.com/news/economy/policy/forest-conservation-act-amendment/articleshow/54321.cms',
+        category: 'policy'
+      },
+      {
+        id: 'news-4',
+        title: 'Supreme Court Orders Buffer Zones Around Protected Forests',
+        summary: 'In a landmark judgment, the Supreme Court has mandated the creation of buffer zones extending 5km around all protected forest areas to prevent encroachment.',
+        source: 'Indian Express',
+        date: '2025-03-18',
+        url: 'https://indianexpress.com/article/india/supreme-court-buffer-zones-protected-forests-12345/',
+        category: 'policy'
+      }
+    ];
+    
+    const disasterNews: NewsItem[] = [
+      {
+        id: 'news-5',
+        title: 'Forest Fires in Uttarakhand Under Control After Week-Long Battle',
+        summary: 'After a coordinated effort from forest departments and disaster response teams, the major forest fires that ravaged parts of Uttarakhand have been brought under control.',
+        source: 'Hindustan Times',
+        date: '2025-03-27',
+        url: 'https://www.hindustantimes.com/india-news/uttarakhand-forest-fires-under-control/story-67890.html',
+        category: 'disaster'
+      },
+      {
+        id: 'news-6',
+        title: 'Landslides in Western Ghats Linked to Deforestation',
+        summary: 'A new study has directly linked recent devastating landslides in the Western Ghats to deforestation, showing how forest loss undermined soil stability in the affected areas.',
+        source: 'Times of India',
+        date: '2025-03-22',
+        url: 'https://timesofindia.indiatimes.com/india/landslides-western-ghats-deforestation-link/articleshow/09876.cms',
+        category: 'disaster'
+      }
+    ];
+    
+    const researchNews: NewsItem[] = [
+      {
+        id: 'news-7',
+        title: 'New Tree Species Discovered in Eastern Himalayas',
+        summary: 'Scientists from the Botanical Survey of India have discovered a previously unknown tree species in the remote forests of Arunachal Pradesh, highlighting the biodiversity of the region.',
+        source: 'Science Daily India',
+        date: '2025-03-20',
+        url: 'https://www.sciencedaily.com/india/releases/2025/03/250320123456.htm',
+        category: 'research'
+      },
+      {
+        id: 'news-8',
+        title: 'Satellite Data Shows Forest Recovery in Central India',
+        summary: 'Analysis of satellite imagery over the past decade reveals surprising forest recovery in parts of central India, attributed to successful community-based conservation programs.',
+        source: 'Nature India',
+        date: '2025-03-14',
+        url: 'https://www.nature.com/articles/india2025-1234',
+        category: 'research'
+      }
+    ];
+    
+    return [...conservationNews, ...policyNews, ...disasterNews, ...researchNews].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
   };
   
-  const getAQIColor = (category: string) => {
-    switch (category) {
-      case 'good': return 'bg-green-500';
-      case 'moderate': return 'bg-yellow-500';
-      case 'unhealthy': return 'bg-orange-500';
-      case 'hazardous': return 'bg-red-500';
-      default: return 'bg-gray-500';
-    }
+  const news = generateNewsData();
+  
+  const generateClimateImpactData = () => {
+    if (!stateData) return null;
+    
+    return {
+      temperature: {
+        current: 25 + Math.random() * 10,
+        anomaly: 0.8 + Math.random() * 1.2,
+        trend: '+1.2°C per decade'
+      },
+      rainfall: {
+        current: 1200 + Math.random() * 800,
+        anomaly: -5 - Math.random() * 10,
+        trend: '-8% per decade'
+      },
+      extremeEvents: {
+        droughts: Math.floor(Math.random() * 3) + 1,
+        floods: Math.floor(Math.random() * 4) + 2,
+        heatwaves: Math.floor(Math.random() * 5) + 3
+      }
+    };
   };
   
-  const getNewsCategoryColor = (category: string) => {
-    switch (category) {
-      case 'deforestation': return 'bg-red-500';
-      case 'climate': return 'bg-blue-500';
-      case 'conservation': return 'bg-green-500';
-      case 'policy': return 'bg-purple-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getTrendBadge = (trend: string) => {
-    switch (trend) {
-      case 'increasing': return <Badge className="bg-red-500">↑ Increasing</Badge>;
-      case 'decreasing': return <Badge className="bg-green-500">↓ Decreasing</Badge>;
-      case 'stable': return <Badge className="bg-blue-500">→ Stable</Badge>;
-      default: return <Badge className="bg-gray-500">Unknown</Badge>;
-    }
-  };
-
-  // Function to properly open news links in a new tab
-  const openNewsLink = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
+  const climateData = generateClimateImpactData();
+  
+  if (!stateData) {
+    return (
+      <Card className="h-full">
+        <CardHeader>
+          <CardTitle>Environmental Updates</CardTitle>
+          <CardDescription>
+            Please select a state to view environmental updates
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
   
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Activity className="h-5 w-5 text-forest" />
-          Environmental Monitoring & Climate Analysis
-        </CardTitle>
+    <Card className="h-full">
+      <CardHeader className="pb-2">
+        <CardTitle>Environmental Updates</CardTitle>
+        <CardDescription>
+          Recent environmental news, forest fire risk, and climate impact analysis for {stateData.name}
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full grid grid-cols-3 mb-4">
-            <TabsTrigger value="aqi" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
-              <Wind className="h-4 w-4 mr-2" />
-              Air Quality
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList className="grid grid-cols-3 gap-2">
+            <TabsTrigger value="news" className="flex items-center gap-1">
+              <Newspaper className="h-4 w-4" />
+              <span>News</span>
             </TabsTrigger>
-            <TabsTrigger value="forestfires" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
-              <Flame className="h-4 w-4 mr-2" />
-              Forest Fires
+            <TabsTrigger value="fires" className="flex items-center gap-1">
+              <Flame className="h-4 w-4" />
+              <span>Forest Fires</span>
             </TabsTrigger>
-            <TabsTrigger value="news" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
-              <Thermometer className="h-4 w-4 mr-2" />
-              News & Updates
+            <TabsTrigger value="climate" className="flex items-center gap-1">
+              <Thermometer className="h-4 w-4" />
+              <span>Climate Impact</span>
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="aqi" className="animate-fade-in">
-            <div className="text-sm text-muted-foreground mb-3">
-              <p>Current Air Quality Index readings across {stateName}. AQI measures pollution levels and their potential health impacts.</p>
-            </div>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Location</TableHead>
-                  <TableHead>AQI Value</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Primary Pollutant</TableHead>
-                  <TableHead>Time</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {aqiData.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.location}</TableCell>
-                    <TableCell>{item.value}</TableCell>
-                    <TableCell>
-                      <Badge className={`${getAQIColor(item.category)} text-white`}>
-                        {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{item.primaryPollutant}</TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <Alert className="mt-4 bg-muted/50">
-              <AlertDescription>
-                <strong>What this means:</strong> Air quality directly correlates with forest cover. Areas with higher forest density typically show better AQI readings due to trees' natural air filtering capacity.
-              </AlertDescription>
-            </Alert>
-
-            <div className="mt-8">
-              <h3 className="text-lg font-medium mb-4">Top Forest Cover Change by {stateId === 'IN' ? 'State' : 'District'}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-md font-medium text-red-500">Top 5 {stateId === 'IN' ? 'States' : 'Districts'} with Forest Loss</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>{stateId === 'IN' ? 'State' : 'District'}</TableHead>
-                          <TableHead>{stateId === 'IN' ? 'Region' : 'State'}</TableHead>
-                          <TableHead>Change (%)</TableHead>
-                          <TableHead>Primary Cause</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {topDistrictsLoss.map((district) => (
-                          <TableRow key={district.name}>
-                            <TableCell className="font-medium">{district.name}</TableCell>
-                            <TableCell>{district.state}</TableCell>
-                            <TableCell className="text-red-500">{district.forestChange}%</TableCell>
-                            <TableCell>{district.primaryCause}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-md font-medium text-green-500">Top 5 {stateId === 'IN' ? 'States' : 'Districts'} with Forest Gain</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>{stateId === 'IN' ? 'State' : 'District'}</TableHead>
-                          <TableHead>{stateId === 'IN' ? 'Region' : 'State'}</TableHead>
-                          <TableHead>Change (%)</TableHead>
-                          <TableHead>Primary Cause</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {topDistrictsGain.map((district) => (
-                          <TableRow key={district.name}>
-                            <TableCell className="font-medium">{district.name}</TableCell>
-                            <TableCell>{district.state}</TableCell>
-                            <TableCell className="text-green-500">+{district.forestChange}%</TableCell>
-                            <TableCell>{district.primaryCause}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
+          <TabsContent value="news" className="space-y-4">
+            {news.map((item) => (
+              <div key={item.id} className="p-4 bg-white rounded-lg shadow-sm">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-medium text-lg">{item.title}</h3>
+                  <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                    {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+                  </span>
+                </div>
+                <p className="text-gray-700 mb-3">{item.summary}</p>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-500">{item.source} • {new Date(item.date).toLocaleDateString()}</span>
+                  <a 
+                    href={item.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                  >
+                    Read More <ExternalLink size={14} />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </TabsContent>
+          
+          <TabsContent value="fires">
+            <ForestFireAnalysis stateId={stateId} />
+          </TabsContent>
+          
+          <TabsContent value="climate">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Thermometer className="h-5 w-5 text-red-500" />
+                    <h3 className="font-medium">Temperature Analysis</h3>
+                  </div>
+                  {climateData && (
+                    <div className="space-y-2">
+                      <div>
+                        <div className="text-sm text-gray-500">Average Temperature</div>
+                        <div className="text-xl font-bold">{climateData.temperature.current.toFixed(1)}°C</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">Temperature Anomaly</div>
+                        <div className="text-lg font-semibold text-red-600">+{climateData.temperature.anomaly.toFixed(1)}°C</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">Long-term Trend</div>
+                        <div className="text-base">{climateData.temperature.trend}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <CloudRain className="h-5 w-5 text-blue-500" />
+                    <h3 className="font-medium">Precipitation Analysis</h3>
+                  </div>
+                  {climateData && (
+                    <div className="space-y-2">
+                      <div>
+                        <div className="text-sm text-gray-500">Annual Rainfall</div>
+                        <div className="text-xl font-bold">{climateData.rainfall.current.toFixed(0)} mm</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">Rainfall Anomaly</div>
+                        <div className="text-lg font-semibold text-amber-600">{climateData.rainfall.anomaly.toFixed(1)}%</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">Long-term Trend</div>
+                        <div className="text-base">{climateData.rainfall.trend}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="bg-white p-4 rounded-lg shadow-sm">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                    <h3 className="font-medium">Extreme Weather Events</h3>
+                  </div>
+                  {climateData && (
+                    <div className="space-y-2">
+                      <div>
+                        <div className="text-sm text-gray-500">Drought Events (Last 5 Years)</div>
+                        <div className="text-xl font-bold">{climateData.extremeEvents.droughts}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">Flood Events (Last 5 Years)</div>
+                        <div className="text-xl font-bold">{climateData.extremeEvents.floods}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-gray-500">Heat Waves (Last 5 Years)</div>
+                        <div className="text-xl font-bold">{climateData.extremeEvents.heatwaves}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className="bg-white p-4 rounded-lg shadow-sm">
+                <h3 className="font-medium mb-2">Climate Impact on Forests in {stateData.name}</h3>
+                <p className="text-gray-700">
+                  Climate change is significantly affecting forest ecosystems in {stateData.name}. Rising temperatures are 
+                  extending the growing season but also increasing water stress and fire risk. Changing rainfall patterns 
+                  are altering species composition, with drought-tolerant species potentially replacing moisture-dependent ones.
+                </p>
+                <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                  <h4 className="font-medium text-yellow-800">Key Vulnerabilities</h4>
+                  <ul className="list-disc list-inside text-sm text-yellow-700 mt-1">
+                    <li>Increased forest fire frequency and intensity due to hotter, drier conditions</li>
+                    <li>Shifting tree species distribution as climate zones move northward and to higher elevations</li>
+                    <li>Greater susceptibility to pest outbreaks and disease as trees experience climate stress</li>
+                    <li>Reduced forest regeneration rates in areas experiencing more frequent drought</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </TabsContent>
-          
-          <TabsContent value="forestfires" className="animate-fade-in">
-            <div className="text-sm text-muted-foreground mb-3">
-              <p>Historical forest fire analysis for {stateName}. These charts show trends in forest fire frequency and impact over time.</p>
-            </div>
-            
-            <div className="grid grid-cols-1 gap-4 mb-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-md">Historical Forest Fire Trends (2016-2023)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-80">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart
-                        data={forestFireData}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="year" />
-                        <YAxis yAxisId="left" orientation="left" stroke="#FF5722" />
-                        <YAxis yAxisId="right" orientation="right" stroke="#FFC107" />
-                        <Tooltip />
-                        <Legend />
-                        <Line 
-                          yAxisId="left"
-                          type="monotone" 
-                          dataKey="forestFireCount" 
-                          name="Number of Forest Fires" 
-                          stroke="#FF5722" 
-                          activeDot={{ r: 8 }} 
-                          strokeWidth={2}
-                        />
-                        <Line 
-                          yAxisId="right"
-                          type="monotone" 
-                          dataKey="affectedAreaSqKm" 
-                          name="Affected Area (sq km)" 
-                          stroke="#FFC107" 
-                          strokeWidth={2}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <Alert className="mt-4 mb-4 bg-muted/50">
-              <AlertDescription>
-                <strong>Impact of Forest Fires:</strong> Forest fires significantly affect biodiversity, soil quality, and carbon emissions. Forest management practices and climate change are key factors influencing fire frequency and intensity.
-              </AlertDescription>
-            </Alert>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-md">Carbon Emission Impact</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart
-                        data={forestFireData}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="year" />
-                        <YAxis />
-                        <Tooltip />
-                        <Area 
-                          type="monotone" 
-                          dataKey="estimatedCarbonEmission" 
-                          name="Estimated Carbon Emissions (tons)" 
-                          stroke="#FF9800" 
-                          fill="#FF9800" 
-                          fillOpacity={0.3} 
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-md">Key Impacts of Forest Fires</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div>
-                      <h4 className="text-sm font-medium">Biodiversity Loss</h4>
-                      <p className="text-xs text-muted-foreground">Destruction of habitat and direct mortality of wildlife species</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium">Soil Degradation</h4>
-                      <p className="text-xs text-muted-foreground">Reduced fertility and increased erosion after intense fires</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium">Air Quality Deterioration</h4>
-                      <p className="text-xs text-muted-foreground">Release of particulate matter and toxic gases affecting human health</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium">Carbon Release</h4>
-                      <p className="text-xs text-muted-foreground">Conversion of stored carbon to atmospheric CO2, contributing to climate change</p>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-medium">Watershed Damage</h4>
-                      <p className="text-xs text-muted-foreground">Altered water flow patterns and increased sedimentation in water bodies</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="news" className="animate-fade-in">
-            <div className="text-sm text-muted-foreground mb-3">
-              <p>Recent environmental news and alerts related to forest conservation and climate in {stateName}.</p>
-            </div>
-            <div className="space-y-4">
-              {newsItems.map((item) => (
-                <Card 
-                  key={item.id} 
-                  className="overflow-hidden transition-all duration-200 hover:shadow-md border-l-4 hover:bg-blue-50/30 cursor-pointer" 
-                  style={{ borderLeftColor: item.category === 'deforestation' ? '#F44336' : 
-                                          item.category === 'climate' ? '#2196F3' : 
-                                          item.category === 'conservation' ? '#4CAF50' : '#9C27B0' }}
-                  onClick={() => openNewsLink(item.url)}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold">{item.title}</h3>
-                      <Badge className={`${getNewsCategoryColor(item.category)} text-white ml-2`}>
-                        {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">{item.summary}</p>
-                    <div className="flex justify-between items-center text-xs text-muted-foreground">
-                      <span>{item.source}</span>
-                      <span className="flex items-center">
-                        {item.date} 
-                        <span className="ml-2 text-blue-600">Read more →</span>
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-            <Alert className="mt-4 bg-muted/50">
-              <AlertDescription>
-                <strong>What this means:</strong> Staying informed about environmental policy changes, conservation efforts, and climate research helps connect forest cover data to broader ecological and social contexts. Recent trends show increasing community involvement in conservation and growing awareness about climate impacts.
-              </AlertDescription>
-            </Alert>
           </TabsContent>
         </Tabs>
       </CardContent>

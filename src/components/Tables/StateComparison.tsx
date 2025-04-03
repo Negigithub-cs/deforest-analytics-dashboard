@@ -16,6 +16,7 @@ import {
   getTopConservationStates, 
   getConservationStatusColor 
 } from '@/data/mockData';
+import { stateIdToName } from '@/components/Map/utils/stateMappings';
 
 interface StateComparisonProps {
   mode: 'positive' | 'negative';
@@ -63,7 +64,7 @@ const StateComparison: React.FC<StateComparisonProps> = ({ mode }) => {
             {states.map((state, index) => (
               <TableRow key={state.id}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell>{state.name}</TableCell>
+                <TableCell>{stateIdToName[state.id] || state.name}</TableCell>
                 <TableCell>
                   {state.deforestationRate.toFixed(1)}% per year
                 </TableCell>

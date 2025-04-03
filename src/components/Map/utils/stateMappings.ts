@@ -36,14 +36,68 @@ export const stateMapping: Record<string, string> = {
   "Jammu and Kashmir": "JK",
   "Ladakh": "LA", 
   "Lakshadweep": "LD",
-  "Puducherry": "PY"
+  "Puducherry": "PY",
+  // Additional mappings for different naming conventions in various GeoJSON sources
+  "Andaman & Nicobar Island": "AN",
+  "Andaman & Nicobar": "AN",
+  "Arunanchal Pradesh": "AR",
+  "Chattisgarh": "CG",
+  "Pondicherry": "PY",
+  "NCT of Delhi": "DL",
+  "NCT Delhi": "DL",
+  "National Capital Territory of Delhi": "DL",
+  "Orissa": "OD",
+  "Uttaranchal": "UK",
+  "Jammu & Kashmir": "JK",
+  "Dadra & Nagar Haveli": "DN",
+  "Dadra and Nagar Haveli": "DN",
+  "Daman & Diu": "DN",
+  "Daman and Diu": "DN",
+  "The Dadra And Nagar Haveli And Daman And Diu": "DN",
+  "Jammu And Kashmir": "JK",
+  "Andaman And Nicobar Islands": "AN"
 };
 
 // Reverse mapping for displaying state names
-export const stateIdToName: Record<string, string> = {};
-Object.entries(stateMapping).forEach(([name, id]) => {
-  stateIdToName[id] = name;
-});
+export const stateIdToName: Record<string, string> = {
+  "AP": "Andhra Pradesh",
+  "AR": "Arunachal Pradesh",
+  "AS": "Assam",
+  "BR": "Bihar",
+  "CG": "Chhattisgarh",
+  "GA": "Goa",
+  "GJ": "Gujarat",
+  "HR": "Haryana",
+  "HP": "Himachal Pradesh",
+  "JH": "Jharkhand",
+  "KA": "Karnataka",
+  "KL": "Kerala",
+  "MP": "Madhya Pradesh",
+  "MH": "Maharashtra",
+  "MN": "Manipur",
+  "ML": "Meghalaya",
+  "MZ": "Mizoram",
+  "NL": "Nagaland",
+  "OD": "Odisha",
+  "PB": "Punjab",
+  "RJ": "Rajasthan",
+  "SK": "Sikkim",
+  "TN": "Tamil Nadu",
+  "TS": "Telangana",
+  "TR": "Tripura",
+  "UP": "Uttar Pradesh",
+  "UK": "Uttarakhand",
+  "WB": "West Bengal",
+  "AN": "Andaman and Nicobar Islands",
+  "CH": "Chandigarh",
+  "DN": "Dadra and Nagar Haveli and Daman and Diu",
+  "DL": "Delhi",
+  "JK": "Jammu and Kashmir",
+  "LA": "Ladakh",
+  "LD": "Lakshadweep",
+  "PY": "Puducherry",
+  "IN": "India"
+};
 
 export const getStateIdFromName = (name: string): string => {
   return stateMapping[name] || "";

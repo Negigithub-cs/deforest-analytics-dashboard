@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, LineChart, Thermometer, MapPin, Info } from 'lucide-react';
@@ -9,6 +10,7 @@ import CorrelationAnalysis from '@/components/Charts/CorrelationAnalysis';
 import PredictiveModel from '@/components/Charts/PredictiveModel';
 import DistrictComparison from '@/components/Tables/DistrictComparison';
 import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
+import ForestFireAnalysis from '@/components/RealTime/ForestFireAnalysis';
 
 interface DashboardTabsProps {
   selectedState: string;
@@ -116,6 +118,9 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
           <EnvironmentalUpdates 
             stateId={selectedState} 
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ForestFireAnalysis stateId={selectedState} />
         </div>
       </TabsContent>
       

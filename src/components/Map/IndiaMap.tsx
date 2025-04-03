@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   ComposableMap, 
@@ -20,7 +19,7 @@ import { getStateIdFromName } from './utils/stateMappings';
 import { getStateFill } from './utils/mapHelpers';
 
 // Use a reliable GeoJSON source for India with CORS support
-const INDIA_TOPO_JSON = "https://gist.githubusercontent.com/AnimeshN/88d7735728663a8aec3141298cefb3fa/raw/india_state_boundaries.geojson";
+const INDIA_TOPO_JSON = "https://raw.githubusercontent.com/geohacker/india/master/states/india_state.geojson";
 
 interface IndiaMapProps {
   selectedState: string;
@@ -46,7 +45,6 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
   const [showInfo, setShowInfo] = useState(false);
   const [forestDensityView, setForestDensityView] = useState(false);
   
-  // Fetch the GeoJSON data
   useEffect(() => {
     setIsLoading(true);
     
@@ -69,7 +67,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
   }, []);
   
   const handleStateMouseEnter = (geo: any) => {
-    const stateName = geo.properties.NAME_1 || geo.properties.name;
+    const stateName = geo.properties.NAME_1 || geo.properties.name || geo.properties.ST_NM || geo.properties.state;
     const stateId = getStateIdFromName(stateName);
     setTooltipData({ id: stateId, state: stateName });
   };
@@ -79,7 +77,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
   };
   
   const handleStateClick = (geo: any) => {
-    const stateName = geo.properties.NAME_1 || geo.properties.name;
+    const stateName = geo.properties.NAME_1 || geo.properties.name || geo.properties.ST_NM || geo.properties.state;
     const stateId = getStateIdFromName(stateName);
     if (stateId) {
       onStateSelect(stateId);
@@ -144,7 +142,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
                 <Geographies geography={geoData}>
                   {({ geographies }) =>
                     geographies.map(geo => {
-                      const stateName = geo.properties.NAME_1 || geo.properties.name || geo.properties.ST_NM;
+                      const stateName = geo.properties.NAME_1 || geo.properties.name || geo.properties.ST_NM || geo.properties.state;
                       if (!stateName) return null;
                       const stateId = getStateIdFromName(stateName);
                       
@@ -174,7 +172,6 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
     );
   };
   
-  // Get appropriate title based on year
   const getMapTitle = () => {
     const currentYear = new Date().getFullYear();
     const yearDisplay = selectedYear > currentYear ? `${selectedYear} (Projected)` : selectedYear;
