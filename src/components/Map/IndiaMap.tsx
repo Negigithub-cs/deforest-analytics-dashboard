@@ -14,11 +14,11 @@ import {
 } from "@/components/ui/tooltip";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStateById, getConservationStatusColor } from '@/data/mockData';
-import { AlertCircle, Info, Maximize } from 'lucide-react';
+import { AlertCircle, Info } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
-// Use a reliable GeoJSON source for India (this was causing the 404 error)
-const INDIA_TOPO_JSON = "https://raw.githubusercontent.com/rawgraphs/rawgraphs-core/master/data/india-states.geojson";
+// Use a reliable GeoJSON source for India with CORS support
+const INDIA_TOPO_JSON = "https://gist.githubusercontent.com/AnimeshN/88d7735728663a8aec3141298cefb3fa/raw/india_state_boundaries.geojson";
 
 interface IndiaMapProps {
   selectedState: string;
@@ -69,6 +69,12 @@ const stateMapping: Record<string, string> = {
   "Lakshadweep": "LD",
   "Puducherry": "PY"
 };
+
+// Reverse mapping for displaying state names
+const stateIdToName: Record<string, string> = {};
+Object.entries(stateMapping).forEach(([name, id]) => {
+  stateIdToName[id] = name;
+});
 
 const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => {
   const [tooltipData, setTooltipData] = useState<MapStateData | null>(null);
@@ -300,7 +306,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
                 <Geographies geography={geoData}>
                   {({ geographies }) =>
                     geographies.map(geo => {
-                      const stateName = geo.properties.NAME_1 || geo.properties.name;
+                      const stateName = geo.properties.NAME_1 || geo.properties.name || geo.properties.ST_NM;
                       if (!stateName) return null;
                       const stateId = getStateIdFromName(stateName);
                       

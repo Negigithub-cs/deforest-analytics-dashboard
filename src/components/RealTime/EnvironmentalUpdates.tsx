@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Thermometer, Wind, Activity } from 'lucide-react';
+import { Thermometer, Wind, Activity, Flame } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { getStateById } from '@/data/mockData';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
@@ -54,6 +54,13 @@ interface DistrictData {
   year: number;
 }
 
+interface ForestFireData {
+  year: number;
+  forestFireCount: number;
+  affectedAreaSqKm: number;
+  estimatedCarbonEmission: number;
+}
+
 const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
   const [activeTab, setActiveTab] = useState('aqi');
   const [aqiData, setAqiData] = useState<AQIReading[]>([]);
@@ -63,6 +70,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
   const [temperatureTrend, setTemperatureTrend] = useState<any[]>([]);
   const [topDistrictsLoss, setTopDistrictsLoss] = useState<DistrictData[]>([]);
   const [topDistrictsGain, setTopDistrictsGain] = useState<DistrictData[]>([]);
+  const [forestFireData, setForestFireData] = useState<ForestFireData[]>([]);
   
   const stateName = getStateById(stateId)?.name || 'India';
   
@@ -236,6 +244,24 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       };
     });
 
+    // Forest fire historical data
+    const mockForestFireData = Array.from({ length: 8 }, (_, i) => {
+      const year = 2016 + i;
+      // Base values that generally increase with random fluctuations
+      let fireCount = 1200 + (i * 130) + Math.floor(Math.random() * 300 - 150);
+      // Add a peak in 2020-2021 to simulate a bad fire year
+      if (year === 2020 || year === 2021) {
+        fireCount += 500;
+      }
+      
+      return {
+        year,
+        forestFireCount: fireCount,
+        affectedAreaSqKm: Math.round(fireCount * 1.2 * (0.9 + Math.random() * 0.4)),
+        estimatedCarbonEmission: Math.round(fireCount * 1.65 * (0.85 + Math.random() * 0.3))
+      };
+    });
+
     // Top districts with forest loss
     const mockTopDistrictsLoss: DistrictData[] = [
       {
@@ -321,6 +347,7 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
     setTemperatureTrend(mockTemperatureTrend);
     setTopDistrictsLoss(mockTopDistrictsLoss);
     setTopDistrictsGain(mockTopDistrictsGain);
+    setForestFireData(mockForestFireData);
   };
   
   const getAQIColor = (category: string) => {
@@ -367,10 +394,14 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full grid grid-cols-2 mb-4">
+          <TabsList className="w-full grid grid-cols-3 mb-4">
             <TabsTrigger value="aqi" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
               <Wind className="h-4 w-4 mr-2" />
               Air Quality
+            </TabsTrigger>
+            <TabsTrigger value="forestfires" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
+              <Flame className="h-4 w-4 mr-2" />
+              Forest Fires
             </TabsTrigger>
             <TabsTrigger value="news" className="data-[state=active]:bg-forest-light data-[state=active]:text-white">
               <Thermometer className="h-4 w-4 mr-2" />
@@ -475,6 +506,121 @@ const EnvironmentalUpdates: React.FC<{ stateId: string }> = ({ stateId }) => {
                   </CardContent>
                 </Card>
               </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="forestfires" className="animate-fade-in">
+            <div className="text-sm text-muted-foreground mb-3">
+              <p>Historical forest fire analysis for {stateName}. These charts show trends in forest fire frequency and impact over time.</p>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-4 mb-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-md">Historical Forest Fire Trends (2016-2023)</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={forestFireData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="year" />
+                        <YAxis yAxisId="left" orientation="left" stroke="#FF5722" />
+                        <YAxis yAxisId="right" orientation="right" stroke="#FFC107" />
+                        <Tooltip />
+                        <Legend />
+                        <Line 
+                          yAxisId="left"
+                          type="monotone" 
+                          dataKey="forestFireCount" 
+                          name="Number of Forest Fires" 
+                          stroke="#FF5722" 
+                          activeDot={{ r: 8 }} 
+                          strokeWidth={2}
+                        />
+                        <Line 
+                          yAxisId="right"
+                          type="monotone" 
+                          dataKey="affectedAreaSqKm" 
+                          name="Affected Area (sq km)" 
+                          stroke="#FFC107" 
+                          strokeWidth={2}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <Alert className="mt-4 mb-4 bg-muted/50">
+              <AlertDescription>
+                <strong>Impact of Forest Fires:</strong> Forest fires significantly affect biodiversity, soil quality, and carbon emissions. Forest management practices and climate change are key factors influencing fire frequency and intensity.
+              </AlertDescription>
+            </Alert>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-md">Carbon Emission Impact</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={forestFireData}
+                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="year" />
+                        <YAxis />
+                        <Tooltip />
+                        <Area 
+                          type="monotone" 
+                          dataKey="estimatedCarbonEmission" 
+                          name="Estimated Carbon Emissions (tons)" 
+                          stroke="#FF9800" 
+                          fill="#FF9800" 
+                          fillOpacity={0.3} 
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-md">Key Impacts of Forest Fires</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div>
+                      <h4 className="text-sm font-medium">Biodiversity Loss</h4>
+                      <p className="text-xs text-muted-foreground">Destruction of habitat and direct mortality of wildlife species</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Soil Degradation</h4>
+                      <p className="text-xs text-muted-foreground">Reduced fertility and increased erosion after intense fires</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Air Quality Deterioration</h4>
+                      <p className="text-xs text-muted-foreground">Release of particulate matter and toxic gases affecting human health</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Carbon Release</h4>
+                      <p className="text-xs text-muted-foreground">Conversion of stored carbon to atmospheric CO2, contributing to climate change</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium">Watershed Damage</h4>
+                      <p className="text-xs text-muted-foreground">Altered water flow patterns and increased sedimentation in water bodies</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
           
