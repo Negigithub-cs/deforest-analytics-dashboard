@@ -7,15 +7,17 @@ import {
   ZoomableGroup
 } from 'react-simple-maps';
 import { 
-  Tooltip, 
-  TooltipContent, 
   TooltipProvider, 
-  TooltipTrigger 
+  Tooltip
 } from "@/components/ui/tooltip";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getStateById, getConservationStatusColor } from '@/data/mockData';
-import { AlertCircle, Info } from 'lucide-react';
-import { Button } from "@/components/ui/button";
+import { getStateById } from '@/data/mockData';
+import MapControls from './MapControls';
+import MapLegend from './MapLegend';
+import MapStatus from './MapStatus';
+import StateTooltip from './StateTooltip';
+import { getStateIdFromName } from './utils/stateMappings';
+import { getStateFill } from './utils/mapHelpers';
 
 // Use a reliable GeoJSON source for India with CORS support
 const INDIA_TOPO_JSON = "https://gist.githubusercontent.com/AnimeshN/88d7735728663a8aec3141298cefb3fa/raw/india_state_boundaries.geojson";
@@ -23,6 +25,7 @@ const INDIA_TOPO_JSON = "https://gist.githubusercontent.com/AnimeshN/88d77357286
 interface IndiaMapProps {
   selectedState: string;
   onStateSelect: (stateId: string) => void;
+  selectedYear?: number;
 }
 
 interface MapStateData {
@@ -30,53 +33,11 @@ interface MapStateData {
   state: string;
 }
 
-// Simple mapping between topojson state names and our state ids
-const stateMapping: Record<string, string> = {
-  "Andhra Pradesh": "AP",
-  "Arunachal Pradesh": "AR",
-  "Assam": "AS",
-  "Bihar": "BR",
-  "Chhattisgarh": "CG",
-  "Goa": "GA",
-  "Gujarat": "GJ",
-  "Haryana": "HR",
-  "Himachal Pradesh": "HP",
-  "Jharkhand": "JH",
-  "Karnataka": "KA",
-  "Kerala": "KL",
-  "Madhya Pradesh": "MP",
-  "Maharashtra": "MH",
-  "Manipur": "MN",
-  "Meghalaya": "ML",
-  "Mizoram": "MZ",
-  "Nagaland": "NL",
-  "Odisha": "OD",
-  "Punjab": "PB",
-  "Rajasthan": "RJ",
-  "Sikkim": "SK",
-  "Tamil Nadu": "TN",
-  "Telangana": "TS",
-  "Tripura": "TR",
-  "Uttar Pradesh": "UP",
-  "Uttarakhand": "UK",
-  "West Bengal": "WB",
-  "Andaman and Nicobar Islands": "AN",
-  "Chandigarh": "CH",
-  "Dadra and Nagar Haveli and Daman and Diu": "DN",
-  "Delhi": "DL",
-  "Jammu and Kashmir": "JK",
-  "Ladakh": "LA", 
-  "Lakshadweep": "LD",
-  "Puducherry": "PY"
-};
-
-// Reverse mapping for displaying state names
-const stateIdToName: Record<string, string> = {};
-Object.entries(stateMapping).forEach(([name, id]) => {
-  stateIdToName[id] = name;
-});
-
-const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => {
+const IndiaMap: React.FC<IndiaMapProps> = ({ 
+  selectedState, 
+  onStateSelect,
+  selectedYear = 2024 
+}) => {
   const [tooltipData, setTooltipData] = useState<MapStateData | null>(null);
   const [geoData, setGeoData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -106,36 +67,6 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
         setIsLoading(false);
       });
   }, []);
-  
-  const getStateIdFromName = (name: string): string => {
-    return stateMapping[name] || "";
-  };
-  
-  const getStateFill = (stateId: string): string => {
-    if (forestDensityView) {
-      const stateData = getStateById(stateId);
-      if (!stateData) return "#EEEEEE";
-      
-      const latestData = stateData.forestData[stateData.forestData.length - 1];
-      const totalArea = latestData.totalForestCover + latestData.nonForest;
-      const forestPercent = (latestData.totalForestCover / totalArea) * 100;
-      
-      if (forestPercent > 60) return "#1B5E20"; // Dark green - very dense
-      if (forestPercent > 40) return "#2E7D32"; // Medium green - moderately dense
-      if (forestPercent > 20) return "#4CAF50"; // Light green - open forest
-      if (forestPercent > 10) return "#A5D6A7"; // Very light green - minimal forest
-      return "#EEEEEE"; // Gray - almost no forest
-    } else {
-      if (stateId === selectedState) {
-        return "#2E7D32"; // Highlight selected state
-      }
-      
-      const stateData = getStateById(stateId);
-      if (!stateData) return "#EEEEEE";
-      
-      return getConservationStatusColor(stateData.conservationStatus);
-    }
-  };
   
   const handleStateMouseEnter = (geo: any) => {
     const stateName = geo.properties.NAME_1 || geo.properties.name;
@@ -168,121 +99,28 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
   const handleMoveEnd = (position: any) => {
     setPosition(position);
   };
+
+  const getStateFillForYear = (stateId: string): string => {
+    return getStateFill(stateId, selectedState, forestDensityView, selectedYear);
+  };
   
   const renderMap = () => {
-    if (isLoading) {
-      return (
-        <div className="flex flex-col items-center justify-center h-64 gap-2">
-          <div className="w-8 h-8 border-4 border-forest border-t-transparent rounded-full animate-spin"></div>
-          <p>Loading map data...</p>
-        </div>
-      );
-    }
-    
-    if (error) {
-      return (
-        <div className="flex flex-col items-center justify-center h-64 text-red-500 gap-2">
-          <AlertCircle size={24} />
-          <p>{error}</p>
-          <Button 
-            variant="outline" 
-            onClick={() => window.location.reload()}
-            className="mt-2"
-          >
-            Retry
-          </Button>
-        </div>
-      );
+    if (isLoading || error) {
+      return <MapStatus isLoading={isLoading} error={error} />;
     }
     
     return (
       <TooltipProvider>
         <div className="relative h-[400px]">
-          <div className="absolute top-2 right-2 z-10 flex gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handleZoomIn}
-              className="bg-white/90 hover:bg-white"
-            >
-              <span className="text-xl">+</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={handleZoomOut}
-              className="bg-white/90 hover:bg-white"
-            >
-              <span className="text-xl">-</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              onClick={() => setShowInfo(!showInfo)}
-              className="bg-white/90 hover:bg-white"
-            >
-              <Info size={18} />
-            </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => setForestDensityView(!forestDensityView)}
-              className="bg-white/90 hover:bg-white text-xs px-2"
-            >
-              {forestDensityView ? "Conservation View" : "Forest Density View"}
-            </Button>
-          </div>
+          <MapControls 
+            onZoomIn={handleZoomIn}
+            onZoomOut={handleZoomOut}
+            onToggleInfo={() => setShowInfo(!showInfo)}
+            onToggleView={() => setForestDensityView(!forestDensityView)}
+            forestDensityView={forestDensityView}
+          />
           
-          {showInfo && (
-            <div className="absolute top-14 right-2 w-64 p-3 bg-white/90 rounded-md shadow-md text-xs z-10 border border-gray-200">
-              <h4 className="font-bold mb-1">Map Legend</h4>
-              <div className="grid grid-cols-2 gap-1">
-                {forestDensityView ? (
-                  <>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-green-900"></div>
-                      <span>Very Dense ({'>'}60%)</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-green-700"></div>
-                      <span>Moderately Dense ({'>'}40%)</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-green-500"></div>
-                      <span>Open Forest ({'>'}20%)</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-green-200"></div>
-                      <span>Minimal Forest ({'>'}10%)</span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-green-800"></div>
-                      <span>Excellent</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-green-500"></div>
-                      <span>Good</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-yellow-500"></div>
-                      <span>Fair</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-orange-500"></div>
-                      <span>Poor</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 rounded-sm bg-red-500"></div>
-                      <span>Critical</span>
-                    </div>
-                  </>
-                )}
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">Click on any state to view detailed information</p>
-            </div>
-          )}
+          {showInfo && <MapLegend showForestDensity={forestDensityView} />}
           
           <ComposableMap
             projection="geoMercator"
@@ -312,56 +150,17 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
                       
                       return (
                         <Tooltip key={geo.rsmKey}>
-                          <TooltipTrigger asChild>
-                            <Geography
-                              geography={geo}
-                              fill={getStateFill(stateId)}
-                              stroke="#FFFFFF"
-                              strokeWidth={0.75}
-                              style={{
-                                default: {
-                                  fill: getStateFill(stateId),
-                                  stroke: "#FFFFFF",
-                                  strokeWidth: 0.75,
-                                  outline: "none"
-                                },
-                                hover: {
-                                  fill: "#2E7D32",
-                                  stroke: "#FFFFFF",
-                                  strokeWidth: 0.75,
-                                  outline: "none",
-                                  cursor: "pointer"
-                                },
-                                pressed: {
-                                  fill: "#1B5E20",
-                                  stroke: "#FFFFFF",
-                                  strokeWidth: 0.75,
-                                  outline: "none"
-                                }
-                              }}
-                              onMouseEnter={() => handleStateMouseEnter(geo)}
-                              onMouseLeave={handleStateMouseLeave}
-                              onClick={() => handleStateClick(geo)}
-                            />
-                          </TooltipTrigger>
-                          {stateId && (
-                            <TooltipContent>
-                              <div>
-                                <p className="font-bold">{stateName}</p>
-                                {getStateById(stateId) && (
-                                  <>
-                                    <p>Conservation Status: {getStateById(stateId)?.conservationStatus}</p>
-                                    <p>Deforestation Rate: {getStateById(stateId)?.deforestationRate.toFixed(1)}%</p>
-                                    {forestDensityView && getStateById(stateId)?.forestData.length > 0 && (
-                                      <p>Forest Cover: {Math.round((getStateById(stateId)?.forestData[getStateById(stateId)!.forestData.length - 1].totalForestCover || 0) / 
-                                        ((getStateById(stateId)?.forestData[getStateById(stateId)!.forestData.length - 1].totalForestCover || 0) + 
-                                         (getStateById(stateId)?.forestData[getStateById(stateId)!.forestData.length - 1].nonForest || 0)) * 100)}%</p>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                            </TooltipContent>
-                          )}
+                          <StateTooltip 
+                            geo={geo}
+                            stateId={stateId}
+                            stateName={stateName}
+                            getStateFill={getStateFillForYear}
+                            handleStateMouseEnter={handleStateMouseEnter}
+                            handleStateMouseLeave={handleStateMouseLeave}
+                            handleStateClick={handleStateClick}
+                            forestDensityView={forestDensityView}
+                            selectedYear={selectedYear}
+                          />
                         </Tooltip>
                       );
                     })
@@ -375,12 +174,22 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ selectedState, onStateSelect }) => 
     );
   };
   
+  // Get appropriate title based on year
+  const getMapTitle = () => {
+    const currentYear = new Date().getFullYear();
+    const yearDisplay = selectedYear > currentYear ? `${selectedYear} (Projected)` : selectedYear;
+    
+    return forestDensityView 
+      ? `Forest Density View - ${yearDisplay}` 
+      : `State-wise Forest Status - ${yearDisplay}`;
+  };
+  
   return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-green-500"></div>
-          {forestDensityView ? "Forest Density View" : "State-wise Forest Status"}
+          {getMapTitle()}
         </CardTitle>
         <CardDescription>
           {forestDensityView 

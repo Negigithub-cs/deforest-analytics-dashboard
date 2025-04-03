@@ -8,6 +8,7 @@ import KeyInsights from './KeyInsights';
 import ForestCoverChange from '@/components/Charts/ForestCoverChange';
 import DashboardTabs from './DashboardTabs';
 import DashboardFooter from './DashboardFooter';
+import TimeSlider from '@/components/UI/TimeSlider';
 
 const Dashboard = () => {
   const [selectedState, setSelectedState] = useState('IN');
@@ -55,6 +56,17 @@ const Dashboard = () => {
     setTimeRange(range);
   };
 
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    
+    // Update time range based on year
+    if (year <= 2024) {
+      setTimeRange('historical');
+    } else {
+      setTimeRange('projected');
+    }
+  };
+
   return (
     <div className="container mx-auto py-6 min-h-screen">
       {/* Header */}
@@ -72,6 +84,14 @@ const Dashboard = () => {
       <KeyInsights 
         selectedState={selectedState} 
         showInsights={showInsights} 
+      />
+      
+      {/* Time Slider */}
+      <TimeSlider 
+        minYear={2013}
+        maxYear={2030}
+        currentYear={selectedYear}
+        onChange={handleYearChange}
       />
       
       {/* Forest Cover Change Summary */}

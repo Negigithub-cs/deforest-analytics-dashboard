@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, LineChart, Thermometer, MapPin, Info } from 'lucide-react';
@@ -79,7 +78,8 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <IndiaMap 
             selectedState={selectedState} 
-            onStateSelect={onStateSelect} 
+            onStateSelect={onStateSelect}
+            selectedYear={selectedYear}
           />
           <ForestTypeDistribution 
             stateId={selectedState} 
