@@ -66,7 +66,50 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
       }
     }
   };
+
+  // If overall India is selected, render India map
+  if (selectedState === "IN") {
+    return (
+      <TooltipProvider>
+        <div className="relative bg-blue-50 p-6 rounded-lg border border-blue-100 flex justify-center items-center">
+          <img 
+            src="https://upload.wikimedia.org/wikipedia/commons/c/c9/India_relief_location_map.jpg" 
+            alt="Physical Map of India" 
+            className="max-w-full max-h-[320px] rounded-md shadow-md"
+          />
+          <div className="absolute bottom-3 right-3 bg-white/80 px-2 py-1 text-xs rounded shadow">
+            Physical Map of India
+          </div>
+        </div>
+      </TooltipProvider>
+    );
+  }
   
+  // If a specific state is selected, render that state's map
+  if (selectedState && selectedState !== "IN") {
+    const stateData = getStateById(selectedState);
+    if (stateData) {
+      const stateName = stateData.name;
+      return (
+        <TooltipProvider>
+          <div className="relative bg-blue-50 p-6 rounded-lg border border-blue-100 flex justify-center items-center">
+            <div className="text-center">
+              <img 
+                src={`https://source.unsplash.com/featured/?${stateName},map,geography,india`} 
+                alt={`Physical Map of ${stateName}`} 
+                className="max-w-full max-h-[320px] rounded-md shadow-md"
+              />
+              <div className="absolute bottom-3 right-3 bg-white/80 px-2 py-1 text-xs rounded shadow">
+                Physical Map of {stateName}
+              </div>
+            </div>
+          </div>
+        </TooltipProvider>
+      );
+    }
+  }
+  
+  // Fallback to showing state blocks with forest density
   return (
     <TooltipProvider>
       <div className="bg-blue-50 p-6 rounded-lg border border-blue-100 flex flex-wrap justify-center items-start gap-3 max-h-[320px] overflow-y-auto">

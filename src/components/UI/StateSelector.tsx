@@ -19,10 +19,18 @@ interface StateSelectorProps {
 const StateSelector: React.FC<StateSelectorProps> = ({ selectedState, onStateChange }) => {
   const allStates = getAllStates();
   
+  // Find the selected state name to display
+  const getDisplayValue = () => {
+    if (selectedState === "IN") return "Overall";
+    
+    const state = allStates.find(state => state.id === selectedState);
+    return state ? state.name : "Select state";
+  };
+  
   return (
     <Select value={selectedState} onValueChange={onStateChange}>
-      <SelectTrigger className="w-[280px]">
-        <SelectValue placeholder="Select state" />
+      <SelectTrigger className="w-[280px] bg-white">
+        <SelectValue>{getDisplayValue()}</SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

@@ -32,7 +32,12 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
     const currentYear = new Date().getFullYear();
     const yearDisplay = selectedYear > currentYear ? `${selectedYear} (Projected)` : selectedYear;
     
-    return `India Forest Cover Map - ${yearDisplay}`;
+    if (selectedState === 'IN') {
+      return `India Forest Cover Map - ${yearDisplay}`;
+    } else {
+      const state = getStateById(selectedState);
+      return state ? `${state.name} Forest Cover Map - ${yearDisplay}` : `India Forest Cover Map - ${yearDisplay}`;
+    }
   };
   
   return (
@@ -43,7 +48,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
           {getMapTitle()}
         </CardTitle>
         <CardDescription>
-          Visualizing the geographic distribution of forest cover across states
+          Visualizing the geographic distribution of forest cover
         </CardDescription>
       </CardHeader>
       <CardContent>
