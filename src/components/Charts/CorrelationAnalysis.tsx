@@ -105,7 +105,7 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white/90 p-3 border rounded-md shadow-md text-sm">
+        <div className="bg-white p-3 border rounded-md shadow-md text-sm">
           <p className="font-bold mb-1">{data.name} ({data.year})</p>
           <p>Forest Cover: {data.forestCover.toLocaleString()} sq km</p>
           <p>Air Quality Index: {data.airQuality.toFixed(1)}</p>
@@ -120,7 +120,7 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white/90 p-3 border rounded-md shadow-md text-sm">
+        <div className="bg-white p-3 border rounded-md shadow-md text-sm">
           <p className="font-bold mb-1">{data.name} ({data.year})</p>
           <p>Forest Cover: {data.forestCover.toLocaleString()} sq km</p>
           <p>Temperature Anomaly: +{data.temperatureAnomaly.toFixed(2)}°C</p>
@@ -135,7 +135,7 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white/90 p-3 border rounded-md shadow-md text-sm">
+        <div className="bg-white p-3 border rounded-md shadow-md text-sm">
           <p className="font-bold mb-1">{data.year}</p>
           <p>Air Quality Index: {data.airQuality.toFixed(1)}</p>
           <p>Forest Cover: {(data.forestCover * 1000).toLocaleString()} sq km</p>
@@ -149,7 +149,7 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="bg-white/90 p-3 border rounded-md shadow-md text-sm">
+        <div className="bg-white p-3 border rounded-md shadow-md text-sm">
           <p className="font-bold mb-1">{data.year}</p>
           <p>Temperature: {data.temperature.toFixed(1)}°C</p>
           <p>Forest Cover: {(data.forestCover * 1000).toLocaleString()} sq km</p>
@@ -187,12 +187,12 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
           </TabsList>
           
           <TabsContent value="pollution" className="mt-4 animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="h-[280px]">
-                <h3 className="text-sm font-medium text-blue-800 mb-2">Correlation Scatter Plot</h3>
+            <div className="grid grid-cols-1 gap-4">
+              <div className="h-[350px] bg-white p-4 rounded-lg shadow-sm">
+                <h3 className="text-sm font-medium text-blue-800 mb-2">Forest Cover vs. Air Quality Index</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <ScatterChart
-                    margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                    margin={{ top: 20, right: 30, bottom: 60, left: 40 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                     <XAxis 
@@ -200,59 +200,68 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
                       dataKey="forestCover" 
                       name="Forest Cover" 
                       unit=" sq km" 
-                      label={{ value: 'Forest Cover (sq km)', position: 'bottom', offset: 0 }}
+                      label={{ value: 'Forest Cover (sq km)', position: 'bottom', offset: 20 }}
+                      fontSize={12}
+                      tickCount={5}
                     />
                     <YAxis 
                       type="number" 
                       dataKey="airQuality" 
                       name="Air Quality Index" 
                       label={{ value: 'Air Quality Index', angle: -90, position: 'insideLeft', offset: -5 }}
+                      fontSize={12}
                     />
                     <ZAxis type="category" dataKey="year" name="Year" />
                     <Tooltip content={<CustomPollutionTooltip />} />
-                    <Legend />
+                    <Legend wrapperStyle={{ bottom: 0 }} />
                     <Scatter 
                       name={`${stateData.name} (2013-2024)`} 
                       data={pollutionData} 
                       fill="#8884d8" 
                       line={{ stroke: '#8884d8', strokeWidth: 2 }} 
                       lineType="fitting"
+                      shape="circle"
+                      fillOpacity={0.8}
                     />
                     
                     {/* Add a trend line */}
                     <ReferenceLine 
                       stroke="red" 
-                      strokeDasharray="3 3" 
+                      strokeWidth={2}
+                      strokeDasharray="5 5" 
                       segment={getTrendLine(pollutionData.map(d => d.forestCover), pollutionData.map(d => d.airQuality))} 
                     />
                   </ScatterChart>
                 </ResponsiveContainer>
               </div>
               
-              <div className="h-[280px]">
-                <h3 className="text-sm font-medium text-blue-800 mb-2">Time Series Analysis</h3>
+              <div className="h-[350px] bg-white p-4 rounded-lg shadow-sm">
+                <h3 className="text-sm font-medium text-blue-800 mb-2">Time Series: Forest Cover and Air Quality</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={airQualityTimeData}
-                    margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                    margin={{ top: 20, right: 30, bottom: 60, left: 40 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                     <XAxis 
                       dataKey="year" 
                       name="Year" 
-                      label={{ value: 'Year', position: 'bottom', offset: 0 }}
+                      label={{ value: 'Year', position: 'bottom', offset: 20 }}
+                      fontSize={12}
                     />
                     <YAxis 
                       yAxisId="left"
                       label={{ value: 'Air Quality Index', angle: -90, position: 'insideLeft', offset: -5 }}
+                      fontSize={12}
                     />
                     <YAxis 
                       yAxisId="right"
                       orientation="right"
                       label={{ value: 'Forest Cover (1000 sq km)', angle: 90, position: 'insideRight', offset: 5 }}
+                      fontSize={12}
                     />
                     <Tooltip content={<TimeSeriesAQITooltip />} />
-                    <Legend />
+                    <Legend wrapperStyle={{ bottom: 0 }} />
                     <Line 
                       yAxisId="left"
                       type="monotone" 
@@ -260,8 +269,8 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
                       name="Air Quality Index" 
                       stroke="#8884d8" 
                       strokeWidth={2} 
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 6 }}
+                      dot={{ r: 5 }}
+                      activeDot={{ r: 8 }}
                     />
                     <Line 
                       yAxisId="right"
@@ -270,8 +279,8 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
                       name="Forest Cover (1000 sq km)" 
                       stroke="#4CAF50" 
                       strokeWidth={2} 
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 6 }}
+                      dot={{ r: 5 }}
+                      activeDot={{ r: 8 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -301,27 +310,26 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
               <p className="text-sm text-gray-700 mt-2">
                 <strong>Key Findings:</strong> The data shows that for every 1,000 sq km increase in forest cover, there is approximately a {Math.abs((pollutionCorrelation * 5)).toFixed(1)} point reduction in the Air Quality Index. This relationship is particularly important in urban and industrial areas where air pollution levels are typically higher.
               </p>
-              <p className="text-sm text-gray-700 mt-2">
-                <strong>Implications:</strong> Forest conservation and reforestation efforts could be strategically targeted in high-pollution areas to maximize air quality benefits. The time series graph clearly illustrates periods where forest cover changes correlate with air quality improvements or degradation.
-              </p>
             </div>
           </TabsContent>
           
           <TabsContent value="climate" className="mt-4 animate-fade-in">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="h-[280px]">
-                <h3 className="text-sm font-medium text-green-800 mb-2">Correlation Scatter Plot</h3>
+            <div className="grid grid-cols-1 gap-4">
+              <div className="h-[350px] bg-white p-4 rounded-lg shadow-sm">
+                <h3 className="text-sm font-medium text-green-800 mb-2">Forest Cover vs. Temperature Anomaly</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <ScatterChart
-                    margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                    margin={{ top: 20, right: 30, bottom: 60, left: 40 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                     <XAxis 
                       type="number" 
                       dataKey="forestCover" 
                       name="Forest Cover" 
-                      unit=" sq km" 
-                      label={{ value: 'Forest Cover (sq km)', position: 'bottom', offset: 0 }}
+                      unit=" sq km"
+                      label={{ value: 'Forest Cover (sq km)', position: 'bottom', offset: 20 }}
+                      fontSize={12}
+                      tickCount={5}
                     />
                     <YAxis 
                       type="number" 
@@ -329,52 +337,59 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
                       name="Temperature Anomaly" 
                       unit="°C" 
                       label={{ value: 'Temperature Anomaly (°C)', angle: -90, position: 'insideLeft', offset: -5 }}
+                      fontSize={12}
                     />
                     <ZAxis type="category" dataKey="year" name="Year" />
                     <Tooltip content={<CustomClimateTooltip />} />
-                    <Legend />
+                    <Legend wrapperStyle={{ bottom: 0 }} />
                     <Scatter 
                       name={`${stateData.name} (2013-2024)`} 
                       data={climateData} 
                       fill="#ff7300" 
                       line={{ stroke: '#ff7300', strokeWidth: 2 }} 
                       lineType="fitting"
+                      shape="circle"
+                      fillOpacity={0.8}
                     />
                     
                     {/* Add a trend line */}
                     <ReferenceLine 
                       stroke="red" 
-                      strokeDasharray="3 3" 
+                      strokeWidth={2}
+                      strokeDasharray="5 5" 
                       segment={getTrendLine(climateData.map(d => d.forestCover), climateData.map(d => d.temperatureAnomaly))} 
                     />
                   </ScatterChart>
                 </ResponsiveContainer>
               </div>
               
-              <div className="h-[280px]">
-                <h3 className="text-sm font-medium text-green-800 mb-2">Time Series Analysis</h3>
+              <div className="h-[350px] bg-white p-4 rounded-lg shadow-sm">
+                <h3 className="text-sm font-medium text-green-800 mb-2">Time Series: Forest Cover and Temperature</h3>
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={temperatureTimeData}
-                    margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                    margin={{ top: 20, right: 30, bottom: 60, left: 40 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                     <XAxis 
                       dataKey="year" 
                       name="Year" 
-                      label={{ value: 'Year', position: 'bottom', offset: 0 }}
+                      label={{ value: 'Year', position: 'bottom', offset: 20 }}
+                      fontSize={12}
                     />
                     <YAxis 
                       yAxisId="left"
                       label={{ value: 'Temperature (°C)', angle: -90, position: 'insideLeft', offset: -5 }}
+                      fontSize={12}
                     />
                     <YAxis 
                       yAxisId="right"
                       orientation="right"
                       label={{ value: 'Forest Cover (1000 sq km)', angle: 90, position: 'insideRight', offset: 5 }}
+                      fontSize={12}
                     />
                     <Tooltip content={<TimeSeriesTempTooltip />} />
-                    <Legend />
+                    <Legend wrapperStyle={{ bottom: 0 }} />
                     <Line 
                       yAxisId="left"
                       type="monotone" 
@@ -382,8 +397,8 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
                       name="Temperature (°C)" 
                       stroke="#FF5722" 
                       strokeWidth={2} 
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 6 }}
+                      dot={{ r: 5 }}
+                      activeDot={{ r: 8 }}
                     />
                     <Line 
                       yAxisId="right"
@@ -392,8 +407,8 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
                       name="Forest Cover (1000 sq km)" 
                       stroke="#4CAF50" 
                       strokeWidth={2} 
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 6 }}
+                      dot={{ r: 5 }}
+                      activeDot={{ r: 8 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -422,9 +437,6 @@ const CorrelationAnalysis: React.FC<CorrelationAnalysisProps> = ({ stateId }) =>
               </p>
               <p className="text-sm text-gray-700 mt-2">
                 <strong>Key Findings:</strong> The data indicates that for every 1,000 sq km of forest loss, there is approximately a {Math.abs((climateCorrelation * 0.8)).toFixed(1)}°C increase in average local temperature. This cooling effect of forests is more pronounced during summer months and in areas with continuous forest cover.
-              </p>
-              <p className="text-sm text-gray-700 mt-2">
-                <strong>Implications:</strong> Forest conservation plays a crucial role in climate adaptation and mitigation. This cooling effect is especially important in urban and peri-urban areas where heat island effects already elevate temperatures, making strategic urban forestry a valuable climate resilience strategy.
               </p>
             </div>
           </TabsContent>

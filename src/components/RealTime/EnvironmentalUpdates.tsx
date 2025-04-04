@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExternalLink, Newspaper, Flame, CloudRain, Thermometer, AlertTriangle } from "lucide-react";
+import { ExternalLink, Newspaper, Flame, CloudRain, Thermometer, AlertTriangle, FileText } from "lucide-react";
 import { getStateById } from '@/data/mockData';
 import ForestFireAnalysis from './ForestFireAnalysis';
 
@@ -32,7 +32,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'The Ministry of Environment and Forests has announced a major reforestation initiative targeting 10,000 hectares in the Western Ghats over the next five years.',
         source: 'The Hindu',
         date: '2025-03-21',
-        url: 'https://www.thehindu.com/news/national/new-reforestation-program-western-ghats/article1234.ece',
+        url: 'https://www.thehindu.com',
         category: 'conservation'
       },
       {
@@ -41,7 +41,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'Indigenous communities in Arunachal Pradesh are spearheading forest protection efforts, resulting in a 15% increase in forest cover in the region.',
         source: 'Down To Earth',
         date: '2025-03-15',
-        url: 'https://www.downtoearth.org.in/news/forests/local-communities-conservation-northeast-89765',
+        url: 'https://www.downtoearth.org.in',
         category: 'conservation'
       }
     ];
@@ -53,7 +53,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'Parliament has passed amendments to the Forest Conservation Act, introducing stricter penalties for illegal deforestation and providing greater protection for old-growth forests.',
         source: 'The Economic Times',
         date: '2025-03-25',
-        url: 'https://economictimes.indiatimes.com/news/economy/policy/forest-conservation-act-amendment/articleshow/54321.cms',
+        url: 'https://economictimes.indiatimes.com',
         category: 'policy'
       },
       {
@@ -62,7 +62,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'In a landmark judgment, the Supreme Court has mandated the creation of buffer zones extending 5km around all protected forest areas to prevent encroachment.',
         source: 'Indian Express',
         date: '2025-03-18',
-        url: 'https://indianexpress.com/article/india/supreme-court-buffer-zones-protected-forests-12345/',
+        url: 'https://indianexpress.com',
         category: 'policy'
       }
     ];
@@ -74,7 +74,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'After a coordinated effort from forest departments and disaster response teams, the major forest fires that ravaged parts of Uttarakhand have been brought under control.',
         source: 'Hindustan Times',
         date: '2025-03-27',
-        url: 'https://www.hindustantimes.com/india-news/uttarakhand-forest-fires-under-control/story-67890.html',
+        url: 'https://www.hindustantimes.com',
         category: 'disaster'
       },
       {
@@ -83,7 +83,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'A new study has directly linked recent devastating landslides in the Western Ghats to deforestation, showing how forest loss undermined soil stability in the affected areas.',
         source: 'Times of India',
         date: '2025-03-22',
-        url: 'https://timesofindia.indiatimes.com/india/landslides-western-ghats-deforestation-link/articleshow/09876.cms',
+        url: 'https://timesofindia.indiatimes.com',
         category: 'disaster'
       }
     ];
@@ -95,7 +95,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'Scientists from the Botanical Survey of India have discovered a previously unknown tree species in the remote forests of Arunachal Pradesh, highlighting the biodiversity of the region.',
         source: 'Science Daily India',
         date: '2025-03-20',
-        url: 'https://www.sciencedaily.com/india/releases/2025/03/250320123456.htm',
+        url: 'https://www.sciencedaily.com',
         category: 'research'
       },
       {
@@ -104,7 +104,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'Analysis of satellite imagery over the past decade reveals surprising forest recovery in parts of central India, attributed to successful community-based conservation programs.',
         source: 'Nature India',
         date: '2025-03-14',
-        url: 'https://www.nature.com/articles/india2025-1234',
+        url: 'https://www.nature.com',
         category: 'research'
       }
     ];
@@ -163,7 +163,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
       </CardHeader>
       <CardContent>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid grid-cols-3 gap-2">
+          <TabsList className="grid grid-cols-4 gap-2">
             <TabsTrigger value="news" className="flex items-center gap-1">
               <Newspaper className="h-4 w-4" />
               <span>News</span>
@@ -175,6 +175,10 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
             <TabsTrigger value="climate" className="flex items-center gap-1">
               <Thermometer className="h-4 w-4" />
               <span>Climate Impact</span>
+            </TabsTrigger>
+            <TabsTrigger value="report" className="flex items-center gap-1">
+              <FileText className="h-4 w-4" />
+              <span>Report</span>
             </TabsTrigger>
           </TabsList>
           
@@ -194,9 +198,9 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
                     href={item.url} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
+                    className="inline-block bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-full flex items-center gap-1 transition-colors"
                   >
-                    Read More <ExternalLink size={14} />
+                    Visit Source <ExternalLink size={14} />
                   </a>
                 </div>
               </div>
@@ -296,6 +300,101 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
                     <li>Reduced forest regeneration rates in areas experiencing more frequent drought</li>
                   </ul>
                 </div>
+              </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="report" className="space-y-4">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-green-800 flex items-center gap-2">
+                  <FileText className="h-5 w-5"/>
+                  Forest Status Report: {stateData.name}
+                </h2>
+                <button className="flex items-center gap-1 px-3 py-1.5 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg transition-colors">
+                  <FileText className="h-4 w-4" />
+                  Download PDF
+                </button>
+              </div>
+              
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2 text-green-700">Executive Summary</h3>
+                    <p className="text-gray-700">
+                      This report provides a comprehensive analysis of forest cover status, trends, and environmental impacts 
+                      in {stateData.name}. The region currently has a conservation status rated as 
+                      <span className="font-medium"> {stateData.conservationStatus}</span>, with an annual deforestation 
+                      rate of {stateData.deforestationRate.toFixed(1)}%.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2 text-green-700">Key Findings</h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                      <li>Total forest area: {Math.round(stateData.forestData[stateData.forestData.length-1].totalForestCover).toLocaleString()} sq km</li>
+                      <li>Forest density classification: {stateData.conservationStatus}</li>
+                      <li>Primary threats: {stateData.deforestationRate > 1 ? 'Agricultural expansion, logging, and urbanization' : 'Climate change and invasive species'}</li>
+                      <li>Air quality correlation: {stateData.deforestationRate > 0.8 ? 'Strong negative impact observed' : 'Moderate positive influence on regional air quality'}</li>
+                      <li>Climate mitigation potential: {stateData.conservationStatus === 'Excellent' || stateData.conservationStatus === 'Good' ? 'High carbon sequestration value' : 'Moderate to low carbon storage capacity'}</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="space-y-5">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2 text-green-700">Historical Trends (2013-2024)</h3>
+                    <p className="text-gray-700">
+                      Forest cover in {stateData.name} has shown a 
+                      {stateData.deforestationRate > 0 ? ' decline ' : ' growth '} 
+                      over the past decade at an average annual rate of 
+                      {stateData.deforestationRate > 0 ? ' -' + stateData.deforestationRate.toFixed(1) : ' +' + Math.abs(stateData.deforestationRate).toFixed(1)}%. 
+                      The most significant changes have occurred in the 
+                      {stateData.forestData[0].veryDenseForest > stateData.forestData[0].openForest ? ' very dense forest ' : ' open forest '} 
+                      category.
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2 text-green-700">Recommendations</h3>
+                    <ul className="list-disc list-inside space-y-1 text-gray-700">
+                      <li>Implement stricter enforcement of forest protection laws</li>
+                      <li>Expand community-based forest management programs</li>
+                      <li>Prioritize reforestation of degraded areas with native species</li>
+                      <li>Develop sustainable forestry practices for timber extraction</li>
+                      <li>Integrate forest conservation into climate adaptation planning</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <h3 className="font-semibold text-green-800 mb-2">Conservation Potential Assessment</h3>
+                <div className="flex items-center gap-3">
+                  <div className="w-full bg-gray-200 rounded-full h-4">
+                    <div 
+                      className={`h-4 rounded-full ${
+                        stateData.conservationStatus === 'Excellent' ? 'bg-green-500 w-[95%]' :
+                        stateData.conservationStatus === 'Good' ? 'bg-green-500 w-[75%]' :
+                        stateData.conservationStatus === 'Fair' ? 'bg-yellow-500 w-[50%]' :
+                        stateData.conservationStatus === 'Poor' ? 'bg-orange-500 w-[25%]' :
+                        'bg-red-500 w-[10%]'
+                      }`}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-medium w-16">
+                    {stateData.conservationStatus === 'Excellent' ? '95%' :
+                     stateData.conservationStatus === 'Good' ? '75%' :
+                     stateData.conservationStatus === 'Fair' ? '50%' :
+                     stateData.conservationStatus === 'Poor' ? '25%' : '10%'}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm text-green-800">
+                  Based on current forest health, biodiversity metrics, and protection status, {stateData.name} 
+                  shows {stateData.conservationStatus === 'Excellent' || stateData.conservationStatus === 'Good' ? 
+                  'high potential' : stateData.conservationStatus === 'Fair' ? 'moderate potential' : 'limited potential'} 
+                  for successful conservation initiatives.
+                </p>
               </div>
             </div>
           </TabsContent>

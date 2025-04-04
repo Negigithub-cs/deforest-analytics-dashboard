@@ -26,11 +26,11 @@ const StateSelector: React.FC<StateSelectorProps> = ({ selectedState, onStateCha
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>All India</SelectLabel>
-          <SelectItem value="IN">India (Overall)</SelectItem>
+          <SelectLabel>National Overview</SelectLabel>
+          <SelectItem value="IN">Overall</SelectItem>
         </SelectGroup>
         <SelectGroup>
-          <SelectLabel>States</SelectLabel>
+          <SelectLabel>States & Union Territories</SelectLabel>
           {allStates
             .filter(state => state.id !== 'IN')
             .sort((a, b) => a.name.localeCompare(b.name))
