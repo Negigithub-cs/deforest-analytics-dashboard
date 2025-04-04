@@ -30,7 +30,7 @@ const StateSelector: React.FC<StateSelectorProps> = ({ selectedState, onStateCha
   return (
     <Select value={selectedState} onValueChange={onStateChange}>
       <SelectTrigger className="w-[280px] bg-white">
-        <SelectValue>{getDisplayValue()}</SelectValue>
+        <SelectValue placeholder="Select state">{getDisplayValue()}</SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

@@ -71,11 +71,11 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
   if (selectedState === "IN") {
     return (
       <TooltipProvider>
-        <div className="relative bg-blue-50 p-6 rounded-lg border border-blue-100 flex justify-center items-center">
+        <div className="relative bg-blue-50 p-6 rounded-lg border border-blue-100 flex justify-center items-center h-[320px]">
           <img 
             src="https://upload.wikimedia.org/wikipedia/commons/c/c9/India_relief_location_map.jpg" 
             alt="Physical Map of India" 
-            className="max-w-full max-h-[320px] rounded-md shadow-md"
+            className="max-h-[290px] max-w-full object-contain rounded-md shadow-md"
           />
           <div className="absolute bottom-3 right-3 bg-white/80 px-2 py-1 text-xs rounded shadow">
             Physical Map of India
@@ -92,16 +92,14 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
       const stateName = stateData.name;
       return (
         <TooltipProvider>
-          <div className="relative bg-blue-50 p-6 rounded-lg border border-blue-100 flex justify-center items-center">
-            <div className="text-center">
-              <img 
-                src={`https://source.unsplash.com/featured/?${stateName},map,geography,india`} 
-                alt={`Physical Map of ${stateName}`} 
-                className="max-w-full max-h-[320px] rounded-md shadow-md"
-              />
-              <div className="absolute bottom-3 right-3 bg-white/80 px-2 py-1 text-xs rounded shadow">
-                Physical Map of {stateName}
-              </div>
+          <div className="relative bg-blue-50 p-6 rounded-lg border border-blue-100 flex justify-center items-center h-[320px]">
+            <img 
+              src={`https://source.unsplash.com/featured/?${encodeURIComponent(stateName)},map,geography,india`} 
+              alt={`Physical Map of ${stateName}`} 
+              className="max-h-[290px] max-w-full object-contain rounded-md shadow-md"
+            />
+            <div className="absolute bottom-3 right-3 bg-white/80 px-2 py-1 text-xs rounded shadow">
+              Physical Map of {stateName}
             </div>
           </div>
         </TooltipProvider>
