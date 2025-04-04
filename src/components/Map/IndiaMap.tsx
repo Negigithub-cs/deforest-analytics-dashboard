@@ -23,23 +23,16 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
   selectedYear = 2024 
 }) => {
   const [showInfo, setShowInfo] = useState(false);
-  const [forestDensityView, setForestDensityView] = useState(true);
   
   const handleToggleInfo = () => {
     setShowInfo(!showInfo);
-  };
-  
-  const handleToggleView = () => {
-    setForestDensityView(!forestDensityView);
   };
   
   const getMapTitle = () => {
     const currentYear = new Date().getFullYear();
     const yearDisplay = selectedYear > currentYear ? `${selectedYear} (Projected)` : selectedYear;
     
-    return forestDensityView 
-      ? `Forest Density View - ${yearDisplay}` 
-      : `State-wise Forest Status - ${yearDisplay}`;
+    return `India Forest Cover Map - ${yearDisplay}`;
   };
   
   return (
@@ -50,20 +43,12 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
           {getMapTitle()}
         </CardTitle>
         <CardDescription>
-          {forestDensityView 
-            ? "Visualizing the percentage of land covered by forests across states" 
-            : "View conservation status of forests across states"}
+          Visualizing the geographic distribution of forest cover across states
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="h-full flex flex-col items-center justify-center">
           <div className="w-full mb-4 flex justify-end gap-2">
-            <button 
-              onClick={handleToggleView}
-              className="px-3 py-1.5 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg transition-colors text-sm"
-            >
-              {forestDensityView ? "Conservation View" : "Forest Density View"}
-            </button>
             <button 
               onClick={handleToggleInfo}
               className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg transition-colors text-sm"
@@ -73,11 +58,11 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
           </div>
           
           <div className="relative w-full">
-            {showInfo && <MapLegend showForestDensity={forestDensityView} />}
+            {showInfo && <MapLegend showForestDensity={true} />}
             <SimpleStateMap 
               selectedState={selectedState}
               onStateSelect={onStateSelect}
-              forestDensityView={forestDensityView}
+              forestDensityView={true}
               selectedYear={selectedYear}
             />
           </div>

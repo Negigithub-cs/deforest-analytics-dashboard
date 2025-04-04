@@ -119,9 +119,6 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
             stateId={selectedState} 
           />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ForestFireAnalysis stateId={selectedState} />
-        </div>
       </TabsContent>
       
       <TabsContent value="comparison" className="space-y-6 animate-fade-in">
@@ -129,11 +126,13 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             <DistrictComparison mode="positive" stateId={selectedState} />
             <DistrictComparison mode="negative" stateId={selectedState} />
+            <ForestFireAnalysis stateId={selectedState} />
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             <DistrictComparison mode="positive" stateId={selectedState} />
             <DistrictComparison mode="negative" stateId={selectedState} />
+            <ForestFireAnalysis stateId={selectedState} />
           </div>
         )}
       </TabsContent>
