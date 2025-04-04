@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ExternalLink, Newspaper, Flame, CloudRain, Thermometer } from "lucide-react";
+import { ExternalLink, Newspaper, Flame, CloudRain, Thermometer, AlertTriangle } from "lucide-react";
 import { getStateById } from '@/data/mockData';
 import ForestFireAnalysis from './ForestFireAnalysis';
 
