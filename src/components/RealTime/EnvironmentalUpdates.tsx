@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,7 +20,6 @@ interface NewsItem {
   category: 'conservation' | 'policy' | 'disaster' | 'research';
 }
 
-// Helper function to generate district names for a state
 const getDistrictNames = (stateId: string): string[] => {
   const districtMap: Record<string, string[]> = {
     'AP': ['Anantapur', 'Chittoor', 'East Godavari', 'Guntur', 'Krishna', 'Kurnool', 'Nellore'],
@@ -44,7 +42,6 @@ const getDistrictNames = (stateId: string): string[] => {
   return districtMap[stateId] || ['Central', 'Eastern', 'Northern', 'Southern', 'Western'];
 };
 
-// Climate data for states
 interface ClimateRecord {
   stateId: string;
   stateName: string;
@@ -55,7 +52,6 @@ interface ClimateRecord {
   heatwaves: number;
 }
 
-// Generate mock climate data for all states
 const generateStateClimateData = (): ClimateRecord[] => {
   const states = getAllStates().filter(state => state.id !== 'IN');
   
@@ -70,7 +66,6 @@ const generateStateClimateData = (): ClimateRecord[] => {
   }));
 };
 
-// Generate mock climate data for districts in a state
 const generateDistrictClimateData = (stateId: string): ClimateRecord[] => {
   const districts = getDistrictNames(stateId);
   
@@ -169,7 +164,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         summary: 'Analysis of satellite imagery over the past decade reveals surprising forest recovery in parts of central India, attributed to successful community-based conservation programs.',
         source: 'Nature India',
         date: '2025-03-14',
-        url: 'https://www.nature.com/nindia/2025/250314-1/full/nindia.2025.34.html',
+        url: 'https://www.nature.com/nindia/250314-1/full/nindia.2025.34.html',
         category: 'research'
       }
     ];
@@ -181,13 +176,10 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
   
   const news = generateNewsData();
   
-  // Get climate data based on stateId
   const getClimateData = () => {
     if (stateId === 'IN') {
-      // For overall, get top states for each category
       const allStateData = generateStateClimateData();
       
-      // Sort by temperature, rainfall, and extreme events
       const topTemperatureStates = [...allStateData].sort((a, b) => b.temperature - a.temperature).slice(0, 5);
       const topRainfallStates = [...allStateData].sort((a, b) => b.rainfall - a.rainfall).slice(0, 5);
       const topExtremeStates = [...allStateData].sort((a, b) => {
@@ -220,10 +212,8 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
         }
       };
     } else {
-      // For specific state, get district data
       const districtData = generateDistrictClimateData(stateId);
       
-      // Sort by temperature, rainfall, and extreme events
       const topTemperatureDistricts = [...districtData].sort((a, b) => b.temperature - a.temperature).slice(0, 5);
       const topRainfallDistricts = [...districtData].sort((a, b) => b.rainfall - a.rainfall).slice(0, 5);
       const topExtremeDistricts = [...districtData].sort((a, b) => {
@@ -333,7 +323,6 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
           
           <TabsContent value="climate">
             <div className="space-y-4">
-              {/* Top stats overview */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
@@ -405,9 +394,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
                 </div>
               </div>
               
-              {/* Top regions for climate metrics */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Temperature rankings */}
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <h3 className="font-medium mb-3 flex items-center gap-2">
                     <Thermometer className="h-5 w-5 text-red-500" />
@@ -423,7 +410,6 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
                   </div>
                 </div>
                 
-                {/* Rainfall rankings */}
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <h3 className="font-medium mb-3 flex items-center gap-2">
                     <CloudRain className="h-5 w-5 text-blue-500" />
@@ -439,7 +425,6 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
                   </div>
                 </div>
                 
-                {/* Extreme events rankings */}
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <h3 className="font-medium mb-3 flex items-center gap-2">
                     <AlertTriangle className="h-5 w-5 text-yellow-500" />
@@ -488,10 +473,6 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
                   <FileText className="h-5 w-5"/>
                   Forest Status Report: {stateId === 'IN' ? 'India' : stateData.name}
                 </h2>
-                <button className="flex items-center gap-1 px-3 py-1.5 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg transition-colors">
-                  <FileText className="h-4 w-4" />
-                  Download PDF
-                </button>
               </div>
               
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">

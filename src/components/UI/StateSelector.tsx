@@ -29,21 +29,21 @@ const StateSelector: React.FC<StateSelectorProps> = ({ selectedState, onStateCha
   
   return (
     <Select value={selectedState} onValueChange={onStateChange}>
-      <SelectTrigger className="w-[280px] bg-white font-medium text-green-800">
+      <SelectTrigger className="w-[280px] bg-white font-semibold text-green-800 shadow-md">
         <SelectValue>{getDisplayValue()}</SelectValue>
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-white">
         <SelectGroup>
-          <SelectLabel>National Overview</SelectLabel>
-          <SelectItem value="IN">Overall</SelectItem>
+          <SelectLabel className="text-green-700 font-medium">National Overview</SelectLabel>
+          <SelectItem value="IN" className="hover:bg-green-50">Overall</SelectItem>
         </SelectGroup>
         <SelectGroup>
-          <SelectLabel>States & Union Territories</SelectLabel>
+          <SelectLabel className="text-green-700 font-medium">States & Union Territories</SelectLabel>
           {allStates
             .filter(state => state.id !== 'IN')
             .sort((a, b) => a.name.localeCompare(b.name))
             .map(state => (
-              <SelectItem key={state.id} value={state.id}>
+              <SelectItem key={state.id} value={state.id} className="hover:bg-green-50">
                 {state.name}
               </SelectItem>
             ))}

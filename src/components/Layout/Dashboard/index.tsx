@@ -8,6 +8,7 @@ import KeyInsights from './KeyInsights';
 import ForestCoverChange from '@/components/Charts/ForestCoverChange';
 import DashboardTabs from './DashboardTabs';
 import DashboardFooter from './DashboardFooter';
+import { LeafyGreen, Sprout, Trees, Mountain, Leaf } from 'lucide-react';
 
 const Dashboard = () => {
   const [selectedState, setSelectedState] = useState('IN');
@@ -31,7 +32,7 @@ const Dashboard = () => {
     // Add loading animation
     const timer = setTimeout(() => {
       setLoading(false);
-    }, 1500);
+    }, 2200);
     
     // Show welcome toast on initial load
     toast({
@@ -66,9 +67,39 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-green-100">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-24 h-24 border-4 border-t-green-600 border-r-green-600 border-b-transparent border-l-transparent rounded-full animate-spin"></div>
-          <h2 className="text-2xl font-semibold text-green-800 animate-pulse">Loading Forest Analytics...</h2>
+        <div className="flex flex-col items-center gap-6">
+          <div className="relative">
+            {/* Loading animation with forest elements */}
+            <div className="relative w-32 h-32">
+              <Trees 
+                className="absolute top-4 left-0 text-green-600 animate-bounce" 
+                style={{ animationDuration: '2s', animationDelay: '0.1s' }}
+                size={48}
+              />
+              <Leaf 
+                className="absolute top-0 left-14 text-green-500 animate-bounce" 
+                style={{ animationDuration: '1.5s', animationDelay: '0.3s' }}
+                size={32}
+              />
+              <Mountain 
+                className="absolute bottom-0 right-2 text-green-700 animate-bounce" 
+                style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}
+                size={42}
+              />
+              <Sprout 
+                className="absolute bottom-6 left-8 text-green-400 animate-bounce" 
+                style={{ animationDuration: '1.7s', animationDelay: '0.2s' }}
+                size={28}
+              />
+            </div>
+          </div>
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-green-800 mb-2 animate-pulse">Forest Analytics Dashboard</h2>
+            <p className="text-green-600">Loading the latest forest coverage data...</p>
+            <div className="mt-3 w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full animate-pulse" style={{width: '85%'}}></div>
+            </div>
+          </div>
         </div>
       </div>
     );
