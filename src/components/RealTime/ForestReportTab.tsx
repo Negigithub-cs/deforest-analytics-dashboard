@@ -1,144 +1,152 @@
 
 import React from 'react';
-import { FileText } from "lucide-react";
-import { getStateById } from '@/data/mockData';
+import { Card, CardContent } from "@/components/ui/card";
+import { 
+  FileText, 
+  BadgeAlert, 
+  PieChart, 
+  BarChart4, 
+  Leaf,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  ListChecks
+} from "lucide-react";
 
 interface ForestReportTabProps {
   stateId: string;
 }
 
 const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
-  const stateData = getStateById(stateId);
-  
-  if (!stateData) return null;
-  
   return (
-    <div className="space-y-4">
-      <div className="bg-gradient-to-br from-green-50 via-white to-green-50 p-6 rounded-lg shadow-md">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-green-800 flex items-center gap-2">
-            <FileText className="h-5 w-5"/>
-            Forest Status Report: {stateId === 'IN' ? 'India' : stateData.name}
-          </h2>
+    <Card className="bg-white shadow-md">
+      <CardContent className="p-6">
+        <div className="flex items-center gap-2 mb-6">
+          <FileText className="h-5 w-5 text-green-700" />
+          <h3 className="text-xl font-bold text-green-800">
+            Forest Health Analysis Report
+          </h3>
         </div>
         
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-5">
-            <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
-              <h3 className="text-lg font-semibold mb-2 text-blue-700">Executive Summary</h3>
-              <p className="text-gray-700">
-                This report provides a comprehensive analysis of forest cover status, trends, and environmental impacts 
-                in {stateId === 'IN' ? 'India' : stateData.name}. 
-                {stateId !== 'IN' && (
-                  <>The region currently has a conservation status rated as 
-                    <span className="font-medium"> {stateData.conservationStatus}</span>, with an annual deforestation 
-                    rate of {stateData.deforestationRate.toFixed(1)}%.
-                  </>
-                )}
-              </p>
-            </div>
-            
-            <div className="bg-emerald-50 rounded-lg p-4 border-l-4 border-emerald-400">
-              <h3 className="text-lg font-semibold mb-2 text-emerald-700">Key Findings</h3>
-              {stateId === 'IN' ? (
-                <ul className="list-disc list-inside space-y-1 text-gray-700">
-                  <li>Total forest area: 7,12,249 sq km (21.67% of geographical area)</li>
-                  <li>Very dense forest: 99,779 sq km (3.04%)</li>
-                  <li>Moderately dense forest: 3,06,890 sq km (9.33%)</li>
-                  <li>Open forest: 3,05,580 sq km (9.29%)</li>
-                  <li>Primary threats: Urbanization, mining, infrastructure development</li>
-                  <li>Climate mitigation potential: High with proper conservation measures</li>
-                </ul>
-              ) : (
-                <ul className="list-disc list-inside space-y-1 text-gray-700">
-                  <li>Total forest area: {Math.round(stateData.forestData[stateData.forestData.length-1].totalForestCover).toLocaleString()} sq km</li>
-                  <li>Forest density classification: {stateData.conservationStatus}</li>
-                  <li>Primary threats: {stateData.deforestationRate > 1 ? 'Agricultural expansion, logging, and urbanization' : 'Climate change and invasive species'}</li>
-                  <li>Air quality correlation: {stateData.deforestationRate > 0.8 ? 'Strong negative impact observed' : 'Moderate positive influence on regional air quality'}</li>
-                  <li>Climate mitigation potential: {stateData.conservationStatus === 'Excellent' || stateData.conservationStatus === 'Good' ? 'High carbon sequestration value' : 'Moderate to low carbon storage capacity'}</li>
-                </ul>
-              )}
+        <div className="space-y-6">
+          {/* Executive Summary */}
+          <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 rounded-lg border border-amber-100">
+            <h4 className="text-amber-800 font-semibold flex items-center gap-2 mb-2">
+              <BadgeAlert className="h-4 w-4" />
+              Executive Summary
+            </h4>
+            <p className="text-amber-700 text-sm">
+              The forest coverage in {stateId === 'IN' ? 'India' : stateId} shows varied patterns across regions. 
+              Dense forests represent 39% of total forest cover, while open forests constitute 42%. 
+              There's been a moderate 1.2% increase in overall forest cover since the last assessment.
+            </p>
+          </div>
+          
+          {/* Key Statistics */}
+          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 p-4 rounded-lg border border-blue-100">
+            <h4 className="text-blue-800 font-semibold flex items-center gap-2 mb-3">
+              <PieChart className="h-4 w-4" />
+              Key Statistics
+            </h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white p-3 rounded shadow-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-gray-500">Forest Density</span>
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                </div>
+                <p className="text-lg font-bold text-blue-700">28.63%</p>
+              </div>
+              <div className="bg-white p-3 rounded shadow-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-gray-500">Deforestation</span>
+                  <TrendingDown className="h-4 w-4 text-red-600" />
+                </div>
+                <p className="text-lg font-bold text-blue-700">1.45%</p>
+              </div>
+              <div className="bg-white p-3 rounded shadow-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-gray-500">Biodiversity</span>
+                  <Activity className="h-4 w-4 text-yellow-600" />
+                </div>
+                <p className="text-lg font-bold text-blue-700">Moderate</p>
+              </div>
+              <div className="bg-white p-3 rounded shadow-sm">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-gray-500">Forest Health</span>
+                  <Leaf className="h-4 w-4 text-green-600" />
+                </div>
+                <p className="text-lg font-bold text-blue-700">Good</p>
+              </div>
             </div>
           </div>
           
-          <div className="space-y-5">
-            <div className="bg-amber-50 rounded-lg p-4 border-l-4 border-amber-400">
-              <h3 className="text-lg font-semibold mb-2 text-amber-700">Historical Trends (2013-2024)</h3>
-              {stateId === 'IN' ? (
-                <p className="text-gray-700">
-                  Forest cover in India has shown a mixed trend over the past decade with slight overall growth in certain regions, 
-                  offset by significant losses in others. The Northeast region has experienced the most significant deforestation, 
-                  while central India has shown positive gains in forest cover through successful reforestation programs.
-                </p>
-              ) : (
-                <p className="text-gray-700">
-                  Forest cover in {stateData.name} has shown a 
-                  {stateData.deforestationRate > 0 ? ' decline ' : ' growth '} 
-                  over the past decade at an average annual rate of 
-                  {stateData.deforestationRate > 0 ? ' -' + stateData.deforestationRate.toFixed(1) : ' +' + Math.abs(stateData.deforestationRate).toFixed(1)}%. 
-                  The most significant changes have occurred in the 
-                  {stateData.forestData[0].veryDenseForest > stateData.forestData[0].openForest ? ' very dense forest ' : ' open forest '} 
-                  category.
-                </p>
-              )}
-            </div>
+          {/* Trend Analysis */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-100">
+            <h4 className="text-green-800 font-semibold flex items-center gap-2 mb-2">
+              <BarChart4 className="h-4 w-4" />
+              Trend Analysis
+            </h4>
+            <p className="text-green-700 text-sm mb-3">
+              Forest cover has shown a positive trend with an annual growth rate of 0.5% over the last 5 years. 
+              The most significant growth has been observed in moderate density forests.
+            </p>
             
-            <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-400">
-              <h3 className="text-lg font-semibold mb-2 text-purple-700">Recommendations</h3>
-              <ul className="list-disc list-inside space-y-1 text-gray-700">
-                <li>Implement stricter enforcement of forest protection laws</li>
-                <li>Expand community-based forest management programs</li>
-                <li>Prioritize reforestation of degraded areas with native species</li>
-                <li>Develop sustainable forestry practices for timber extraction</li>
-                <li>Integrate forest conservation into climate adaptation planning</li>
-              </ul>
+            <div className="w-full bg-white rounded-lg p-3">
+              <div className="h-16 flex items-end justify-around gap-1">
+                {[32, 45, 40, 50, 42, 48, 55].map((value, i) => (
+                  <div 
+                    key={`bar-${i}`} 
+                    className="w-[10%] bg-gradient-to-t from-green-700 to-green-500 rounded-t"
+                    style={{ 
+                      height: `${value}%`,
+                      animation: 'scale-in 0.5s ease-out forwards',
+                      animationDelay: `${i * 0.1}s`,
+                      opacity: 0,
+                      transformOrigin: 'bottom'
+                    }}
+                  ></div>
+                ))}
+              </div>
+              <div className="flex justify-between mt-1 text-xs text-gray-500">
+                <span>2018</span>
+                <span>2019</span>
+                <span>2020</span>
+                <span>2021</span>
+                <span>2022</span>
+                <span>2023</span>
+                <span>2024</span>
+              </div>
             </div>
           </div>
+          
+          {/* Recommendations */}
+          <div className="bg-gradient-to-r from-purple-50 to-violet-50 p-4 rounded-lg border border-purple-100">
+            <h4 className="text-purple-800 font-semibold flex items-center gap-2 mb-2">
+              <ListChecks className="h-4 w-4" />
+              Recommendations
+            </h4>
+            <ul className="text-purple-700 text-sm space-y-1">
+              <li className="flex gap-2 items-start">
+                <div className="min-w-4 mt-1">•</div>
+                <p>Implement stricter monitoring in areas with high deforestation rates</p>
+              </li>
+              <li className="flex gap-2 items-start">
+                <div className="min-w-4 mt-1">•</div>
+                <p>Increase community participation in forest conservation efforts</p>
+              </li>
+              <li className="flex gap-2 items-start">
+                <div className="min-w-4 mt-1">•</div>
+                <p>Develop sustainable forestry practices in buffer zones</p>
+              </li>
+              <li className="flex gap-2 items-start">
+                <div className="min-w-4 mt-1">•</div>
+                <p>Enhance biodiversity conservation measures in critical habitats</p>
+              </li>
+            </ul>
+          </div>
         </div>
-        
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <h3 className="font-semibold text-green-800 mb-2">Conservation Potential Assessment</h3>
-          {stateId === 'IN' ? (
-            <div className="flex items-center gap-3">
-              <div className="w-full bg-gray-200 rounded-full h-4">
-                <div className="h-4 rounded-full bg-green-500 w-[70%]"></div>
-              </div>
-              <span className="text-sm font-medium w-16">70%</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <div className="w-full bg-gray-200 rounded-full h-4">
-                <div 
-                  className={`h-4 rounded-full ${
-                    stateData.conservationStatus === 'Excellent' ? 'bg-green-500 w-[95%]' :
-                    stateData.conservationStatus === 'Good' ? 'bg-green-500 w-[75%]' :
-                    stateData.conservationStatus === 'Fair' ? 'bg-yellow-500 w-[50%]' :
-                    stateData.conservationStatus === 'Poor' ? 'bg-orange-500 w-[25%]' :
-                    'bg-red-500 w-[10%]'
-                  }`}
-                ></div>
-              </div>
-              <span className="text-sm font-medium w-16">
-                {stateData.conservationStatus === 'Excellent' ? '95%' :
-                 stateData.conservationStatus === 'Good' ? '75%' :
-                 stateData.conservationStatus === 'Fair' ? '50%' :
-                 stateData.conservationStatus === 'Poor' ? '25%' : '10%'}
-              </span>
-            </div>
-          )}
-          <p className="mt-2 text-sm text-green-800">
-            {stateId === 'IN' ? (
-              'Based on current forest health, biodiversity metrics, and protection status, India shows moderate to good potential for successful conservation initiatives with proper policy implementation and community engagement.'
-            ) : (
-              `Based on current forest health, biodiversity metrics, and protection status, ${stateData.name} 
-              shows ${stateData.conservationStatus === 'Excellent' || stateData.conservationStatus === 'Good' ? 
-              'high potential' : stateData.conservationStatus === 'Fair' ? 'moderate potential' : 'limited potential'} 
-              for successful conservation initiatives.`
-            )}
-          </p>
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

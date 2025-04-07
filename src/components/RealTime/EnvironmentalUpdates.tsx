@@ -71,25 +71,25 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
             </TabsTrigger>
           </TabsList>
           
-          <div className="bg-gradient-peach p-1 rounded-lg">
+          <div className="bg-gradient-to-br from-amber-50 to-orange-50 p-2 rounded-lg border border-amber-100">
             <TabsContent value="news" className="mt-0 animate-fade-in">
               <NewsTab />
             </TabsContent>
           </div>
           
-          <div className="bg-gradient-yellow p-1 rounded-lg">
+          <div className="bg-gradient-to-br from-red-50 to-orange-50 p-2 rounded-lg border border-red-100">
             <TabsContent value="fires" className="mt-0 animate-fade-in">
               <ForestFireAnalysis stateId={stateId} />
             </TabsContent>
           </div>
           
-          <div className="bg-gradient-blue p-1 rounded-lg">
+          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-2 rounded-lg border border-blue-100">
             <TabsContent value="climate" className="mt-0 animate-fade-in">
               <ClimateImpactTab stateId={stateId} />
             </TabsContent>
           </div>
           
-          <div className="bg-gradient-green p-1 rounded-lg">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-2 rounded-lg border border-green-100">
             <TabsContent value="report" className="mt-0 animate-fade-in">
               <ForestReportTab stateId={stateId} />
             </TabsContent>
