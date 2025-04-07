@@ -8,7 +8,7 @@ import KeyInsights from './KeyInsights';
 import ForestCoverChange from '@/components/Charts/ForestCoverChange';
 import DashboardTabs from './DashboardTabs';
 import DashboardFooter from './DashboardFooter';
-import { LeafyGreen, Sprout, Trees, Mountain, Leaf } from 'lucide-react';
+import { TreeDeciduous, TreePine, Trees, Mountain, Leaf, Sprout, CloudRain } from 'lucide-react';
 
 const Dashboard = () => {
   const [selectedState, setSelectedState] = useState('IN');
@@ -66,38 +66,77 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-green-100">
+      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-green-100 via-blue-50 to-emerald-100">
         <div className="flex flex-col items-center gap-6">
-          <div className="relative">
-            {/* Loading animation with forest elements */}
-            <div className="relative w-32 h-32">
-              <Trees 
-                className="absolute top-4 left-0 text-green-600 animate-bounce" 
-                style={{ animationDuration: '2s', animationDelay: '0.1s' }}
-                size={48}
-              />
-              <Leaf 
-                className="absolute top-0 left-14 text-green-500 animate-bounce" 
-                style={{ animationDuration: '1.5s', animationDelay: '0.3s' }}
-                size={32}
-              />
-              <Mountain 
-                className="absolute bottom-0 right-2 text-green-700 animate-bounce" 
-                style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}
-                size={42}
-              />
-              <Sprout 
-                className="absolute bottom-6 left-8 text-green-400 animate-bounce" 
-                style={{ animationDuration: '1.7s', animationDelay: '0.2s' }}
-                size={28}
-              />
-            </div>
+          {/* Enhanced forest-themed loading animation */}
+          <div className="relative w-64 h-64">
+            {/* Background elements */}
+            <div className="absolute w-full h-full rounded-full bg-gradient-to-b from-blue-50 to-blue-100 opacity-50"></div>
+            <div className="absolute inset-4 rounded-full bg-gradient-to-t from-green-50 to-green-100 opacity-70"></div>
+            
+            {/* Ground/Earth element */}
+            <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-amber-700 to-amber-600 rounded-full"></div>
+            
+            {/* Rain cloud */}
+            <CloudRain 
+              className="absolute top-2 right-8 text-blue-300 animate-bounce opacity-70" 
+              style={{ animationDuration: '3s', animationDelay: '0.5s' }}
+              size={24}
+            />
+            
+            {/* Trees & Plants */}
+            <Trees 
+              className="absolute bottom-8 left-6 text-green-700 animate-bounce" 
+              style={{ animationDuration: '2s', animationDelay: '0.1s' }}
+              size={48}
+            />
+            <TreeDeciduous 
+              className="absolute bottom-8 left-24 text-green-600 animate-bounce" 
+              style={{ animationDuration: '2.2s', animationDelay: '0.3s' }}
+              size={42}
+            />
+            <TreePine 
+              className="absolute bottom-8 right-10 text-green-800 animate-bounce" 
+              style={{ animationDuration: '1.8s', animationDelay: '0.5s' }}
+              size={46}
+            />
+            <Sprout 
+              className="absolute bottom-8 right-32 text-green-500 animate-bounce" 
+              style={{ animationDuration: '1.5s', animationDelay: '0.7s' }}
+              size={28}
+            />
+            
+            {/* Foreground elements */}
+            <Leaf 
+              className="absolute top-16 left-10 text-green-400 animate-spin" 
+              style={{ animationDuration: '8s' }}
+              size={18}
+            />
+            <Leaf 
+              className="absolute top-24 right-16 text-green-300 animate-spin" 
+              style={{ animationDuration: '6s', animationDirection: 'reverse' }}
+              size={14}
+            />
+            <Mountain 
+              className="absolute top-28 left-32 text-green-200 animate-pulse" 
+              style={{ animationDuration: '4s' }}
+              size={20}
+            />
           </div>
+          
           <div className="text-center">
-            <h2 className="text-3xl font-bold text-green-800 mb-2 animate-pulse">Forest Analytics Dashboard</h2>
-            <p className="text-green-600">Loading the latest forest coverage data...</p>
-            <div className="mt-3 w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full animate-pulse" style={{width: '85%'}}></div>
+            <h2 className="text-3xl font-bold text-green-800 mb-3 animate-pulse">
+              Forest Analytics Dashboard
+            </h2>
+            <p className="text-green-600 mb-4">
+              Loading the latest forest coverage data...
+            </p>
+            <div className="w-64 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-green-400 via-green-600 to-green-500 rounded-full" 
+                style={{
+                  width: '85%',
+                  animation: 'grow-width 2.2s ease-in-out'
+                }}></div>
             </div>
           </div>
         </div>

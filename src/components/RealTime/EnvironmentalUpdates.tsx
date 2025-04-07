@@ -31,49 +31,69 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
   }
   
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
+    <Card className="h-full bg-gradient-to-br from-green-50 via-white to-green-50 shadow-lg border-green-100">
+      <CardHeader className="pb-2 bg-gradient-to-r from-green-800 to-green-600 text-white rounded-t-lg">
         <CardTitle>Environmental Updates</CardTitle>
-        <CardDescription>
+        <CardDescription className="text-green-50">
           Recent environmental news, forest fire risk, and climate impact analysis for {stateId === 'IN' ? 'India' : stateData.name}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-5">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid grid-cols-4 gap-2">
-            <TabsTrigger value="news" className="flex items-center gap-1">
+          <TabsList className="grid grid-cols-4 gap-2 bg-green-100 p-1.5 rounded-xl">
+            <TabsTrigger 
+              value="news" 
+              className="flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm rounded-lg transition-all"
+            >
               <Newspaper className="h-4 w-4" />
               <span>News</span>
             </TabsTrigger>
-            <TabsTrigger value="fires" className="flex items-center gap-1">
+            <TabsTrigger 
+              value="fires" 
+              className="flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm rounded-lg transition-all"
+            >
               <Flame className="h-4 w-4" />
               <span>Forest Fires</span>
             </TabsTrigger>
-            <TabsTrigger value="climate" className="flex items-center gap-1">
+            <TabsTrigger 
+              value="climate" 
+              className="flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm rounded-lg transition-all"
+            >
               <Thermometer className="h-4 w-4" />
               <span>Climate Impact</span>
             </TabsTrigger>
-            <TabsTrigger value="report" className="flex items-center gap-1">
+            <TabsTrigger 
+              value="report" 
+              className="flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm rounded-lg transition-all"
+            >
               <FileText className="h-4 w-4" />
               <span>Report</span>
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="news">
-            <NewsTab />
-          </TabsContent>
+          <div className="bg-gradient-peach p-1 rounded-lg">
+            <TabsContent value="news" className="mt-0 animate-fade-in">
+              <NewsTab />
+            </TabsContent>
+          </div>
           
-          <TabsContent value="fires">
-            <ForestFireAnalysis stateId={stateId} />
-          </TabsContent>
+          <div className="bg-gradient-yellow p-1 rounded-lg">
+            <TabsContent value="fires" className="mt-0 animate-fade-in">
+              <ForestFireAnalysis stateId={stateId} />
+            </TabsContent>
+          </div>
           
-          <TabsContent value="climate">
-            <ClimateImpactTab stateId={stateId} />
-          </TabsContent>
+          <div className="bg-gradient-blue p-1 rounded-lg">
+            <TabsContent value="climate" className="mt-0 animate-fade-in">
+              <ClimateImpactTab stateId={stateId} />
+            </TabsContent>
+          </div>
           
-          <TabsContent value="report">
-            <ForestReportTab stateId={stateId} />
-          </TabsContent>
+          <div className="bg-gradient-green p-1 rounded-lg">
+            <TabsContent value="report" className="mt-0 animate-fade-in">
+              <ForestReportTab stateId={stateId} />
+            </TabsContent>
+          </div>
         </Tabs>
       </CardContent>
     </Card>

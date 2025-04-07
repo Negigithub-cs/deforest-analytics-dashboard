@@ -32,7 +32,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
   return (
     <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="relative mt-6">
       <div className="flex justify-between items-center mb-2">
-        <TabsList className="mb-4 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl p-1 shadow-md">
+        <TabsList className="mb-4 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl p-1.5 shadow-md">
           <TabsTrigger 
             value="overview" 
             className="data-[state=active]:bg-white data-[state=active]:text-green-700 rounded-lg transition-all"
@@ -66,38 +66,50 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
       
       <TabsContent value="overview" className="space-y-6 animate-fade-in">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <IndiaMap 
-            selectedState={selectedState} 
-            onStateSelect={onStateSelect}
-            selectedYear={selectedYear}
-          />
-          <ForestTypeDistribution 
-            stateId={selectedState} 
-            year={selectedYear} 
-          />
+          <div className="card-bg-green rounded-lg p-1">
+            <IndiaMap 
+              selectedState={selectedState} 
+              onStateSelect={onStateSelect}
+              selectedYear={selectedYear}
+            />
+          </div>
+          <div className="card-bg-blue rounded-lg p-1">
+            <ForestTypeDistribution 
+              stateId={selectedState} 
+              year={selectedYear} 
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-6">
-          <ForestCoverTrend 
-            stateId={selectedState} 
-            timeRange={timeRange} 
-          />
+          <div className="card-bg-purple rounded-lg p-1">
+            <ForestCoverTrend 
+              stateId={selectedState} 
+              timeRange={timeRange} 
+            />
+          </div>
         </div>
       </TabsContent>
       
       <TabsContent value="trends" className="space-y-6 animate-fade-in">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <AirQualityTrend
-            stateId={selectedState}
-            timeRange={timeRange}
-          />
-          <CorrelationAnalysis 
-            stateId={selectedState} 
-          />
+          <div className="card-bg-yellow rounded-lg p-1">
+            <AirQualityTrend
+              stateId={selectedState}
+              timeRange={timeRange}
+            />
+          </div>
+          <div className="card-bg-peach rounded-lg p-1">
+            <CorrelationAnalysis 
+              stateId={selectedState} 
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 gap-6">
-          <PredictiveModel 
-            stateId={selectedState} 
-          />
+          <div className="card-bg-green rounded-lg p-1">
+            <PredictiveModel 
+              stateId={selectedState} 
+            />
+          </div>
         </div>
       </TabsContent>
       
@@ -112,15 +124,27 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
       <TabsContent value="comparison" className="space-y-6 animate-fade-in">
         {selectedState === 'IN' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            <DistrictComparison mode="positive" stateId={selectedState} />
-            <DistrictComparison mode="negative" stateId={selectedState} />
-            <ForestFireAnalysis stateId={selectedState} />
+            <div className="card-bg-blue rounded-lg p-1">
+              <DistrictComparison mode="positive" stateId={selectedState} />
+            </div>
+            <div className="card-bg-peach rounded-lg p-1">
+              <DistrictComparison mode="negative" stateId={selectedState} />
+            </div>
+            <div className="card-bg-yellow rounded-lg p-1">
+              <ForestFireAnalysis stateId={selectedState} />
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            <DistrictComparison mode="positive" stateId={selectedState} />
-            <DistrictComparison mode="negative" stateId={selectedState} />
-            <ForestFireAnalysis stateId={selectedState} />
+            <div className="card-bg-blue rounded-lg p-1">
+              <DistrictComparison mode="positive" stateId={selectedState} />
+            </div>
+            <div className="card-bg-peach rounded-lg p-1">
+              <DistrictComparison mode="negative" stateId={selectedState} />
+            </div>
+            <div className="card-bg-yellow rounded-lg p-1">
+              <ForestFireAnalysis stateId={selectedState} />
+            </div>
           </div>
         )}
       </TabsContent>

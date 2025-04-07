@@ -14,7 +14,7 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
   
   return (
     <div className="space-y-4">
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-gradient-to-br from-green-50 via-white to-green-50 p-6 rounded-lg shadow-md">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-green-800 flex items-center gap-2">
             <FileText className="h-5 w-5"/>
@@ -24,8 +24,8 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
         
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-5">
-            <div>
-              <h3 className="text-lg font-semibold mb-2 text-green-700">Executive Summary</h3>
+            <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-400">
+              <h3 className="text-lg font-semibold mb-2 text-blue-700">Executive Summary</h3>
               <p className="text-gray-700">
                 This report provides a comprehensive analysis of forest cover status, trends, and environmental impacts 
                 in {stateId === 'IN' ? 'India' : stateData.name}. 
@@ -38,8 +38,8 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
               </p>
             </div>
             
-            <div>
-              <h3 className="text-lg font-semibold mb-2 text-green-700">Key Findings</h3>
+            <div className="bg-emerald-50 rounded-lg p-4 border-l-4 border-emerald-400">
+              <h3 className="text-lg font-semibold mb-2 text-emerald-700">Key Findings</h3>
               {stateId === 'IN' ? (
                 <ul className="list-disc list-inside space-y-1 text-gray-700">
                   <li>Total forest area: 7,12,249 sq km (21.67% of geographical area)</li>
@@ -62,8 +62,8 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
           </div>
           
           <div className="space-y-5">
-            <div>
-              <h3 className="text-lg font-semibold mb-2 text-green-700">Historical Trends (2013-2024)</h3>
+            <div className="bg-amber-50 rounded-lg p-4 border-l-4 border-amber-400">
+              <h3 className="text-lg font-semibold mb-2 text-amber-700">Historical Trends (2013-2024)</h3>
               {stateId === 'IN' ? (
                 <p className="text-gray-700">
                   Forest cover in India has shown a mixed trend over the past decade with slight overall growth in certain regions, 
@@ -83,8 +83,8 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
               )}
             </div>
             
-            <div>
-              <h3 className="text-lg font-semibold mb-2 text-green-700">Recommendations</h3>
+            <div className="bg-purple-50 rounded-lg p-4 border-l-4 border-purple-400">
+              <h3 className="text-lg font-semibold mb-2 text-purple-700">Recommendations</h3>
               <ul className="list-disc list-inside space-y-1 text-gray-700">
                 <li>Implement stricter enforcement of forest protection laws</li>
                 <li>Expand community-based forest management programs</li>

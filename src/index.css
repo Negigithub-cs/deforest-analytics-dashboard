@@ -73,6 +73,20 @@
   --forest-medium: #4caf50; 
   --forest-dark: #2e7d32;
   --forest-black: #1b5e20;
+  
+  /* Additional beautiful colors */
+  --soft-green: #F2FCE2;
+  --soft-yellow: #FEF7CD;
+  --soft-orange: #FEC6A1;
+  --soft-purple: #E5DEFF;
+  --soft-pink: #FFDEE2;
+  --soft-peach: #FDE1D3;
+  --soft-blue: #D3E4FD;
+  --soft-gray: #F1F0FB;
+  --vivid-purple: #8B5CF6;
+  --magenta-pink: #D946EF;
+  --bright-orange: #F97316;
+  --ocean-blue: #0EA5E9;
 }
  
 @layer base {
@@ -132,6 +146,56 @@
   }
 }
 
+@keyframes grow-width {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 85%;
+  }
+}
+
+@keyframes grow-and-shine {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.5;
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.2);
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+    box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes leaf-fall {
+  0% {
+    transform: translateY(-50px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(200px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.5s ease-out forwards;
 }
@@ -152,6 +216,18 @@
   animation: spin 1s linear infinite;
 }
 
+.animate-grow-and-shine {
+  animation: grow-and-shine 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-leaf-fall {
+  animation: leaf-fall 5s linear;
+}
+
 .text-forest-light {
   color: var(--forest-light);
 }
@@ -166,4 +242,51 @@
 
 .text-forest-black {
   color: var(--forest-black);
+}
+
+/* Beautiful gradient backgrounds for cards */
+.bg-gradient-green {
+  background: linear-gradient(to bottom right, var(--soft-green), #e6ffec);
+}
+
+.bg-gradient-blue {
+  background: linear-gradient(to bottom right, var(--soft-blue), #ecf6ff);
+}
+
+.bg-gradient-purple {
+  background: linear-gradient(to bottom right, var(--soft-purple), #f5f2ff);
+}
+
+.bg-gradient-peach {
+  background: linear-gradient(to bottom right, var(--soft-peach), #fff7f2);
+}
+
+.bg-gradient-yellow {
+  background: linear-gradient(to bottom right, var(--soft-yellow), #fffbe6);
+}
+
+/* Colorful backgrounds for chart cards */
+.card-bg-green {
+  background-color: var(--soft-green);
+  border-left: 4px solid var(--forest-medium);
+}
+
+.card-bg-blue {
+  background-color: var(--soft-blue);
+  border-left: 4px solid var(--ocean-blue);
+}
+
+.card-bg-purple {
+  background-color: var(--soft-purple);
+  border-left: 4px solid var(--vivid-purple);
+}
+
+.card-bg-peach {
+  background-color: var(--soft-peach);
+  border-left: 4px solid var(--bright-orange);
+}
+
+.card-bg-yellow {
+  background-color: var(--soft-yellow);
+  border-left: 4px solid #EAB308;
 }

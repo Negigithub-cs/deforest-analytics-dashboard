@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
   TooltipContent
 } from "@/components/ui/tooltip";
-import { MapPin, Tree } from 'lucide-react';
+import { MapPin, Trees, TreePine, TreeDeciduous } from 'lucide-react';
 
 interface SimpleStateMapProps {
   selectedState: string;
@@ -68,7 +68,7 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
     }
   };
 
-  // Alternative to the previous map implementation - more reliable
+  // Enhanced forest visualization
   const renderForestVisualization = () => {
     if (selectedState === "IN") {
       // For overall India, render a visual forest representation
@@ -85,9 +85,13 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
                   opacity: 0
                 }}
               >
-                <Tree 
-                  className={`h-8 w-8 ${i % 3 === 0 ? 'text-green-800' : i % 3 === 1 ? 'text-green-600' : 'text-green-500'}`}
-                />
+                {i % 3 === 0 ? (
+                  <Trees className={`h-8 w-8 text-green-800`} />
+                ) : i % 3 === 1 ? (
+                  <TreePine className={`h-8 w-8 text-green-600`} />
+                ) : (
+                  <TreeDeciduous className={`h-8 w-8 text-green-500`} />
+                )}
               </div>
             ))}
           </div>
@@ -125,18 +129,33 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
             <div className="flex flex-col items-center mb-6">
               <div className="relative w-24 h-24 mb-4">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Tree 
-                    key={i}
-                    className={`absolute h-12 w-12 text-green-${600 + i * 100}`}
-                    style={{
-                      top: `${Math.sin(i * 1.25) * 20}px`,
-                      left: `${Math.cos(i * 1.25) * 20 + 24}px`,
-                      animation: `fade-in 0.5s ease-out forwards`,
-                      animationDelay: `${i * 0.15}s`,
-                      opacity: 0,
-                      zIndex: 5 - i
-                    }}
-                  />
+                  <React.Fragment key={i}>
+                    {i % 2 === 0 ? (
+                      <TreePine 
+                        className={`absolute h-12 w-12 text-green-${600 + i * 100}`}
+                        style={{
+                          top: `${Math.sin(i * 1.25) * 20}px`,
+                          left: `${Math.cos(i * 1.25) * 20 + 24}px`,
+                          animation: `fade-in 0.5s ease-out forwards`,
+                          animationDelay: `${i * 0.15}s`,
+                          opacity: 0,
+                          zIndex: 5 - i
+                        }}
+                      />
+                    ) : (
+                      <TreeDeciduous 
+                        className={`absolute h-12 w-12 text-green-${600 + i * 100}`}
+                        style={{
+                          top: `${Math.sin(i * 1.25) * 20}px`,
+                          left: `${Math.cos(i * 1.25) * 20 + 24}px`,
+                          animation: `fade-in 0.5s ease-out forwards`,
+                          animationDelay: `${i * 0.15}s`,
+                          opacity: 0,
+                          zIndex: 5 - i
+                        }}
+                      />
+                    )}
+                  </React.Fragment>
                 ))}
               </div>
               
