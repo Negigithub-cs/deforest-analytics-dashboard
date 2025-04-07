@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, LineChart, Thermometer, MapPin, Info } from 'lucide-react';
+import { BarChart3, LineChart, Thermometer, MapPin } from 'lucide-react';
 import IndiaMap from '@/components/Map/IndiaMap';
 import ForestTypeDistribution from '@/components/Charts/ForestTypeDistribution';
 import ForestCoverTrend from '@/components/Charts/ForestCoverTrend';
@@ -17,9 +17,7 @@ interface DashboardTabsProps {
   timeRange: string;
   selectedYear: number;
   activeTab: string;
-  showInsights: boolean;
   setActiveTab: (tab: string) => void;
-  setShowInsights: (show: boolean) => void;
   onStateSelect: (stateId: string) => void;
 }
 
@@ -28,9 +26,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
   timeRange,
   selectedYear,
   activeTab,
-  showInsights,
   setActiveTab,
-  setShowInsights,
   onStateSelect
 }) => {
   return (
@@ -66,14 +62,6 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
             {selectedState === 'IN' ? 'State Analysis' : 'District Analysis'}
           </TabsTrigger>
         </TabsList>
-        
-        <button 
-          className="flex items-center gap-1 text-xs text-white hover:text-white/90 mb-4 bg-gradient-to-r from-blue-500 to-green-500 px-3 py-1 rounded-md"
-          onClick={() => setShowInsights(!showInsights)}
-        >
-          <Info size={14} />
-          {showInsights ? 'Hide' : 'Show'} Insights
-        </button>
       </div>
       
       <TabsContent value="overview" className="space-y-6 animate-fade-in">

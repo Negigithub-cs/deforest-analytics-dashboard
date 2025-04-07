@@ -29,8 +29,8 @@ const StateSelector: React.FC<StateSelectorProps> = ({ selectedState, onStateCha
   
   return (
     <Select value={selectedState} onValueChange={onStateChange}>
-      <SelectTrigger className="w-[280px] bg-white">
-        <SelectValue placeholder="Select state">{getDisplayValue()}</SelectValue>
+      <SelectTrigger className="w-[280px] bg-white font-medium text-green-800">
+        <SelectValue>{getDisplayValue()}</SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

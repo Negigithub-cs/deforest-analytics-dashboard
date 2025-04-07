@@ -37,13 +37,9 @@ const PredictiveModel: React.FC<PredictiveModelProps> = ({ stateId }) => {
     return <div>No data available</div>;
   }
   
-  // Get the last historical data point and all projected data
-  const lastHistoricalIndex = stateData.forestData.length - 1;
-  const lastHistoricalData = stateData.forestData[lastHistoricalIndex];
-  
-  // Combine last few historical points with projections for continuity
+  // Get all data from 2013 including projections
   const data = [
-    ...stateData.forestData.slice(-3),
+    ...stateData.forestData,
     ...stateData.projectedData
   ];
   
@@ -58,7 +54,8 @@ const PredictiveModel: React.FC<PredictiveModelProps> = ({ stateId }) => {
   
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
-      const isProjectedYear = label > lastHistoricalData.year;
+      const currentYear = new Date().getFullYear();
+      const isProjectedYear = label > currentYear;
       
       return (
         <div className="bg-white p-3 border rounded-md shadow-md text-sm">
@@ -94,15 +91,19 @@ const PredictiveModel: React.FC<PredictiveModelProps> = ({ stateId }) => {
     return null;
   };
   
+  // Find the transition year between historical and projected data
+  const lastHistoricalIndex = stateData.forestData.length - 1;
+  const lastHistoricalData = stateData.forestData[lastHistoricalIndex];
+  
   return (
     <Card className="h-full">
       <CardHeader>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div>
-              <CardTitle>Predictive Forest Cover Model</CardTitle>
+              <CardTitle className="text-xl text-green-800">Forest Cover History & Projection</CardTitle>
               <CardDescription>
-                Projected forest cover changes for {stateData.name} (2025-2030)
+                Historical data (2013-2024) and future projections (2025-2030) for {stateData.name}
               </CardDescription>
             </div>
             
@@ -114,9 +115,9 @@ const PredictiveModel: React.FC<PredictiveModelProps> = ({ stateId }) => {
               </HoverCardTrigger>
               <HoverCardContent className="w-80">
                 <div className="space-y-2">
-                  <h4 className="font-medium">Understanding the Predictive Model</h4>
+                  <h4 className="font-medium">Understanding the Forest Cover Model</h4>
                   <p className="text-sm text-muted-foreground">
-                    This chart shows the projected forest cover changes through 2030 based on current trends.
+                    This chart shows historical forest cover since 2013 and projected changes through 2030 based on current trends.
                     The model accounts for existing conservation efforts, climate impacts, and land use patterns.
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -134,13 +135,13 @@ const PredictiveModel: React.FC<PredictiveModelProps> = ({ stateId }) => {
       <CardContent>
         {showAlert && (
           <Alert 
-            className={`mb-4 border-l-4 ${isImproving ? 'border-l-forest-dark' : 'border-l-orange-500'}`}
+            className={`mb-4 border-l-4 ${isImproving ? 'border-l-green-700' : 'border-l-orange-500'}`}
             variant="default"
           >
             {isImproving ? null : <AlertTriangle className="h-4 w-4 text-orange-500" />}
             <AlertDescription className="text-sm">
               {isImproving 
-                ? <span>Forest cover in {stateData.name} is projected to <strong className="text-forest-dark">increase by {Math.abs(Number(projectedChange))}%</strong> by 2030 based on current conservation trends.</span>
+                ? <span>Forest cover in {stateData.name} is projected to <strong className="text-green-700">increase by {Math.abs(Number(projectedChange))}%</strong> by 2030 based on current conservation trends.</span>
                 : <span>Forest cover in {stateData.name} is projected to <strong className="text-orange-500">decrease by {Math.abs(Number(projectedChange))}%</strong> by 2030 if current deforestation trends continue.</span>
               }
               <button 

@@ -22,7 +22,8 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
   onStateSelect,
   selectedYear = 2024 
 }) => {
-  const [showInfo, setShowInfo] = useState(false);
+  const [showInfo, setShowInfo] = useState(true);
+  const [forestDensityView, setForestDensityView] = useState(true);
   
   const handleToggleInfo = () => {
     setShowInfo(!showInfo);
@@ -41,33 +42,24 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
   };
   
   return (
-    <Card className="h-full">
-      <CardHeader>
+    <Card className="h-full overflow-visible">
+      <CardHeader className="bg-gradient-to-r from-green-800 to-green-600 text-white rounded-t-lg">
         <CardTitle className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+          <div className="w-3 h-3 rounded-full bg-white animate-pulse"></div>
           {getMapTitle()}
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-green-50">
           Visualizing the geographic distribution of forest cover
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4">
         <div className="h-full flex flex-col items-center justify-center">
-          <div className="w-full mb-4 flex justify-end gap-2">
-            <button 
-              onClick={handleToggleInfo}
-              className="px-3 py-1.5 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg transition-colors text-sm"
-            >
-              {showInfo ? "Hide Legend" : "Show Legend"}
-            </button>
-          </div>
-          
-          <div className="relative w-full">
-            {showInfo && <MapLegend showForestDensity={true} />}
+          <div className="relative w-full animate-fade-in">
+            {showInfo && <MapLegend showForestDensity={forestDensityView} />}
             <SimpleStateMap 
               selectedState={selectedState}
               onStateSelect={onStateSelect}
-              forestDensityView={true}
+              forestDensityView={forestDensityView}
               selectedYear={selectedYear}
             />
           </div>

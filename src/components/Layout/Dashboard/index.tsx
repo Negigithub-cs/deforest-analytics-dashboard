@@ -8,14 +8,13 @@ import KeyInsights from './KeyInsights';
 import ForestCoverChange from '@/components/Charts/ForestCoverChange';
 import DashboardTabs from './DashboardTabs';
 import DashboardFooter from './DashboardFooter';
-import TimeSlider from '@/components/UI/TimeSlider';
 
 const Dashboard = () => {
   const [selectedState, setSelectedState] = useState('IN');
   const [timeRange, setTimeRange] = useState('historical');
   const [selectedYear, setSelectedYear] = useState(2024);
   const [activeTab, setActiveTab] = useState('overview');
-  const [showInsights, setShowInsights] = useState(true);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   
   // Update selected year when time range changes
@@ -27,13 +26,21 @@ const Dashboard = () => {
     }
   }, [timeRange]);
 
+  // Loading effect
   useEffect(() => {
+    // Add loading animation
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1500);
+    
     // Show welcome toast on initial load
     toast({
       title: "Welcome to the Forest Cover Analytics",
       description: "Explore forest cover changes across India. Select a state to begin.",
       duration: 5000,
     });
+    
+    return () => clearTimeout(timer);
   }, []);
   
   const handleStateChange = (stateId: string) => {
@@ -56,16 +63,16 @@ const Dashboard = () => {
     setTimeRange(range);
   };
 
-  const handleYearChange = (year: number) => {
-    setSelectedYear(year);
-    
-    // Update time range based on year
-    if (year <= 2024) {
-      setTimeRange('historical');
-    } else {
-      setTimeRange('projected');
-    }
-  };
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-green-50 via-blue-50 to-green-100">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-24 h-24 border-4 border-t-green-600 border-r-green-600 border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+          <h2 className="text-2xl font-semibold text-green-800 animate-pulse">Loading Forest Analytics...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-6 min-h-screen">
@@ -80,18 +87,10 @@ const Dashboard = () => {
       {/* State Info */}
       <StateInfo selectedState={selectedState} />
       
-      {/* Key Insights Section */}
+      {/* Key Insights Section - Always show */}
       <KeyInsights 
         selectedState={selectedState} 
-        showInsights={showInsights} 
-      />
-      
-      {/* Time Slider */}
-      <TimeSlider 
-        minYear={2013}
-        maxYear={2030}
-        currentYear={selectedYear}
-        onChange={handleYearChange}
+        showInsights={true} 
       />
       
       {/* Forest Cover Change Summary */}
@@ -103,9 +102,7 @@ const Dashboard = () => {
         timeRange={timeRange}
         selectedYear={selectedYear}
         activeTab={activeTab}
-        showInsights={showInsights}
         setActiveTab={setActiveTab}
-        setShowInsights={setShowInsights}
         onStateSelect={handleStateChange}
       />
       
