@@ -115,7 +115,7 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
           </p>
           
           <div className="bg-white rounded-lg p-4 shadow-sm border border-green-100">
-            <div className="h-24 flex items-end justify-between gap-3">
+            <div className="h-48 flex items-end justify-between gap-3">
               {[32, 45, 40, 50, 42, 48, 55].map((value, i) => (
                 <div key={`bar-${i}`} className="relative group flex flex-col items-center flex-1">
                   <div className="text-xs text-gray-500 mb-1 opacity-0 group-hover:opacity-100 absolute -top-6 transition-opacity">
@@ -125,7 +125,7 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
                     className="w-full bg-gradient-to-t from-green-700 to-green-400 rounded-t"
                     style={{ 
                       height: `${value}%`,
-                      animation: 'scale-in 0.5s ease-out forwards',
+                      animation: `scale-in 0.5s ease-out forwards`,
                       animationDelay: `${i * 0.1}s`,
                       opacity: 0,
                       transformOrigin: 'bottom'
@@ -142,6 +142,104 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
               <span>2022</span>
               <span>2023</span>
               <span>2024</span>
+            </div>
+            
+            <div className="mt-4 flex items-center justify-center">
+              <div className="flex items-center gap-2 mr-4">
+                <div className="w-3 h-3 rounded-sm bg-green-700"></div>
+                <span className="text-xs">Dense Forest</span>
+              </div>
+              <div className="flex items-center gap-2 mr-4">
+                <div className="w-3 h-3 rounded-sm bg-green-500"></div>
+                <span className="text-xs">Moderately Dense</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-sm bg-green-300"></div>
+                <span className="text-xs">Open Forest</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* New Area Chart for monthly trends */}
+          <div className="mt-6 bg-white rounded-lg p-4 shadow-sm border border-green-100">
+            <h5 className="text-sm font-medium text-green-800 mb-3">Monthly Forest Growth (Last 12 Months)</h5>
+            
+            <div className="relative h-36">
+              {/* Area chart visualization */}
+              <div className="absolute inset-0">
+                <svg viewBox="0 0 100 50" preserveAspectRatio="none" className="h-full w-full">
+                  <defs>
+                    <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#4ADE80" stopOpacity="0.7"/>
+                      <stop offset="100%" stopColor="#4ADE80" stopOpacity="0.1"/>
+                    </linearGradient>
+                  </defs>
+                  
+                  {/* Area chart path with animation */}
+                  <path
+                    d="M0,50 L0,35 C5,33 10,38 15,30 C20,22 25,28 30,20 C35,12 40,25 45,18 C50,11 55,15 60,10 C65,5 70,15 75,12 C80,9 85,2 90,8 C95,14 100,10 100,10 L100,50 Z"
+                    fill="url(#areaGradient)"
+                    className="animate-draw-path"
+                    strokeWidth="1.5"
+                    stroke="#22C55E"
+                    strokeLinecap="round"
+                    strokeDasharray="200"
+                    strokeDashoffset="200"
+                    style={{
+                      animation: 'draw-path 2s forwards'
+                    }}
+                  />
+                  
+                  {/* Line for the area chart */}
+                  <path
+                    d="M0,35 C5,33 10,38 15,30 C20,22 25,28 30,20 C35,12 40,25 45,18 C50,11 55,15 60,10 C65,5 70,15 75,12 C80,9 85,2 90,8 C95,14 100,10 100,10"
+                    fill="none"
+                    strokeWidth="2"
+                    stroke="#16A34A"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeDasharray="200"
+                    strokeDashoffset="200"
+                    style={{
+                      animation: 'draw-path 2s forwards'
+                    }}
+                  />
+                  
+                  {/* Data points */}
+                  {[35, 33, 38, 30, 22, 28, 20, 12, 25, 18, 11, 10].map((point, i) => (
+                    <circle
+                      key={`point-${i}`}
+                      cx={i * 9}
+                      cy={point}
+                      r="1"
+                      fill="#FFF"
+                      stroke="#16A34A"
+                      strokeWidth="1"
+                      style={{
+                        animation: `scale-in 0.3s ease-out forwards`,
+                        animationDelay: `${1.5 + (i * 0.05)}s`,
+                        opacity: 0
+                      }}
+                    />
+                  ))}
+                </svg>
+              </div>
+              
+              {/* X-axis labels */}
+              <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-500 pt-2">
+                <span>Jan</span>
+                <span>Feb</span>
+                <span>Mar</span>
+                <span>Apr</span>
+                <span>May</span>
+                <span>Jun</span>
+                <span>Jul</span>
+                <span>Aug</span>
+                <span>Sep</span>
+                <span>Oct</span>
+                <span>Nov</span>
+                <span>Dec</span>
+              </div>
             </div>
           </div>
         </div>

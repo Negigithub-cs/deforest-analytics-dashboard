@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, LineChart, Thermometer, MapPin } from 'lucide-react';
-import IndiaMap from '@/components/Map/IndiaMap';
+import { BarChart3, LineChart, Thermometer, MapPin, Leaf } from 'lucide-react';
 import ForestTypeDistribution from '@/components/Charts/ForestTypeDistribution';
 import ForestCoverTrend from '@/components/Charts/ForestCoverTrend';
 import AirQualityTrend from '@/components/Charts/AirQualityTrend';
@@ -11,6 +10,7 @@ import PredictiveModel from '@/components/Charts/PredictiveModel';
 import DistrictComparison from '@/components/Tables/DistrictComparison';
 import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
 import ForestFireAnalysis from '@/components/RealTime/ForestFireAnalysis';
+import ForestConservationStatus from '@/components/Charts/ForestConservationStatus';
 
 interface DashboardTabsProps {
   selectedState: string;
@@ -67,9 +67,8 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
       <TabsContent value="overview" className="space-y-6 animate-fade-in">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card-bg-green rounded-lg p-1">
-            <IndiaMap 
-              selectedState={selectedState} 
-              onStateSelect={onStateSelect}
+            <ForestConservationStatus 
+              stateId={selectedState} 
               selectedYear={selectedYear}
             />
           </div>
