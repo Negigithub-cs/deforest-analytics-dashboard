@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, LineChart, Thermometer, MapPin, Leaf } from 'lucide-react';
+import { BarChart3, LineChart, Thermometer, Leaf } from 'lucide-react';
 import ForestTypeDistribution from '@/components/Charts/ForestTypeDistribution';
 import ForestCoverTrend from '@/components/Charts/ForestCoverTrend';
 import AirQualityTrend from '@/components/Charts/AirQualityTrend';
@@ -55,11 +55,11 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
             Climate Impact
           </TabsTrigger>
           <TabsTrigger 
-            value="comparison" 
+            value="sustainability" 
             className="data-[state=active]:bg-white data-[state=active]:text-green-700 rounded-lg transition-all"
           >
-            <MapPin className="h-4 w-4 mr-2" />
-            {selectedState === 'IN' ? 'State Analysis' : 'District Analysis'}
+            <Leaf className="h-4 w-4 mr-2" />
+            Sustainability
           </TabsTrigger>
         </TabsList>
       </div>
@@ -120,32 +120,18 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         </div>
       </TabsContent>
       
-      <TabsContent value="comparison" className="space-y-6 animate-fade-in">
-        {selectedState === 'IN' ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            <div className="card-bg-blue rounded-lg p-1">
-              <DistrictComparison mode="positive" stateId={selectedState} />
-            </div>
-            <div className="card-bg-peach rounded-lg p-1">
-              <DistrictComparison mode="negative" stateId={selectedState} />
-            </div>
-            <div className="card-bg-yellow rounded-lg p-1">
-              <ForestFireAnalysis stateId={selectedState} />
-            </div>
+      <TabsContent value="sustainability" className="space-y-6 animate-fade-in">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+          <div className="card-bg-blue rounded-lg p-1">
+            <DistrictComparison mode="positive" stateId={selectedState} />
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-            <div className="card-bg-blue rounded-lg p-1">
-              <DistrictComparison mode="positive" stateId={selectedState} />
-            </div>
-            <div className="card-bg-peach rounded-lg p-1">
-              <DistrictComparison mode="negative" stateId={selectedState} />
-            </div>
-            <div className="card-bg-yellow rounded-lg p-1">
-              <ForestFireAnalysis stateId={selectedState} />
-            </div>
+          <div className="card-bg-peach rounded-lg p-1">
+            <DistrictComparison mode="negative" stateId={selectedState} />
           </div>
-        )}
+          <div className="card-bg-yellow rounded-lg p-1 col-span-1 md:col-span-2">
+            <ForestFireAnalysis stateId={selectedState} />
+          </div>
+        </div>
       </TabsContent>
     </Tabs>
   );
