@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
   TooltipContent
 } from "@/components/ui/tooltip";
-import { MapPin, Trees, TreePine, TreeDeciduous, Map } from 'lucide-react';
+import { MapPin, Trees, TreePine, TreeDeciduous, Map, BarChart2 } from 'lucide-react';
 
 interface SimpleStateMapProps {
   selectedState: string;
@@ -70,17 +70,21 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
 
   // India visualization with map icon
   const renderIndiaVisualization = () => (
-    <div className="relative bg-gradient-to-b from-green-50 to-green-100 p-6 rounded-lg border border-green-200 flex flex-col justify-center items-center h-[320px]">
+    <div className="relative bg-gradient-to-b from-green-50 to-green-100 p-6 rounded-lg border border-green-200 flex flex-col justify-center items-center h-[340px]">
       <div className="absolute top-4 left-4">
         <span className="font-bold text-green-800 text-xl">India</span>
       </div>
       
       <div className="mb-6 relative">
         <div className="mb-4 flex justify-center">
-          <Map className="h-24 w-24 text-green-700 animate-pulse" />
+          <img 
+            src="/lovable-uploads/d4ab249f-e107-4739-bd02-840358a6953e.png" 
+            alt="India Map" 
+            className="h-40 w-auto object-contain animate-fade-in"
+          />
         </div>
         
-        <div className="grid grid-cols-5 gap-3 mb-8">
+        <div className="grid grid-cols-5 gap-3 mb-2 absolute bottom-0 left-0 right-0">
           {Array.from({ length: 10 }).map((_, i) => (
             <div 
               key={`tree-${i}`}
@@ -130,41 +134,33 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
     const stateName = stateData.name;
     
     return (
-      <div className="relative bg-gradient-to-b from-green-50 to-green-100 p-6 rounded-lg border border-green-200 flex flex-col justify-center items-center h-[320px]">
+      <div className="relative bg-gradient-to-b from-green-50 to-green-100 p-6 rounded-lg border border-green-200 flex flex-col justify-center items-center h-[340px]">
         <div className="absolute top-4 left-4 bg-white px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
           <MapPin className="h-4 w-4 text-green-700" />
           <span className="font-medium text-green-800">{stateName}</span>
         </div>
         
-        <div className="flex flex-col items-center mb-6">
-          <div className="relative w-24 h-24 mb-4">
-            {Array.from({ length: 5 }).map((_, i) => (
+        <div className="flex flex-col items-center mb-6 relative">
+          <div className="relative w-40 h-40 mb-4">
+            <img 
+              src={`/lovable-uploads/f0066c44-a38b-4177-8f4b-cc0cf15600f4.png`} 
+              alt={`${stateName} State Map`} 
+              className="w-full h-full object-contain animate-fade-in"
+            />
+            
+            {Array.from({ length: 3 }).map((_, i) => (
               <React.Fragment key={i}>
-                {i % 2 === 0 ? (
-                  <TreePine 
-                    className={`absolute h-12 w-12 text-green-${600 + i * 100}`}
-                    style={{
-                      top: `${Math.sin(i * 1.25) * 20}px`,
-                      left: `${Math.cos(i * 1.25) * 20 + 24}px`,
-                      animation: `fade-in 0.5s ease-out forwards`,
-                      animationDelay: `${i * 0.15}s`,
-                      opacity: 0,
-                      zIndex: 5 - i
-                    }}
-                  />
-                ) : (
-                  <TreeDeciduous 
-                    className={`absolute h-12 w-12 text-green-${600 + i * 100}`}
-                    style={{
-                      top: `${Math.sin(i * 1.25) * 20}px`,
-                      left: `${Math.cos(i * 1.25) * 20 + 24}px`,
-                      animation: `fade-in 0.5s ease-out forwards`,
-                      animationDelay: `${i * 0.15}s`,
-                      opacity: 0,
-                      zIndex: 5 - i
-                    }}
-                  />
-                )}
+                <TreePine 
+                  className={`absolute h-8 w-8 text-green-${600 + i * 100}`}
+                  style={{
+                    top: `${Math.sin(i * 1.25) * 40 + 20}px`,
+                    left: `${Math.cos(i * 1.25) * 40 + 70}px`,
+                    animation: `fade-in 0.5s ease-out forwards`,
+                    animationDelay: `${i * 0.15}s`,
+                    opacity: 0,
+                    zIndex: 5 - i
+                  }}
+                />
               </React.Fragment>
             ))}
           </div>
@@ -199,47 +195,53 @@ const SimpleStateMap: React.FC<SimpleStateMapProps> = ({
   // Render state blocks grid
   const renderStateBlocksGrid = () => (
     <TooltipProvider>
-      <div className="bg-gradient-to-b from-green-50 to-green-100 p-6 rounded-lg border border-green-200 flex flex-wrap justify-center items-start gap-3 max-h-[320px] overflow-y-auto">
-        {states.sort((a, b) => a.name.localeCompare(b.name)).map((state, index) => {
-          const forestPercent = getForestCoverPercentage(state.id);
-          const stateData = getStateById(state.id);
-          
-          return (
-            <Tooltip key={state.id}>
-              <TooltipTrigger asChild>
-                <button 
-                  onClick={() => onStateSelect(state.id)}
-                  className={`w-16 h-16 rounded-md flex items-center justify-center transition-all hover:scale-105 ${getStateFill(state.id)}`}
-                  style={{
-                    animation: 'scale-in 0.3s ease-out forwards',
-                    animationDelay: `${index * 0.03}s`,
-                    opacity: 0
-                  }}
-                >
-                  <span className="text-xs font-semibold text-white drop-shadow-md">{state.id}</span>
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <div className="p-2">
-                  <p className="font-bold">{state.name}</p>
-                  <p className="text-xs text-muted-foreground mb-1">
-                    {isProjected ? `Projected for ${selectedYear}` : `Data for ${selectedYear}`}
-                  </p>
-                  
-                  {stateData && (
-                    <>
-                      <p>Conservation Status: {stateData.conservationStatus}</p>
-                      <p>Deforestation Rate: {stateData.deforestationRate.toFixed(1)}%</p>
-                      {forestDensityView && (
-                        <p>Forest Cover: {Math.round(forestPercent)}%</p>
-                      )}
-                    </>
-                  )}
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          );
-        })}
+      <div className="bg-white p-6 rounded-lg border border-green-200 flex flex-wrap justify-center items-start gap-3">
+        <div className="w-full mb-4">
+          <h3 className="text-lg font-medium text-green-800 text-center">Select a state to view detailed information</h3>
+        </div>
+        
+        <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-3 max-h-[280px] overflow-y-auto p-2">
+          {states.sort((a, b) => a.name.localeCompare(b.name)).map((state, index) => {
+            const forestPercent = getForestCoverPercentage(state.id);
+            const stateData = getStateById(state.id);
+            
+            return (
+              <Tooltip key={state.id}>
+                <TooltipTrigger asChild>
+                  <button 
+                    onClick={() => onStateSelect(state.id)}
+                    className={`w-16 h-16 rounded-md flex items-center justify-center transition-all hover:scale-105 ${getStateFill(state.id)}`}
+                    style={{
+                      animation: 'scale-in 0.3s ease-out forwards',
+                      animationDelay: `${index * 0.03}s`,
+                      opacity: 0
+                    }}
+                  >
+                    <span className="text-xs font-semibold text-white drop-shadow-md">{state.id}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <div className="p-2">
+                    <p className="font-bold">{state.name}</p>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      {isProjected ? `Projected for ${selectedYear}` : `Data for ${selectedYear}`}
+                    </p>
+                    
+                    {stateData && (
+                      <>
+                        <p>Conservation Status: {stateData.conservationStatus}</p>
+                        <p>Deforestation Rate: {stateData.deforestationRate.toFixed(1)}%</p>
+                        {forestDensityView && (
+                          <p>Forest Cover: {Math.round(forestPercent)}%</p>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
+        </div>
       </div>
     </TooltipProvider>
   );

@@ -26,6 +26,7 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
   const [showInfo, setShowInfo] = useState(true);
   const [forestDensityView, setForestDensityView] = useState(true);
   const [animateIcons, setAnimateIcons] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     // Start the animation after a delay
@@ -33,7 +34,15 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
       setAnimateIcons(true);
     }, 500);
     
-    return () => clearTimeout(timer);
+    // Simulate map loading
+    const loadTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1200);
+    
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(loadTimer);
+    };
   }, []);
   
   const handleToggleInfo = () => {
@@ -81,17 +90,48 @@ const IndiaMap: React.FC<IndiaMapProps> = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4">
-        <div className="h-full flex flex-col items-center justify-center">
-          <div className="relative w-full animate-fade-in">
-            {showInfo && <MapLegend showForestDensity={forestDensityView} />}
-            <SimpleStateMap 
-              selectedState={selectedState}
-              onStateSelect={onStateSelect}
-              forestDensityView={forestDensityView}
-              selectedYear={selectedYear}
-            />
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center h-[340px] bg-green-50 rounded-lg">
+            <div className="flex gap-2 items-end mb-4">
+              {[...Array(5)].map((_, i) => (
+                <div 
+                  key={i}
+                  className="flex flex-col items-center"
+                >
+                  <div 
+                    className="w-1 bg-green-600 rounded-full"
+                    style={{ 
+                      height: `${20 + i * 10}px`,
+                      animation: `scale-in 0.6s ease-out infinite alternate`,
+                      animationDelay: `${i * 0.1}s`,
+                    }}
+                  ></div>
+                  <Trees 
+                    className="h-6 w-6 text-green-700 mt-1"
+                    style={{ 
+                      animation: `fade-in 0.5s ease-out forwards`,
+                      animationDelay: `${i * 0.15}s`,
+                      opacity: 0
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+            <p className="text-green-700 animate-pulse">Loading forest coverage data...</p>
           </div>
-        </div>
+        ) : (
+          <div className="h-full flex flex-col items-center justify-center">
+            <div className="relative w-full animate-fade-in">
+              {showInfo && <MapLegend showForestDensity={forestDensityView} />}
+              <SimpleStateMap 
+                selectedState={selectedState}
+                onStateSelect={onStateSelect}
+                forestDensityView={forestDensityView}
+                selectedYear={selectedYear}
+              />
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
