@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, LineChart, Thermometer, Leaf } from 'lucide-react';
@@ -6,11 +7,9 @@ import ForestCoverTrend from '@/components/Charts/ForestCoverTrend';
 import AirQualityTrend from '@/components/Charts/AirQualityTrend';
 import CorrelationAnalysis from '@/components/Charts/CorrelationAnalysis';
 import PredictiveModel from '@/components/Charts/PredictiveModel';
-import DistrictComparison from '@/components/Tables/DistrictComparison';
-import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
-import ForestFireAnalysis from '@/components/RealTime/ForestFireAnalysis';
 import ForestConservationStatus from '@/components/Charts/ForestConservationStatus';
 import ForestReportTab from '@/components/RealTime/ForestReportTab';
+import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
 
 interface DashboardTabsProps {
   selectedState: string;
