@@ -82,3 +82,25 @@
   from { width: 0; }
   to { width: 90%; }
 }
+
+.trend-bar {
+  animation: scale-in 0.5s ease-out forwards;
+  transform-origin: bottom;
+}
+
+.trend-line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: draw-path 1.5s forwards;
+}
+
+.trend-area {
+  opacity: 0;
+  animation: fade-in 1s forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

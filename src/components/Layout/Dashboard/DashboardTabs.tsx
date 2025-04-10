@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, LineChart, Thermometer, Leaf } from 'lucide-react';
@@ -11,6 +10,7 @@ import DistrictComparison from '@/components/Tables/DistrictComparison';
 import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
 import ForestFireAnalysis from '@/components/RealTime/ForestFireAnalysis';
 import ForestConservationStatus from '@/components/Charts/ForestConservationStatus';
+import ForestReportTab from '@/components/RealTime/ForestReportTab';
 
 interface DashboardTabsProps {
   selectedState: string;
@@ -59,7 +59,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
             className="data-[state=active]:bg-white data-[state=active]:text-green-700 rounded-lg transition-all"
           >
             <Leaf className="h-4 w-4 mr-2" />
-            Sustainability
+            Forest Report
           </TabsTrigger>
         </TabsList>
       </div>
@@ -121,16 +121,8 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
       </TabsContent>
       
       <TabsContent value="sustainability" className="space-y-6 animate-fade-in">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          <div className="card-bg-blue rounded-lg p-1">
-            <DistrictComparison mode="positive" stateId={selectedState} />
-          </div>
-          <div className="card-bg-peach rounded-lg p-1">
-            <DistrictComparison mode="negative" stateId={selectedState} />
-          </div>
-          <div className="card-bg-yellow rounded-lg p-1 col-span-1 md:col-span-2">
-            <ForestFireAnalysis stateId={selectedState} />
-          </div>
+        <div className="grid grid-cols-1 gap-6">
+          <ForestReportTab stateId={selectedState} />
         </div>
       </TabsContent>
     </Tabs>
