@@ -10,6 +10,7 @@ import PredictiveModel from '@/components/Charts/PredictiveModel';
 import ForestConservationStatus from '@/components/Charts/ForestConservationStatus';
 import ForestReportTab from '@/components/RealTime/ForestReportTab';
 import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
+import ForestCoverSummary from '@/components/RealTime/Reports/ForestCoverSummary';
 
 interface DashboardTabsProps {
   selectedState: string;
@@ -64,6 +65,14 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
       </div>
       
       <TabsContent value="overview" className="space-y-6 animate-fade-in">
+        {/* Forest Cover Summary added to the top of the Overview tab */}
+        <div className="grid grid-cols-1 gap-6">
+          <ForestCoverSummary 
+            stateId={selectedState}
+            stateName={selectedState === 'IN' ? 'India' : getStateById(selectedState)?.name || ''}
+            deforestationRate={selectedState === 'IN' ? 2.1 : (getStateById(selectedState)?.deforestationRate || 2.0)}
+          />
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="card-bg-green rounded-lg p-1">
             <ForestConservationStatus 

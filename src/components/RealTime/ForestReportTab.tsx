@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { FileText, AlertTriangle } from "lucide-react";
+import { FileText } from "lucide-react";
 import { getStateById } from '@/data/mockData';
 import ExecutiveSummary from './Reports/ExecutiveSummary';
 import KeyStatistics from './Reports/KeyStatistics';
@@ -9,7 +9,6 @@ import Recommendations from './Reports/Recommendations';
 import { generateStateSpecificStats } from './Reports/utils/reportHelpers';
 import StateComparison from '../Tables/StateComparison';
 import DistrictComparison from '../Tables/DistrictComparison';
-import ForestCoverSummary from './Reports/ForestCoverSummary';
 
 interface ForestReportTabProps {
   stateId: string;
@@ -35,13 +34,6 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
             Forest Status Report: {stateName}
           </h3>
         </div>
-        
-        {/* Forest Cover Summary - New Addition */}
-        <ForestCoverSummary 
-          stateId={stateId}
-          stateName={stateName}
-          deforestationRate={stateStats.deforestation}
-        />
         
         {/* Executive Summary */}
         <ExecutiveSummary 

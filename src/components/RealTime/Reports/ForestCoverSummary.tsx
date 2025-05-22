@@ -3,6 +3,7 @@ import React from 'react';
 import { AlertTriangle, ArrowUp, ArrowDown } from 'lucide-react';
 import { getStateById } from '@/data/mockData';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend } from 'recharts';
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ForestCoverSummaryProps {
   stateId: string;
@@ -51,113 +52,117 @@ const ForestCoverSummary: React.FC<ForestCoverSummaryProps> = ({
   const forestCoverTarget = Math.round(totalForestCover * 1.15); // 15% increase target for 2030
   
   return (
-    <div className="p-6 bg-green-50 border-b border-green-100">
-      <h4 className="text-lg font-semibold text-green-800 mb-4">Forest Cover Summary</h4>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left Column - Summary Stats */}
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-green-100">
-          <h5 className="text-sm font-medium text-green-700 mb-4">Key Metrics</h5>
-          
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm text-gray-600">Total Forest Cover</p>
-              <p className="text-3xl font-bold text-green-700">{totalForestCover.toLocaleString()} km²</p>
-            </div>
-            
-            <div>
-              <div className="flex items-center gap-1.5">
-                <p className="text-sm text-gray-600">Deforestation Rate</p>
-                <AlertTriangle className="h-4 w-4 text-red-600" />
-              </div>
-              <p className="text-2xl font-bold text-red-600">{deforestationRate.toFixed(2)}%/year</p>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <div>
-                <p className="text-sm text-gray-600">Forest Cover Trend</p>
-                <p className="font-medium">{isForestDecreasing ? 'Decreasing' : 'Increasing'}</p>
-              </div>
-              {isForestDecreasing ? (
-                <ArrowDown className="h-6 w-6 text-red-500" />
-              ) : (
-                <ArrowUp className="h-6 w-6 text-green-500" />
-              )}
-            </div>
-          </div>
+    <Card className="shadow-md overflow-hidden border border-green-100">
+      <CardContent className="p-0">
+        <div className="bg-gradient-to-r from-green-800 to-green-600 p-4">
+          <h3 className="text-xl font-bold text-white">Forest Cover Summary: {stateName}</h3>
         </div>
         
-        {/* Middle Column - Composition Chart */}
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-green-100 flex flex-col">
-          <h5 className="text-sm font-medium text-green-700 mb-2">Forest Composition (2024)</h5>
-          
-          <div className="h-[200px] flex-1">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={forestCompositionData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={40}
-                  outerRadius={80}
-                  paddingAngle={2}
-                  dataKey="value"
-                  label={({ value }) => `${value.toLocaleString()} km²`}
-                >
-                  {forestCompositionData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-        
-        {/* Right Column - Historical Comparison */}
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-green-100">
-          <h5 className="text-sm font-medium text-green-700 mb-3">Historical Comparison</h5>
-          
-          <div className="space-y-3">
-            {historicalData.map((data, index) => (
-              <div key={years[index]} className="relative">
-                <div className="flex justify-between text-xs text-gray-500 mb-1">
-                  <span>{years[index]}</span>
-                  <span>{data?.totalForestCover.toLocaleString()} km²</span>
-                </div>
-                <div className="h-4 bg-gray-100 rounded-full overflow-hidden flex">
-                  <div 
-                    className="bg-green-800 h-full" 
-                    style={{ width: `${(data?.veryDenseForest / data?.totalForestCover) * 100}%` }}
-                  ></div>
-                  <div 
-                    className="bg-green-600 h-full" 
-                    style={{ width: `${(data?.moderatelyDenseForest / data?.totalForestCover) * 100}%` }}
-                  ></div>
-                  <div 
-                    className="bg-green-400 h-full" 
-                    style={{ width: `${(data?.openForest / data?.totalForestCover) * 100}%` }}
-                  ></div>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-white">
+          {/* Left Column - Summary Stats */}
+          <div className="bg-gradient-to-br from-green-50 to-white p-4 rounded-lg shadow-sm border border-green-100">
+            <h4 className="text-base font-semibold text-green-800 mb-3 pb-2 border-b border-green-100">Key Metrics</h4>
+            
+            <div className="space-y-6">
+              <div>
+                <p className="text-sm text-gray-600 font-medium">Total Forest Cover</p>
+                <p className="text-3xl font-bold text-green-700">{totalForestCover.toLocaleString()} km²</p>
               </div>
-            ))}
+              
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm text-gray-600 font-medium">Deforestation Rate</p>
+                  <AlertTriangle className="h-4 w-4 text-red-600" />
+                </div>
+                <p className="text-2xl font-bold text-red-600">{deforestationRate.toFixed(2)}%/year</p>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div>
+                  <p className="text-sm text-gray-600 font-medium">Forest Cover Trend</p>
+                  <p className="font-medium text-lg">{isForestDecreasing ? 'Decreasing' : 'Increasing'}</p>
+                </div>
+                {isForestDecreasing ? (
+                  <ArrowDown className="h-8 w-8 text-red-500" />
+                ) : (
+                  <ArrowUp className="h-8 w-8 text-green-500" />
+                )}
+              </div>
+            </div>
           </div>
           
-          <div className="mt-4 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <p className="text-gray-500">Global Rank</p>
-                <p className="font-semibold">{globalRank}{getOrdinal(globalRank)}</p>
-              </div>
-              <div>
-                <p className="text-gray-500">2030 Target</p>
-                <p className="font-semibold">{forestCoverTarget.toLocaleString()} km²</p>
+          {/* Middle Column - Composition Chart */}
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-green-100 flex flex-col">
+            <h4 className="text-base font-semibold text-green-800 mb-3 pb-2 border-b border-green-100">Forest Composition (2024)</h4>
+            
+            <div className="h-[200px] flex-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={forestCompositionData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                    label={({ value }) => `${Math.round(value/totalForestCover*100)}%`}
+                  >
+                    {forestCompositionData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+          
+          {/* Right Column - Historical Comparison */}
+          <div className="bg-gradient-to-br from-blue-50 to-white p-4 rounded-lg shadow-sm border border-blue-100">
+            <h4 className="text-base font-semibold text-blue-800 mb-3 pb-2 border-b border-blue-100">Historical Comparison</h4>
+            
+            <div className="space-y-4">
+              {historicalData.map((data, index) => (
+                <div key={years[index]} className="relative">
+                  <div className="flex justify-between text-sm font-medium mb-1">
+                    <span className="text-blue-700">{years[index]}</span>
+                    <span className="text-gray-700">{data?.totalForestCover.toLocaleString()} km²</span>
+                  </div>
+                  <div className="h-5 bg-gray-100 rounded-full overflow-hidden flex">
+                    <div 
+                      className="bg-green-800 h-full" 
+                      style={{ width: `${(data?.veryDenseForest / data?.totalForestCover) * 100}%` }}
+                    ></div>
+                    <div 
+                      className="bg-green-600 h-full" 
+                      style={{ width: `${(data?.moderatelyDenseForest / data?.totalForestCover) * 100}%` }}
+                    ></div>
+                    <div 
+                      className="bg-green-400 h-full" 
+                      style={{ width: `${(data?.openForest / data?.totalForestCover) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-6 pt-3 border-t border-blue-100">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600 font-medium">Global Rank</p>
+                  <p className="font-bold text-lg text-blue-800">{globalRank}{getOrdinal(globalRank)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600 font-medium">2030 Target</p>
+                  <p className="font-bold text-lg text-green-700">{forestCoverTarget.toLocaleString()} km²</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 
