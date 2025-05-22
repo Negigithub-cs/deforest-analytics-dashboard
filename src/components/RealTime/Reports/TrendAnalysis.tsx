@@ -15,6 +15,20 @@ const TrendAnalysis: React.FC<TrendAnalysisProps> = ({
   growthRate,
   annualData
 }) => {
+  // Generate this state's specific forest growth trend
+  const generateStateSpecificTrend = (stateId: string) => {
+    const idSum = stateId.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    // Create unique values based on stateId
+    return Array.from({ length: 12 }, (_, i) => {
+      const base = 15 + (idSum % 10);
+      const amplitude = 8 + (idSum % 6);
+      const phase = (idSum % 12) / 10;
+      return base + amplitude * Math.sin((i / 12 + phase) * Math.PI * 2);
+    });
+  };
+
+  const monthlyData = generateStateSpecificTrend(stateId);
+
   // Add CSS for trend analysis chart animations
   useEffect(() => {
     const styleForTrendChart = document.createElement('style');
@@ -57,8 +71,8 @@ const TrendAnalysis: React.FC<TrendAnalysisProps> = ({
       </div>
       
       <p className="text-green-700 mb-4">
-        Forest cover has shown a positive trend with an annual growth rate of {growthRate.toFixed(1)}% over the last 5 years. 
-        The most significant growth has been observed in moderate density forests in {stateName}.
+        Forest cover in {stateName} has shown a {growthRate > 0.5 ? 'positive' : 'moderate'} trend with an annual growth rate of {growthRate.toFixed(1)}% over the last 5 years. 
+        The most significant growth has been observed in {stateId === 'IN' ? 'the northeastern states' : 'moderate density forests'} in {stateName}.
       </p>
       
       <div className="bg-white rounded-lg p-4 shadow-sm border border-green-100">
@@ -117,54 +131,61 @@ const TrendAnalysis: React.FC<TrendAnalysisProps> = ({
               </linearGradient>
             </defs>
             
-            {/* Area chart path with animation */}
-            <path
-              d={`M0,50 L0,${35 - (parseInt(stateId || 'IN', 36) % 15)} C5,${33 + (parseInt(stateId || 'IN', 36) % 10)} 10,${38 - (parseInt(stateId || 'IN', 36) % 8)} 15,${30 + (parseInt(stateId || 'IN', 36) % 6)} C20,${22 - (parseInt(stateId || 'IN', 36) % 12)} 25,${28 + (parseInt(stateId || 'IN', 36) % 7)} 30,${20 - (parseInt(stateId || 'IN', 36) % 5)} C35,${12 + (parseInt(stateId || 'IN', 36) % 8)} 40,${25 - (parseInt(stateId || 'IN', 36) % 10)} 45,${18 + (parseInt(stateId || 'IN', 36) % 7)} C50,${11 - (parseInt(stateId || 'IN', 36) % 6)} 55,${15 + (parseInt(stateId || 'IN', 36) % 10)} 60,${10 - (parseInt(stateId || 'IN', 36) % 5)} C65,${5 + (parseInt(stateId || 'IN', 36) % 10)} 70,${15 - (parseInt(stateId || 'IN', 36) % 5)} 75,${12 + (parseInt(stateId || 'IN', 36) % 8)} C80,${9 - (parseInt(stateId || 'IN', 36) % 7)} 85,${2 + (parseInt(stateId || 'IN', 36) % 10)} 90,${8 - (parseInt(stateId || 'IN', 36) % 6)} C95,${14 + (parseInt(stateId || 'IN', 36) % 6)} 100,10 100,10 L100,50 Z`}
-              fill={`url(#areaGradient-${stateId})`}
-              className="trend-area"
-            />
-            
-            {/* Line for the area chart */}
-            <path
-              d={`M0,${35 - (parseInt(stateId || 'IN', 36) % 15)} C5,${33 + (parseInt(stateId || 'IN', 36) % 10)} 10,${38 - (parseInt(stateId || 'IN', 36) % 8)} 15,${30 + (parseInt(stateId || 'IN', 36) % 6)} C20,${22 - (parseInt(stateId || 'IN', 36) % 12)} 25,${28 + (parseInt(stateId || 'IN', 36) % 7)} 30,${20 - (parseInt(stateId || 'IN', 36) % 5)} C35,${12 + (parseInt(stateId || 'IN', 36) % 8)} 40,${25 - (parseInt(stateId || 'IN', 36) % 10)} 45,${18 + (parseInt(stateId || 'IN', 36) % 7)} C50,${11 - (parseInt(stateId || 'IN', 36) % 6)} 55,${15 + (parseInt(stateId || 'IN', 36) % 10)} 60,${10 - (parseInt(stateId || 'IN', 36) % 5)} C65,${5 + (parseInt(stateId || 'IN', 36) % 10)} 70,${15 - (parseInt(stateId || 'IN', 36) % 5)} 75,${12 + (parseInt(stateId || 'IN', 36) % 8)} C80,${9 - (parseInt(stateId || 'IN', 36) % 7)} 85,${2 + (parseInt(stateId || 'IN', 36) % 10)} 90,${8 - (parseInt(stateId || 'IN', 36) % 6)} C95,${14 + (parseInt(stateId || 'IN', 36) % 6)} 100,10 100,10`}
-              fill="none"
-              strokeWidth="2"
-              stroke="#16A34A"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="trend-line"
-            />
-            
-            {/* Data points */}
-            {[
-              35 - (parseInt(stateId || 'IN', 36) % 15),
-              33 + (parseInt(stateId || 'IN', 36) % 10),
-              38 - (parseInt(stateId || 'IN', 36) % 8),
-              30 + (parseInt(stateId || 'IN', 36) % 6),
-              22 - (parseInt(stateId || 'IN', 36) % 12),
-              28 + (parseInt(stateId || 'IN', 36) % 7),
-              20 - (parseInt(stateId || 'IN', 36) % 5),
-              12 + (parseInt(stateId || 'IN', 36) % 8),
-              25 - (parseInt(stateId || 'IN', 36) % 10),
-              18 + (parseInt(stateId || 'IN', 36) % 7),
-              11 - (parseInt(stateId || 'IN', 36) % 6),
-              10 + (parseInt(stateId || 'IN', 36) % 5)
-            ].map((point, i) => (
-              <circle
-                key={`point-${i}`}
-                cx={i * 9}
-                cy={point}
-                r="1.5"
-                fill="#FFF"
-                stroke="#16A34A"
-                strokeWidth="1"
-                style={{
-                  animation: `scale-in 0.3s ease-out forwards`,
-                  animationDelay: `${1.5 + (i * 0.05)}s`,
-                  opacity: 0
-                }}
-              />
-            ))}
+            {/* Create the SVG path for the area chart */}
+            {(() => {
+              // Convert the monthlyData array to SVG path coordinates
+              const pathPoints = monthlyData.map((value, index) => {
+                const x = (index / (monthlyData.length - 1)) * 100;
+                const y = 50 - value; // SVG coordinate system is top-down
+                return `${x},${y}`;
+              }).join(' L');
+              
+              // Create the area path
+              const areaPath = `M0,${50 - monthlyData[0]} L${pathPoints} L100,50 L0,50 Z`;
+              
+              // Create the line path
+              const linePath = `M0,${50 - monthlyData[0]} L${pathPoints}`;
+              
+              return (
+                <>
+                  {/* Area chart path with animation */}
+                  <path
+                    d={areaPath}
+                    fill={`url(#areaGradient-${stateId})`}
+                    className="trend-area"
+                  />
+                  
+                  {/* Line for the area chart */}
+                  <path
+                    d={linePath}
+                    fill="none"
+                    strokeWidth="2"
+                    stroke="#16A34A"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="trend-line"
+                  />
+                  
+                  {/* Data points */}
+                  {monthlyData.map((value, i) => (
+                    <circle
+                      key={`point-${i}`}
+                      cx={(i / (monthlyData.length - 1)) * 100}
+                      cy={50 - value}
+                      r="1.5"
+                      fill="#FFF"
+                      stroke="#16A34A"
+                      strokeWidth="1"
+                      style={{
+                        animation: `scale-in 0.3s ease-out forwards`,
+                        animationDelay: `${1.5 + (i * 0.05)}s`,
+                        opacity: 0
+                      }}
+                    />
+                  ))}
+                </>
+              );
+            })()}
           </svg>
           
           {/* X-axis labels */}

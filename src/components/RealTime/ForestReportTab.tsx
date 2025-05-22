@@ -6,9 +6,10 @@ import { getStateById } from '@/data/mockData';
 import ExecutiveSummary from './Reports/ExecutiveSummary';
 import KeyStatistics from './Reports/KeyStatistics';
 import TrendAnalysis from './Reports/TrendAnalysis';
-import ConservationTimeline from './Reports/ConservationTimeline';
 import Recommendations from './Reports/Recommendations';
 import { generateStateSpecificStats } from './Reports/utils/reportHelpers';
+import StateComparison from '../Tables/StateComparison';
+import DistrictComparison from '../Tables/DistrictComparison';
 
 interface ForestReportTabProps {
   stateId: string;
@@ -20,7 +21,6 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
   
   // Generate state-specific data based on stateId
   const stateStats = generateStateSpecificStats(stateId);
-  const conservationTimeline = stateStats.generateConservationTimeline(stateName);
   
   // CSS for animating the bars in the chart
   useEffect(() => {
@@ -89,16 +89,27 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
           annualData={stateStats.annualData}
         />
         
-        {/* Conservation Timeline - State-specific */}
-        <ConservationTimeline 
-          stateName={stateName}
-          conservationTimeline={conservationTimeline}
-        />
+        {/* State & District Comparison Analysis */}
+        <div className="p-6 bg-blue-50 border-t border-blue-100">
+          <h4 className="text-lg font-semibold text-blue-800 mb-4">State & District Analysis</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <StateComparison mode="positive" />
+            <StateComparison mode="negative" />
+          </div>
+          
+          <div className="mt-6">
+            <DistrictComparison mode="positive" stateId={stateId} />
+          </div>
+          
+          <div className="mt-6">
+            <DistrictComparison mode="negative" stateId={stateId} />
+          </div>
+        </div>
         
         {/* Recommendations */}
         <Recommendations 
           stateName={stateName} 
-          timelineYear={conservationTimeline[2]?.year || 2020}
+          timelineYear={2020}
         />
       </CardContent>
     </Card>
