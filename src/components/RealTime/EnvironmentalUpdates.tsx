@@ -2,12 +2,11 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Newspaper, Flame, Thermometer, FileText } from "lucide-react";
+import { Newspaper, Flame, Thermometer } from "lucide-react";
 import { getStateById } from '@/data/mockData';
 import ForestFireAnalysis from './ForestFireAnalysis';
 import NewsTab from './NewsTab';
 import ClimateImpactTab from './ClimateImpactTab';
-import ForestReportTab from './ForestReportTab';
 
 interface EnvironmentalUpdatesProps {
   stateId: string;
@@ -41,7 +40,7 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
       
       <CardContent className="p-0">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="w-full grid grid-cols-4 gap-0 bg-green-700 p-0 rounded-none">
+          <TabsList className="w-full grid grid-cols-3 gap-0 bg-green-700 p-0 rounded-none">
             <TabsTrigger 
               value="news" 
               className="flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm rounded-none transition-all py-3 border-r border-green-600 text-green-50"
@@ -58,17 +57,10 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
             </TabsTrigger>
             <TabsTrigger 
               value="climate" 
-              className="flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm rounded-none transition-all py-3 border-r border-green-600 text-green-50"
+              className="flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm rounded-none transition-all py-3 text-green-50"
             >
               <Thermometer className="h-4 w-4" />
               <span>Climate Impact</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="report" 
-              className="flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-green-700 data-[state=active]:shadow-sm rounded-none transition-all py-3 text-green-50"
-            >
-              <FileText className="h-4 w-4" />
-              <span>Report</span>
             </TabsTrigger>
           </TabsList>
           
@@ -88,10 +80,6 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
             <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4">
               <ClimateImpactTab stateId={stateId} />
             </div>
-          </TabsContent>
-          
-          <TabsContent value="report" className="mt-0 animate-fade-in">
-            <ForestReportTab stateId={stateId} />
           </TabsContent>
         </Tabs>
       </CardContent>

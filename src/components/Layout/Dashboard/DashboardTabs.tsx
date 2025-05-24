@@ -11,7 +11,7 @@ import ForestConservationStatus from '@/components/Charts/ForestConservationStat
 import ForestReportTab from '@/components/RealTime/ForestReportTab';
 import EnvironmentalUpdates from '@/components/RealTime/EnvironmentalUpdates';
 import ForestCoverSummary from '@/components/RealTime/Reports/ForestCoverSummary';
-import { getStateById } from '@/data/mockData'; // Added this import
+import { getStateById } from '@/data/mockData'; 
 
 interface DashboardTabsProps {
   selectedState: string;

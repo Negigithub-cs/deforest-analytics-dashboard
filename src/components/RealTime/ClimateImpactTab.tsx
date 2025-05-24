@@ -1,8 +1,13 @@
 
 import React from 'react';
-import { Thermometer, CloudRain, AlertTriangle } from "lucide-react";
+import { Thermometer, CloudRain, AlertTriangle, Wind, CloudLightning } from "lucide-react";
 import { getClimateData } from './utils/environmentalDataUtils';
 import { getStateById } from '@/data/mockData';
+import { Card } from "@/components/ui/card";
+import { 
+  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, 
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
+} from 'recharts';
 
 interface ClimateImpactTabProps {
   stateId: string;
@@ -11,9 +16,74 @@ interface ClimateImpactTabProps {
 const ClimateImpactTab: React.FC<ClimateImpactTabProps> = ({ stateId }) => {
   const stateData = getStateById(stateId);
   const climateData = getClimateData(stateId);
+  
+  // Generate temperature trend data
+  const temperatureTrendData = [
+    { year: 2015, temperature: climateData.current.temperature.current - 1.2 },
+    { year: 2016, temperature: climateData.current.temperature.current - 1.0 },
+    { year: 2017, temperature: climateData.current.temperature.current - 0.8 },
+    { year: 2018, temperature: climateData.current.temperature.current - 0.6 },
+    { year: 2019, temperature: climateData.current.temperature.current - 0.4 },
+    { year: 2020, temperature: climateData.current.temperature.current - 0.3 },
+    { year: 2021, temperature: climateData.current.temperature.current - 0.1 },
+    { year: 2022, temperature: climateData.current.temperature.current },
+    { year: 2023, temperature: climateData.current.temperature.current + 0.2 },
+    { year: 2024, temperature: climateData.current.temperature.current + 0.4 },
+    { year: 2025, temperature: climateData.current.temperature.current + 0.6 },
+  ];
+  
+  // Rainfall trend data
+  const rainfallTrendData = [
+    { year: 2015, rainfall: climateData.current.rainfall.current * 1.08 },
+    { year: 2016, rainfall: climateData.current.rainfall.current * 1.06 },
+    { year: 2017, rainfall: climateData.current.rainfall.current * 1.04 },
+    { year: 2018, rainfall: climateData.current.rainfall.current * 1.02 },
+    { year: 2019, rainfall: climateData.current.rainfall.current * 1.00 },
+    { year: 2020, rainfall: climateData.current.rainfall.current * 0.98 },
+    { year: 2021, rainfall: climateData.current.rainfall.current * 0.96 },
+    { year: 2022, rainfall: climateData.current.rainfall.current * 0.94 },
+    { year: 2023, rainfall: climateData.current.rainfall.current * 0.92 },
+    { year: 2024, rainfall: climateData.current.rainfall.current * 0.90 },
+  ];
+  
+  // Extreme weather data
+  const extremeEventsData = [
+    { name: 'Droughts', value: climateData.current.extremeEvents.droughts },
+    { name: 'Floods', value: climateData.current.extremeEvents.floods },
+    { name: 'Heat Waves', value: climateData.current.extremeEvents.heatwaves },
+  ];
+  
+  // Forest impact data
+  const forestImpactData = [
+    { impact: 'Water Stress', score: 65 + Math.floor(Math.random() * 15) },
+    { impact: 'Fire Risk', score: 70 + Math.floor(Math.random() * 20) },
+    { impact: 'Species Loss', score: 45 + Math.floor(Math.random() * 25) },
+    { impact: 'Soil Erosion', score: 50 + Math.floor(Math.random() * 20) },
+    { impact: 'Disease Risk', score: 40 + Math.floor(Math.random() * 30) },
+  ];
+  
+  // Annual temperature cycle
+  const temperatureCycleData = [
+    { month: 'Jan', temp: 18 + Math.random() * 5 },
+    { month: 'Feb', temp: 20 + Math.random() * 5 },
+    { month: 'Mar', temp: 25 + Math.random() * 5 },
+    { month: 'Apr', temp: 30 + Math.random() * 5 },
+    { month: 'May', temp: 35 + Math.random() * 5 },
+    { month: 'Jun', temp: 32 + Math.random() * 5 },
+    { month: 'Jul', temp: 30 + Math.random() * 5 },
+    { month: 'Aug', temp: 29 + Math.random() * 5 },
+    { month: 'Sep', temp: 28 + Math.random() * 5 },
+    { month: 'Oct', temp: 26 + Math.random() * 5 },
+    { month: 'Nov', temp: 22 + Math.random() * 5 },
+    { month: 'Dec', temp: 19 + Math.random() * 5 },
+  ];
+  
+  // Colors for pie chart
+  const COLORS = ['#FFA07A', '#20B2AA', '#B22222'];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Current Climate Indicators */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-lg shadow-sm">
           <div className="flex items-center gap-2 mb-2">
@@ -85,58 +155,175 @@ const ClimateImpactTab: React.FC<ClimateImpactTabProps> = ({ stateId }) => {
         </div>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="font-medium mb-3 flex items-center gap-2">
-            <Thermometer className="h-5 w-5 text-red-500" />
-            Top {climateData.isState ? 'States' : 'Districts'} by Temperature
-          </h3>
-          <div className="space-y-2">
-            {climateData.temperatureData.map((item, index) => (
-              <div key={`temp-${index}`} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                <span className="font-medium">{index + 1}. {item.stateName}</span>
-                <span className="text-red-600 font-semibold">{item.temperature.toFixed(1)}°C</span>
-              </div>
-            ))}
-          </div>
+      {/* Temperature Trend Chart */}
+      <Card className="p-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <Thermometer className="h-5 w-5 text-red-500 mr-2" />
+          Temperature Trend (2015-2025)
+        </h3>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={temperatureTrendData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" />
+              <YAxis domain={['dataMin - 1', 'dataMax + 1']} label={{ value: '°C', angle: -90, position: 'insideLeft' }} />
+              <Tooltip formatter={(value) => [`${value}°C`, 'Temperature']} />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="temperature"
+                stroke="#FF7043"
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
+      </Card>
+      
+      {/* Rainfall Trend Chart */}
+      <Card className="p-4">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <CloudRain className="h-5 w-5 text-blue-500 mr-2" />
+          Annual Rainfall Trend (2015-2024)
+        </h3>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={rainfallTrendData}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="year" />
+              <YAxis label={{ value: 'mm', angle: -90, position: 'insideLeft' }} />
+              <Tooltip formatter={(value) => [`${value.toFixed(0)} mm`, 'Rainfall']} />
+              <Legend />
+              <Bar dataKey="rainfall" fill="#4FC3F7" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+      
+      {/* Grid of additional charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Extreme Events Pie Chart */}
+        <Card className="p-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <AlertTriangle className="h-5 w-5 text-yellow-500 mr-2" />
+            Extreme Weather Events Distribution
+          </h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={extremeEventsData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
+                  {extremeEventsData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => [`${value} events`, '']} />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
         
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="font-medium mb-3 flex items-center gap-2">
-            <CloudRain className="h-5 w-5 text-blue-500" />
-            Top {climateData.isState ? 'States' : 'Districts'} by Rainfall
+        {/* Forest Impact Chart */}
+        <Card className="p-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <Wind className="h-5 w-5 text-green-600 mr-2" />
+            Climate Impact on Forest Health
           </h3>
-          <div className="space-y-2">
-            {climateData.rainfallData.map((item, index) => (
-              <div key={`rain-${index}`} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                <span className="font-medium">{index + 1}. {item.stateName}</span>
-                <span className="text-blue-600 font-semibold">{item.rainfall.toFixed(0)} mm</span>
-              </div>
-            ))}
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                layout="vertical"
+                data={forestImpactData}
+                margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis type="number" domain={[0, 100]} />
+                <YAxis dataKey="impact" type="category" width={80} />
+                <Tooltip formatter={(value) => [`${value}/100`, 'Impact Score']} />
+                <Legend />
+                <Bar dataKey="score" fill="#66BB6A" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-        </div>
+        </Card>
         
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <h3 className="font-medium mb-3 flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-yellow-500" />
-            Top {climateData.isState ? 'States' : 'Districts'} by Extreme Events
+        {/* Monthly Temperature Cycle */}
+        <Card className="p-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <Thermometer className="h-5 w-5 text-orange-500 mr-2" />
+            Monthly Temperature Cycle
           </h3>
-          <div className="space-y-2">
-            {climateData.extremeData.map((item, index) => (
-              <div key={`extreme-${index}`} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                <span className="font-medium">{index + 1}. {item.stateName}</span>
-                <div className="flex gap-2">
-                  <span className="text-amber-600 text-xs px-1.5 py-0.5 bg-amber-50 rounded-full">D: {item.droughts}</span>
-                  <span className="text-blue-600 text-xs px-1.5 py-0.5 bg-blue-50 rounded-full">F: {item.floods}</span>
-                  <span className="text-red-600 text-xs px-1.5 py-0.5 bg-red-50 rounded-full">H: {item.heatwaves}</span>
-                </div>
-              </div>
-            ))}
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={temperatureCycleData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis domain={['dataMin - 5', 'dataMax + 5']} />
+                <Tooltip formatter={(value) => [`${value.toFixed(1)}°C`, 'Temperature']} />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="temp"
+                  stroke="#FF9800"
+                  strokeWidth={2}
+                  dot={{ stroke: '#FF9800', strokeWidth: 2, r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
-          <div className="mt-2 text-xs text-gray-500">D: Droughts, F: Floods, H: Heat waves (5 year totals)</div>
-        </div>
+        </Card>
+        
+        {/* Climate Anomalies Visualization */}
+        <Card className="p-4">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <CloudLightning className="h-5 w-5 text-purple-500 mr-2" />
+            Climate Anomalies by Region
+          </h3>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={climateData.temperatureData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 25 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="stateName" 
+                  tick={{ fontSize: 12 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                />
+                <YAxis />
+                <Tooltip formatter={(value) => [`${value.toFixed(1)}°C`, 'Temperature']} />
+                <Legend />
+                <Bar dataKey="temperature" name="Temperature (°C)" fill="#9575CD" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
       </div>
       
+      {/* Climate Impact on Forests */}
       <div className="bg-white p-4 rounded-lg shadow-sm">
         <h3 className="font-medium mb-2">Climate Impact on Forests in {stateId === 'IN' ? 'India' : stateData?.name}</h3>
         <p className="text-gray-700">
