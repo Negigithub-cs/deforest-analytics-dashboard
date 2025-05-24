@@ -1,347 +1,339 @@
 
-import React from 'react';
-import { Thermometer, CloudRain, AlertTriangle, Wind, CloudLightning } from "lucide-react";
-import { getClimateData } from './utils/environmentalDataUtils';
-import { getStateById } from '@/data/mockData';
-import { Card } from "@/components/ui/card";
-import { 
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, 
-  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer 
-} from 'recharts';
+import React, { useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { Cloud, CloudRain, Thermometer, AlertTriangle, Droplets } from "lucide-react";
+
+// Helper function to safely format values
+const safeToFixed = (value: any, digits: number = 1): string => {
+  if (typeof value === 'number') {
+    return value.toFixed(digits);
+  }
+  return String(value);
+};
+
+// Mock data generators
+const generateTemperatureData = (stateId: string) => {
+  const baseYear = 1990;
+  const multiplier = stateId === 'IN' ? 1 : (parseInt(stateId.charAt(0), 36) % 5 + 0.8);
+  
+  return Array.from({ length: 8 }, (_, i) => {
+    const year = baseYear + i * 5;
+    const averageTemp = 25 + (i * 0.4 * multiplier);
+    const anomaly = i * 0.15 * multiplier;
+    return {
+      year: year,
+      average: averageTemp,
+      anomaly: anomaly
+    };
+  });
+};
+
+const generateRainfallData = (stateId: string) => {
+  const baseYear = 1990;
+  const multiplier = stateId === 'IN' ? 1 : (parseInt(stateId.charAt(1), 36) % 3 + 0.9);
+  
+  return Array.from({ length: 8 }, (_, i) => {
+    const year = baseYear + i * 5;
+    let baseRainfall = 1200 - (i * 15 * multiplier);
+    
+    // Add some variability
+    if (i % 2 === 0) {
+      baseRainfall += 50 * multiplier;
+    } else {
+      baseRainfall -= 30 * multiplier;
+    }
+    
+    return {
+      year: year,
+      rainfall: baseRainfall
+    };
+  });
+};
+
+const generateExtremeWeatherData = (stateId: string) => {
+  const stateMultiplier = stateId === 'IN' ? 1 : (parseInt(stateId, 36) % 5 + 0.7);
+  
+  return [
+    { name: 'Floods', events: Math.floor(8 * stateMultiplier), impact: Math.floor(7 * stateMultiplier) },
+    { name: 'Droughts', events: Math.floor(5 * stateMultiplier), impact: Math.floor(9 * stateMultiplier) },
+    { name: 'Heat Waves', events: Math.floor(12 * stateMultiplier), impact: Math.floor(6 * stateMultiplier) },
+    { name: 'Cyclones', events: Math.floor(3 * stateMultiplier), impact: Math.floor(8 * stateMultiplier) },
+  ];
+};
+
+const generateForestHealthData = (stateId: string) => {
+  const baseScore = stateId === 'IN' ? 75 : (70 + (parseInt(stateId.charAt(0), 36) % 20));
+  
+  return [
+    { metric: 'Biodiversity', score: baseScore - 5 },
+    { metric: 'Tree Health', score: baseScore - 10 },
+    { metric: 'Soil Quality', score: baseScore - 8 },
+    { metric: 'Water Retention', score: baseScore - 15 },
+    { metric: 'Fire Resistance', score: baseScore - 18 },
+  ];
+};
 
 interface ClimateImpactTabProps {
   stateId: string;
 }
 
 const ClimateImpactTab: React.FC<ClimateImpactTabProps> = ({ stateId }) => {
-  const stateData = getStateById(stateId);
-  const climateData = getClimateData(stateId);
+  const [activeTab, setActiveTab] = useState<string>('temperature');
   
-  // Generate temperature trend data
-  const temperatureTrendData = [
-    { year: 2015, temperature: climateData.current.temperature.current - 1.2 },
-    { year: 2016, temperature: climateData.current.temperature.current - 1.0 },
-    { year: 2017, temperature: climateData.current.temperature.current - 0.8 },
-    { year: 2018, temperature: climateData.current.temperature.current - 0.6 },
-    { year: 2019, temperature: climateData.current.temperature.current - 0.4 },
-    { year: 2020, temperature: climateData.current.temperature.current - 0.3 },
-    { year: 2021, temperature: climateData.current.temperature.current - 0.1 },
-    { year: 2022, temperature: climateData.current.temperature.current },
-    { year: 2023, temperature: climateData.current.temperature.current + 0.2 },
-    { year: 2024, temperature: climateData.current.temperature.current + 0.4 },
-    { year: 2025, temperature: climateData.current.temperature.current + 0.6 },
-  ];
+  // Generate data based on state
+  const temperatureData = generateTemperatureData(stateId);
+  const rainfallData = generateRainfallData(stateId);
+  const extremeWeatherData = generateExtremeWeatherData(stateId);
+  const forestHealthData = generateForestHealthData(stateId);
   
-  // Rainfall trend data
-  const rainfallTrendData = [
-    { year: 2015, rainfall: climateData.current.rainfall.current * 1.08 },
-    { year: 2016, rainfall: climateData.current.rainfall.current * 1.06 },
-    { year: 2017, rainfall: climateData.current.rainfall.current * 1.04 },
-    { year: 2018, rainfall: climateData.current.rainfall.current * 1.02 },
-    { year: 2019, rainfall: climateData.current.rainfall.current * 1.00 },
-    { year: 2020, rainfall: climateData.current.rainfall.current * 0.98 },
-    { year: 2021, rainfall: climateData.current.rainfall.current * 0.96 },
-    { year: 2022, rainfall: climateData.current.rainfall.current * 0.94 },
-    { year: 2023, rainfall: climateData.current.rainfall.current * 0.92 },
-    { year: 2024, rainfall: climateData.current.rainfall.current * 0.90 },
-  ];
+  // Calculate current temperature anomaly
+  const currentAnomalyPercent = temperatureData[temperatureData.length - 1].anomaly / 0.8 * 100;
   
-  // Extreme weather data
-  const extremeEventsData = [
-    { name: 'Droughts', value: climateData.current.extremeEvents.droughts },
-    { name: 'Floods', value: climateData.current.extremeEvents.floods },
-    { name: 'Heat Waves', value: climateData.current.extremeEvents.heatwaves },
-  ];
+  // Calculate average rainfall change
+  const earliestRainfall = rainfallData[0].rainfall;
+  const latestRainfall = rainfallData[rainfallData.length - 1].rainfall;
+  const rainfallChangePercent = ((latestRainfall - earliestRainfall) / earliestRainfall) * 100;
   
-  // Forest impact data
-  const forestImpactData = [
-    { impact: 'Water Stress', score: 65 + Math.floor(Math.random() * 15) },
-    { impact: 'Fire Risk', score: 70 + Math.floor(Math.random() * 20) },
-    { impact: 'Species Loss', score: 45 + Math.floor(Math.random() * 25) },
-    { impact: 'Soil Erosion', score: 50 + Math.floor(Math.random() * 20) },
-    { impact: 'Disease Risk', score: 40 + Math.floor(Math.random() * 30) },
-  ];
+  // Determine severity classes
+  const getAnomalySeverityClass = (percent: number) => {
+    if (percent > 150) return "text-red-600";
+    if (percent > 100) return "text-amber-600";
+    return "text-yellow-600";
+  };
   
-  // Annual temperature cycle
-  const temperatureCycleData = [
-    { month: 'Jan', temp: 18 + Math.random() * 5 },
-    { month: 'Feb', temp: 20 + Math.random() * 5 },
-    { month: 'Mar', temp: 25 + Math.random() * 5 },
-    { month: 'Apr', temp: 30 + Math.random() * 5 },
-    { month: 'May', temp: 35 + Math.random() * 5 },
-    { month: 'Jun', temp: 32 + Math.random() * 5 },
-    { month: 'Jul', temp: 30 + Math.random() * 5 },
-    { month: 'Aug', temp: 29 + Math.random() * 5 },
-    { month: 'Sep', temp: 28 + Math.random() * 5 },
-    { month: 'Oct', temp: 26 + Math.random() * 5 },
-    { month: 'Nov', temp: 22 + Math.random() * 5 },
-    { month: 'Dec', temp: 19 + Math.random() * 5 },
-  ];
+  const getRainfallChangeClass = (percent: number) => {
+    if (percent < -15) return "text-red-600";
+    if (percent < -5) return "text-amber-600";
+    if (percent < 0) return "text-yellow-600";
+    return "text-green-600";
+  };
   
-  // Colors for pie chart
-  const COLORS = ['#FFA07A', '#20B2AA', '#B22222'];
-
   return (
-    <div className="space-y-6">
-      {/* Current Climate Indicators */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <Thermometer className="h-5 w-5 text-red-500" />
-            <h3 className="font-medium">Temperature Analysis</h3>
-          </div>
-          {climateData.current && (
-            <div className="space-y-2">
-              <div>
-                <div className="text-sm text-gray-500">Average Temperature</div>
-                <div className="text-xl font-bold">{climateData.current.temperature.current.toFixed(1)}°C</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">Temperature Anomaly</div>
-                <div className="text-lg font-semibold text-red-600">+{climateData.current.temperature.anomaly.toFixed(1)}°C</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">Long-term Trend</div>
-                <div className="text-base">{climateData.current.temperature.trend}</div>
-              </div>
+    <Card className="bg-white shadow-md overflow-hidden">
+      <CardContent className="p-0">
+        {/* Summary Stats */}
+        <div className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-cyan-100 flex items-center">
+            <div className="bg-amber-100 p-3 rounded-full mr-4">
+              <Thermometer className="h-8 w-8 text-amber-600" />
             </div>
-          )}
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">Temperature Change</h3>
+              <p className={`text-xl font-bold ${getAnomalySeverityClass(currentAnomalyPercent)}`}>
+                +{safeToFixed(temperatureData[temperatureData.length - 1].anomaly)}°C
+                <span className="text-sm ml-1">since 1990</span>
+              </p>
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-cyan-100 flex items-center">
+            <div className="bg-blue-100 p-3 rounded-full mr-4">
+              <CloudRain className="h-8 w-8 text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">Rainfall Change</h3>
+              <p className={`text-xl font-bold ${getRainfallChangeClass(rainfallChangePercent)}`}>
+                {safeToFixed(rainfallChangePercent)}%
+                <span className="text-sm ml-1">since 1990</span>
+              </p>
+            </div>
+          </div>
+          
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-cyan-100 flex items-center">
+            <div className="bg-red-100 p-3 rounded-full mr-4">
+              <AlertTriangle className="h-8 w-8 text-red-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-gray-700">Extreme Weather</h3>
+              <p className="text-xl font-bold text-red-600">
+                {extremeWeatherData.reduce((sum, item) => sum + item.events, 0)}
+                <span className="text-sm ml-1">events last decade</span>
+              </p>
+            </div>
+          </div>
         </div>
         
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <CloudRain className="h-5 w-5 text-blue-500" />
-            <h3 className="font-medium">Precipitation Analysis</h3>
-          </div>
-          {climateData.current && (
-            <div className="space-y-2">
-              <div>
-                <div className="text-sm text-gray-500">Annual Rainfall</div>
-                <div className="text-xl font-bold">{climateData.current.rainfall.current.toFixed(0)} mm</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">Rainfall Anomaly</div>
-                <div className="text-lg font-semibold text-amber-600">{climateData.current.rainfall.anomaly.toFixed(1)}%</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">Long-term Trend</div>
-                <div className="text-base">{climateData.current.rainfall.trend}</div>
-              </div>
-            </div>
-          )}
-        </div>
-        
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle className="h-5 w-5 text-yellow-500" />
-            <h3 className="font-medium">Extreme Weather Events</h3>
-          </div>
-          {climateData.current && (
-            <div className="space-y-2">
-              <div>
-                <div className="text-sm text-gray-500">Drought Events (Last 5 Years)</div>
-                <div className="text-xl font-bold">{climateData.current.extremeEvents.droughts}</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">Flood Events (Last 5 Years)</div>
-                <div className="text-xl font-bold">{climateData.current.extremeEvents.floods}</div>
-              </div>
-              <div>
-                <div className="text-sm text-gray-500">Heat Waves (Last 5 Years)</div>
-                <div className="text-xl font-bold">{climateData.current.extremeEvents.heatwaves}</div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* Temperature Trend Chart */}
-      <Card className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-          <Thermometer className="h-5 w-5 text-red-500 mr-2" />
-          Temperature Trend (2015-2025)
-        </h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart
-              data={temperatureTrendData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+        {/* Climate Impact Data Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full bg-gradient-to-r from-blue-800 to-cyan-700 rounded-none grid grid-cols-4 p-0">
+            <TabsTrigger 
+              value="temperature" 
+              className="data-[state=active]:bg-white rounded-none py-3 text-blue-50 data-[state=active]:text-blue-700"
             >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" />
-              <YAxis domain={['dataMin - 1', 'dataMax + 1']} label={{ value: '°C', angle: -90, position: 'insideLeft' }} />
-              <Tooltip formatter={(value) => [`${value}°C`, 'Temperature']} />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="temperature"
-                stroke="#FF7043"
-                strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
-      
-      {/* Rainfall Trend Chart */}
-      <Card className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-          <CloudRain className="h-5 w-5 text-blue-500 mr-2" />
-          Annual Rainfall Trend (2015-2024)
-        </h3>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={rainfallTrendData}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              Temperature
+            </TabsTrigger>
+            <TabsTrigger 
+              value="rainfall" 
+              className="data-[state=active]:bg-white rounded-none py-3 text-blue-50 data-[state=active]:text-blue-700"
             >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="year" />
-              <YAxis label={{ value: 'mm', angle: -90, position: 'insideLeft' }} />
-              <Tooltip formatter={(value) => [`${value.toFixed(0)} mm`, 'Rainfall']} />
-              <Legend />
-              <Bar dataKey="rainfall" fill="#4FC3F7" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </Card>
-      
-      {/* Grid of additional charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Extreme Events Pie Chart */}
-        <Card className="p-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-            <AlertTriangle className="h-5 w-5 text-yellow-500 mr-2" />
-            Extreme Weather Events Distribution
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={extremeEventsData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                >
-                  {extremeEventsData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value) => [`${value} events`, '']} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        
-        {/* Forest Impact Chart */}
-        <Card className="p-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-            <Wind className="h-5 w-5 text-green-600 mr-2" />
-            Climate Impact on Forest Health
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                layout="vertical"
-                data={forestImpactData}
-                margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 100]} />
-                <YAxis dataKey="impact" type="category" width={80} />
-                <Tooltip formatter={(value) => [`${value}/100`, 'Impact Score']} />
-                <Legend />
-                <Bar dataKey="score" fill="#66BB6A" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        
-        {/* Monthly Temperature Cycle */}
-        <Card className="p-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-            <Thermometer className="h-5 w-5 text-orange-500 mr-2" />
-            Monthly Temperature Cycle
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={temperatureCycleData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis domain={['dataMin - 5', 'dataMax + 5']} />
-                <Tooltip formatter={(value) => [`${value.toFixed(1)}°C`, 'Temperature']} />
-                <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="temp"
-                  stroke="#FF9800"
-                  strokeWidth={2}
-                  dot={{ stroke: '#FF9800', strokeWidth: 2, r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-        
-        {/* Climate Anomalies Visualization */}
-        <Card className="p-4">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-            <CloudLightning className="h-5 w-5 text-purple-500 mr-2" />
-            Climate Anomalies by Region
-          </h3>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={climateData.temperatureData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 25 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="stateName" 
-                  tick={{ fontSize: 12 }}
-                  angle={-45}
-                  textAnchor="end"
-                  height={60}
-                />
-                <YAxis />
-                <Tooltip formatter={(value) => [`${value.toFixed(1)}°C`, 'Temperature']} />
-                <Legend />
-                <Bar dataKey="temperature" name="Temperature (°C)" fill="#9575CD" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-      
-      {/* Climate Impact on Forests */}
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <h3 className="font-medium mb-2">Climate Impact on Forests in {stateId === 'IN' ? 'India' : stateData?.name}</h3>
-        <p className="text-gray-700">
-          Climate change is significantly affecting forest ecosystems in {stateId === 'IN' ? 'India' : stateData?.name}. Rising temperatures are 
-          extending the growing season but also increasing water stress and fire risk. Changing rainfall patterns 
-          are altering species composition, with drought-tolerant species potentially replacing moisture-dependent ones.
-        </p>
-        <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-          <h4 className="font-medium text-yellow-800">Key Vulnerabilities</h4>
-          <ul className="list-disc list-inside text-sm text-yellow-700 mt-1">
-            <li>Increased forest fire frequency and intensity due to hotter, drier conditions</li>
-            <li>Shifting tree species distribution as climate zones move northward and to higher elevations</li>
-            <li>Greater susceptibility to pest outbreaks and disease as trees experience climate stress</li>
-            <li>Reduced forest regeneration rates in areas experiencing more frequent drought</li>
-          </ul>
-        </div>
-      </div>
-    </div>
+              Rainfall
+            </TabsTrigger>
+            <TabsTrigger 
+              value="extreme" 
+              className="data-[state=active]:bg-white rounded-none py-3 text-blue-50 data-[state=active]:text-blue-700"
+            >
+              Extreme Weather
+            </TabsTrigger>
+            <TabsTrigger 
+              value="impact" 
+              className="data-[state=active]:bg-white rounded-none py-3 text-blue-50 data-[state=active]:text-blue-700"
+            >
+              Forest Health
+            </TabsTrigger>
+          </TabsList>
+          
+          {/* Temperature Tab */}
+          <TabsContent value="temperature" className="p-6 bg-white animate-fade-in">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+              <Thermometer className="mr-2 h-6 w-6 text-amber-600" />
+              Temperature Trends (1990-2025)
+            </h3>
+            <div className="mb-4">
+              <p className="text-gray-600">
+                Average temperatures have increased by <strong className="text-amber-600">
+                {safeToFixed(temperatureData[temperatureData.length - 1].anomaly)}°C
+                </strong> since 1990, with accelerating warming in recent decades. This warming trend is 
+                {currentAnomalyPercent > 120 ? " significantly" : ""} impacting forest ecosystems.
+              </p>
+            </div>
+            <div className="h-72 mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={temperatureData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="year" />
+                  <YAxis yAxisId="left" />
+                  <YAxis yAxisId="right" orientation="right" />
+                  <Tooltip />
+                  <Legend />
+                  <Line yAxisId="left" type="monotone" dataKey="average" name="Avg. Temperature (°C)" stroke="#e67700" strokeWidth={2} />
+                  <Line yAxisId="right" type="monotone" dataKey="anomaly" name="Anomaly (°C)" stroke="#ff4d4f" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-amber-50 p-4 rounded-lg border border-amber-100">
+              <h4 className="font-medium text-amber-800">Key Impacts on Forests</h4>
+              <ul className="list-disc pl-5 text-amber-700 mt-2">
+                <li>Extended growing seasons affecting forest composition</li>
+                <li>Increased vulnerability to pests and diseases</li>
+                <li>Higher risk of wildfires during hot and dry periods</li>
+                <li>Shifts in species distribution towards higher elevations</li>
+              </ul>
+            </div>
+          </TabsContent>
+          
+          {/* Rainfall Tab */}
+          <TabsContent value="rainfall" className="p-6 bg-white animate-fade-in">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+              <Cloud className="mr-2 h-6 w-6 text-blue-600" />
+              Rainfall Patterns (1990-2025)
+            </h3>
+            <div className="mb-4">
+              <p className="text-gray-600">
+                Annual rainfall has changed by <strong className={getRainfallChangeClass(rainfallChangePercent)}>
+                {safeToFixed(rainfallChangePercent)}%
+                </strong> since 1990. Changing precipitation patterns are affecting forest hydrology and ecosystem stability.
+              </p>
+            </div>
+            <div className="h-72 mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={rainfallData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="year" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="rainfall" name="Annual Rainfall (mm)" stroke="#0284c7" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
+              <h4 className="font-medium text-blue-800">Hydrological Impacts</h4>
+              <ul className="list-disc pl-5 text-blue-700 mt-2">
+                <li>Altered soil moisture availability affecting tree growth</li>
+                <li>Increased runoff leading to soil erosion in deforested areas</li>
+                <li>Changing water table levels affecting groundwater-dependent ecosystems</li>
+                <li>More frequent drought stress in forest ecosystems</li>
+              </ul>
+            </div>
+          </TabsContent>
+          
+          {/* Extreme Weather Tab */}
+          <TabsContent value="extreme" className="p-6 bg-white animate-fade-in">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+              <AlertTriangle className="mr-2 h-6 w-6 text-red-600" />
+              Extreme Weather Events (Past Decade)
+            </h3>
+            <div className="mb-4">
+              <p className="text-gray-600">
+                The region has experienced <strong className="text-red-600">
+                {extremeWeatherData.reduce((sum, item) => sum + item.events, 0)}</strong> extreme weather events 
+                in the past decade, with increasing frequency and intensity affecting forest resilience.
+              </p>
+            </div>
+            <div className="h-72 mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={extremeWeatherData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="events" name="Number of Events" fill="#f43f5e" />
+                  <Bar dataKey="impact" name="Impact Severity (1-10)" fill="#881337" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-red-50 p-4 rounded-lg border border-red-100">
+              <h4 className="font-medium text-red-800">Forest Disturbances</h4>
+              <ul className="list-disc pl-5 text-red-700 mt-2">
+                <li>Widespread tree damage from increased storm intensity</li>
+                <li>Flash floods causing accelerated soil erosion in forested watersheds</li>
+                <li>Extended drought periods inducing physiological stress in trees</li>
+                <li>Cascading impacts on forest-dependent wildlife and plant communities</li>
+              </ul>
+            </div>
+          </TabsContent>
+          
+          {/* Forest Health Impact Tab */}
+          <TabsContent value="impact" className="p-6 bg-white animate-fade-in">
+            <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+              <Droplets className="mr-2 h-6 w-6 text-emerald-600" />
+              Forest Health Impact Scores
+            </h3>
+            <div className="mb-4">
+              <p className="text-gray-600">
+                Climate change is affecting multiple aspects of forest health, with varying impacts across different forest attributes.
+                Lower scores indicate higher vulnerability to climate impacts.
+              </p>
+            </div>
+            <div className="h-72 mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={forestHealthData} layout="vertical" margin={{ top: 5, right: 30, left: 100, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" domain={[0, 100]} />
+                  <YAxis dataKey="metric" type="category" />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="score" name="Health Score (0-100)" fill="#059669">
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+              <h4 className="font-medium text-emerald-800">Adaptation Strategies</h4>
+              <ul className="list-disc pl-5 text-emerald-700 mt-2">
+                <li>Promoting drought-resistant native species in reforestation efforts</li>
+                <li>Creating habitat corridors to facilitate species migration</li>
+                <li>Implementing early warning systems for forest fires and pest outbreaks</li>
+                <li>Integrated watershed management to improve water retention</li>
+              </ul>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
   );
 };
 

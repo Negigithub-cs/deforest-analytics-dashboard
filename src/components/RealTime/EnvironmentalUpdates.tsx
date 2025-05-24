@@ -26,8 +26,8 @@ const EnvironmentalUpdates: React.FC<EnvironmentalUpdatesProps> = ({ stateId }) 
     ],
     fires: [
       "https://images.unsplash.com/photo-1516575438296-6a7562bdee6c?q=80&w=1200&auto=format",
-      "https://images.unsplash.com/photo-1516575438296-6a7562bdee6c?q=80&w=1200&auto=format", 
-      "https://images.unsplash.com/photo-1493962853295-0fd70327578a?q=80&w=1200&auto=format"
+      "https://images.unsplash.com/photo-1493962853295-0fd70327578a?q=80&w=1200&auto=format", 
+      "https://images.unsplash.com/photo-1516575438296-6a7562bdee6c?q=80&w=1200&auto=format"
     ],
     climate: [
       "https://images.unsplash.com/photo-1498936178812-4b2e558d2937?q=80&w=1200&auto=format",
