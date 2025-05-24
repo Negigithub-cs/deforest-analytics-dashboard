@@ -28,9 +28,12 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
   return (
     <Card className="bg-white shadow-md overflow-hidden">
       <CardContent className="p-0">
-        <div className="bg-gradient-to-r from-green-900 to-green-700 p-4 flex items-center gap-3">
-          <FileText className="h-6 w-6 text-white" />
-          <h3 className="text-xl font-bold text-white">
+        {/* Report Header */}
+        <div className="bg-gradient-to-r from-green-900 to-green-700 p-6 flex items-center gap-3">
+          <div className="bg-white/20 p-2.5 rounded-lg">
+            <FileText className="h-7 w-7 text-white" />
+          </div>
+          <h3 className="text-2xl font-bold text-white">
             Forest Status Report: {stateName}
           </h3>
         </div>
@@ -52,21 +55,33 @@ const ForestReportTab: React.FC<ForestReportTabProps> = ({ stateId }) => {
           forestHealth={stateStats.forestHealth}
         />
         
-        {/* State & District Comparison Analysis */}
-        <div className="p-6 bg-blue-50 border-t border-blue-100">
-          <h4 className="text-lg font-semibold text-blue-800 mb-4">State & District Analysis</h4>
+        {/* State & District Comparison Analysis - Improved Visual Design */}
+        <div className="p-6 bg-gradient-to-br from-blue-50 to-white border-t border-blue-100">
+          <h4 className="text-xl font-semibold text-blue-800 mb-6 flex items-center">
+            <span className="bg-blue-100 text-blue-600 p-1.5 rounded-md mr-2">
+              <FileText className="h-5 w-5" />
+            </span>
+            State & District Analysis
+          </h4>
           
-          {stateId === 'IN' ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <StateComparison mode="positive" />
-              <StateComparison mode="negative" />
+          <div className="grid grid-cols-1 gap-8">
+            {/* Top Performers Section */}
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-green-100">
+              <h5 className="text-lg font-semibold text-green-700 mb-4">Conservation Leaders</h5>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {stateId === 'IN' ? (
+                  <StateComparison mode="positive" />
+                ) : (
+                  <DistrictComparison mode="positive" stateId={stateId} />
+                )}
+                {stateId === 'IN' ? (
+                  <StateComparison mode="negative" />
+                ) : (
+                  <DistrictComparison mode="negative" stateId={stateId} />
+                )}
+              </div>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <DistrictComparison mode="positive" stateId={stateId} />
-              <DistrictComparison mode="negative" stateId={stateId} />
-            </div>
-          )}
+          </div>
         </div>
         
         {/* Recommendations */}
