@@ -2,7 +2,7 @@
 import { ForestData, StateData } from './types/forestTypes';
 import { statesData } from './statesData';
 
-// Generate all-India data by aggregating state data
+/
 export const indiaData: StateData = {
   id: 'IN',
   name: 'India',
@@ -13,7 +13,7 @@ export const indiaData: StateData = {
   ranking: 0
 };
 
-// Aggregate data for all of India
+
 for (let i = 0; i < 12; i++) {
   const year = 2013 + i;
   const aggregatedData: ForestData = {
