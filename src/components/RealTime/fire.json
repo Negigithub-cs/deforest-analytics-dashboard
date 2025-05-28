@@ -1,0 +1,290 @@
+[
+    {
+        "id": "Punjab",
+        "name": "Punjab",
+        "riskLevel": "Extreme",
+        "vulnerableArea": 46000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 900
+    },
+    {
+        "id": "MadhyaPradesh",
+        "name": "MadhyaPradesh",
+        "riskLevel": "Extreme",
+        "vulnerableArea": 21800,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 416
+    },
+    {
+        "id": "UttarPradesh",
+        "name": "UttarPradesh",
+        "riskLevel": "Extreme",
+        "vulnerableArea": 11200,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 204
+    },
+    {
+        "id": "Haryana",
+        "name": "Haryana",
+        "riskLevel": "Extreme",
+        "vulnerableArea": 6700,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 114
+    },
+    {
+        "id": "Gujarat",
+        "name": "Gujarat",
+        "riskLevel": "Extreme",
+        "vulnerableArea": 6500,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 110
+    },
+    {
+        "id": "Jharkhand",
+        "name": "Jharkhand",
+        "riskLevel": "High",
+        "vulnerableArea": 5500,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 90
+    },
+    {
+        "id": "Rajasthan",
+        "name": "Rajasthan",
+        "riskLevel": "High",
+        "vulnerableArea": 5450,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 89
+    },
+    {
+        "id": "JammuandKashmir",
+        "name": "JammuandKashmir",
+        "riskLevel": "High",
+        "vulnerableArea": 5400,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 88
+    },
+    {
+        "id": "Odisha",
+        "name": "Odisha",
+        "riskLevel": "High",
+        "vulnerableArea": 4850,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 77
+    },
+    {
+        "id": "Chhattisgarh",
+        "name": "Chhattisgarh",
+        "riskLevel": "High",
+        "vulnerableArea": 4050,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 61
+    },
+    {
+        "id": "TamilNadu",
+        "name": "TamilNadu",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 2950,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 39
+    },
+    {
+        "id": "WestBengal",
+        "name": "WestBengal",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 2700,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 34
+    },
+    {
+        "id": "Uttarakhand",
+        "name": "Uttarakhand",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 2200,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 24
+    },
+    {
+        "id": "HimachalPradesh",
+        "name": "HimachalPradesh",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 2150,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 23
+    },
+    {
+        "id": "AndhraPradesh",
+        "name": "AndhraPradesh",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 2100,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 22
+    },
+    {
+        "id": "Telangana",
+        "name": "Telangana",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 2100,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 22
+    },
+    {
+        "id": "Bihar",
+        "name": "Bihar",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 2050,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 21
+    },
+    {
+        "id": "Maharashtra",
+        "name": "Maharashtra",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 1850,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 17
+    },
+    {
+        "id": "ArunachalPradesh",
+        "name": "ArunachalPradesh",
+        "riskLevel": "Moderate",
+        "vulnerableArea": 1700,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 14
+    },
+    {
+        "id": "Assam",
+        "name": "Assam",
+        "riskLevel": "Low",
+        "vulnerableArea": 1400,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 8
+    },
+    {
+        "id": "Karnataka",
+        "name": "Karnataka",
+        "riskLevel": "Low",
+        "vulnerableArea": 1100,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 2
+    },
+    {
+        "id": "NCTofDelhi",
+        "name": "NCTofDelhi",
+        "riskLevel": "Low",
+        "vulnerableArea": 1100,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 2
+    },
+    {
+        "id": "Manipur",
+        "name": "Manipur",
+        "riskLevel": "Low",
+        "vulnerableArea": 1050,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 1
+    },
+    {
+        "id": "AndamanandNicobar",
+        "name": "AndamanandNicobar",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Chandigarh",
+        "name": "Chandigarh",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "DadraandNagarHaveli",
+        "name": "DadraandNagarHaveli",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "DamanandDiu",
+        "name": "DamanandDiu",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Goa",
+        "name": "Goa",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Kerala",
+        "name": "Kerala",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Lakshadweep",
+        "name": "Lakshadweep",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Meghalaya",
+        "name": "Meghalaya",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Mizoram",
+        "name": "Mizoram",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Nagaland",
+        "name": "Nagaland",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Puducherry",
+        "name": "Puducherry",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Sikkim",
+        "name": "Sikkim",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    },
+    {
+        "id": "Tripura",
+        "name": "Tripura",
+        "riskLevel": "Low",
+        "vulnerableArea": 1000,
+        "drySeasonMonths": "Feb-Jun",
+        "activeFireCount": 0
+    }
+]

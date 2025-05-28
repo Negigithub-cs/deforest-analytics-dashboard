@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText } from "lucide-react";
-import { getStateById } from '@/data/mockData';
+import { getStateById } from '@/data/mainData';
 import ExecutiveSummary from './Reports/ExecutiveSummary';
 import KeyStatistics from './Reports/KeyStatistics';
 import Recommendations from './Reports/Recommendations';
